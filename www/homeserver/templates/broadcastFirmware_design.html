@@ -1,0 +1,84 @@
+Firmware per Broadcast laden
+<hr>
+<br>
+
+<script>
+	function checkAllAr8()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("instar8")!=-1)
+          document.forms[0].elements[$i].checked=true;
+       else 
+          document.forms[0].elements[$i].checked=false;
+    }
+	}
+
+  function checkAllMs6()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("instms6")!=-1)
+          document.forms[0].elements[$i].checked=true;
+       else 
+          document.forms[0].elements[$i].checked=false;
+    }
+	}
+	
+	function checkAllSd6()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("instsd6")!=-1)
+          document.forms[0].elements[$i].checked=true;
+       else 
+          document.forms[0].elements[$i].checked=false;
+    }
+	}
+	
+	function uncheckAll()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("inst")!=-1)
+          document.forms[0].elements[$i].checked=false;
+    }
+	}
+	
+</script>
+<b>Verf&uuml;gbare Onlinecontroller:</b> &nbsp;&nbsp;&nbsp; <a href="javascript:checkAllAr8()">Alle AR8 Hauptcontroller</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp; <a href="javascript:checkAllMs6()">Alle MS6 Multitaster</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp; <a href="javascript:checkAllSd6()">Alle SD6 Multitaster</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp; <a href="javascript:uncheckAll()">Alle deaktivieren</a> <br><br>
+<form action="broadcastFirmware.php" method="POST" enctype="multipart/form-data">
+
+Hauptcontroller <hr>
+<table>
+  <%INSTANCES%>
+   <tr><td><input type="checkbox" name="instar8%FEATURE_INSTANCE_ID%" value="1"></td><td>%FEATURE_NAME%</td></tr>
+  </%INSTANCES%>
+</table>
+<br>
+Multitaster MS6<hr>
+<table>
+  <%TASTER_INSTANCES%>
+   <tr><td><input type="checkbox" name="instms6%FEATURE_INSTANCE_ID%" value="1"></td><td>%FEATURE_NAME%</td></tr>
+  </%TASTER_INSTANCES%>
+</table>
+<br>
+
+Multitaster SD6<hr>
+<table>
+  <%TASTER_SD6_INSTANCES%>
+   <tr><td><input type="checkbox" name="instsd6%FEATURE_INSTANCE_ID%" value="1"></td><td>%FEATURE_NAME%</td></tr>
+  </%TASTER_SD6_INSTANCES%>
+</table>
+<br>
+
+
+<br>
+<br>
+<input name="userfile" type="file" size="22" >
+<input type="submit" name="submitted" value="Firmware laden">
+</form>
+</body>
+</html>
+
+

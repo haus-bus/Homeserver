@@ -1,0 +1,244 @@
+﻿<html>
+<head>
+<link type="text/css" rel="StyleSheet" href="css/luna.css" />
+<script type="text/javascript" src="include/range.js"></script>
+<script type="text/javascript" src="include/timer.js"></script>
+<script type="text/javascript" src="include/slider.js"></script>
+</head>
+
+<script>
+var xmlhttp=false;
+if (typeof XMLHttpRequest != 'undefined') xmlhttp = new XMLHttpRequest();
+if (!xmlhttp) 
+{
+  try 
+  {
+    xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+  }
+  catch(e) 
+  {
+    try 
+    {
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    catch(e)
+    {
+    	xmlhttp = null;
+    }
+  }
+}
+
+var xmlhttpStatus=false;
+if (typeof XMLHttpRequest != 'undefined') xmlhttpStatus = new XMLHttpRequest();
+if (!xmlhttpStatus) 
+{
+  try 
+  {
+	  xmlhttpStatus = new ActiveXObject("Msxml2.XMLHTTP");
+  }
+  catch(e) 
+  {
+    try 
+    {
+    	xmlhttpStatus = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    catch(e)
+    {
+    	xmlhttpStatus = null;
+    }
+  }
+}
+
+var controlTimer=0;
+
+function triggerControl()
+{
+	if (controlTimer!=0) clearTimeout(controlTimer);
+    controlTimer = setTimeout("send()",100);
+}
+
+function send()
+{
+  try
+  {
+    xmlhttp.open("GET","dimmerControl.php?featureInstanceId=%FEATURE_INSTANCE_ID%&action=control&brightness="+document.getElementById("slider-input-1").value);
+    xmlhttp.onreadystatechange = function()
+    {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+      {
+          //alert(xmlhttp.responseText);
+      }
+    }
+    xmlhttp.send(null);
+  } catch (e){}
+}
+
+function sendCommand(action)
+{
+  try
+  {
+    xmlhttp.open("GET","dimmerControl.php?featureInstanceId=%FEATURE_INSTANCE_ID%&action="+action);
+    xmlhttp.onreadystatechange = function()
+    {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+      {
+        //alert(xmlhttp.responseText);
+      }
+    }
+    xmlhttp.send(null);
+  } catch (e){}
+}
+
+var lastStatusId=%INITIAL_STATUS_ID%;
+function checkStatus()
+{
+  try
+  {
+    xmlhttpStatus.open("GET","dimmerControl.php?featureInstanceId=%FEATURE_INSTANCE_ID%&action=status"+"&lastStatusId="+lastStatusId);
+    xmlhttpStatus.onreadystatechange = function()
+    {
+      if (xmlhttpStatus.readyState == 4 && xmlhttpStatus.status == 200)
+      {
+          var actValue = xmlhttpStatus.responseText;
+          
+          var pos= actValue.indexOf("#");
+          
+          if (pos!=-1)
+          {
+            lastStatusId=actValue.substring(0,pos);
+            actValue =actValue.substring(pos+1);
+
+            if (s.getValue()!=actValue && actValue!=-1)
+            { 
+              //alert("ttttN:"+actValue+" - "+s.getValue());
+              if (drag!=1)
+              {
+                document.getElementById("myValue").innerHTML=actValue;
+    	          s.setValue(actValue);
+    	        }
+            }
+          }
+          setTimeout("checkStatus()",1000);
+      }
+    }
+    xmlhttpStatus.send(null);
+  } catch (e){}
+}
+
+var drag=0;
+
+function init()
+{
+  document.getElementById('mybody').onmousedown = function (e) {drag=1;}
+  document.getElementById('mybody').onmouseup = function (e) {drag=0;}
+}
+</script>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0"	onload="init();checkStatus()" id="mybody">
+<form action="dimmerControl.php" method="POST"><input
+	type="hidden" name="action" value="save"> <input type="hidden"
+	name="featureInstanceId" value="%FEATURE_INSTANCE_ID%">
+<table>
+	<tr>
+		<td valign="top" align="center"><input type="button" value="An"
+			onclick="s.setValue(parseInt(100));" style="width: 32px">
+		<div class="slider" id="slider-1" tabIndex="1"><input
+			class="slider-input" id="slider-input-1" name="value" /></div>
+		<input type="button" value="Aus" onclick="s.setValue(parseInt(0));"
+			style="width: 32px; text-align: center"></td>
+		<td width=40>&nbsp;</td>
+		<td valign="middle"><input type="button" value="Heller" onclick="sendCommand('toBrightness')"	style="width: 80px; text-align: center"><br>
+		<br>
+		<input type="button" value="Stop"	onclick="sendCommand('stop')"	style="width: 80px; text-align: center"><br>
+		<br>
+		<input type="button" value="Dunkler"	onclick="sendCommand('toDarkness')"	style="width: 80px; text-align: center"></td>
+		<td width=40>&nbsp;</td>
+		<td valign="top">
+		<table>
+			<tr>
+				<%PRESET%>
+				<td><input type=button
+					onclick="s.setValue(parseInt(%PRESET_BRIGHTNESS%));"
+					value="%PRESET%"
+					style="font-family: calibri; font-size: 11px; width: 100px; height: 30px"><br>
+				<br>
+				</td>
+				<td width="10">&nbsp;</td>
+				</%PRESET%>
+			</tr>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td align=center>
+		<div id="myValue"></div>
+		</td>
+		<td>&nbsp;</td>
+	</tr>
+</table>
+</td>
+</tr>
+</table>
+<%OPT_ADMIN%>
+<table>
+	<tr>
+		<td>Presetname</td>
+		<td><input type="text" size="15" name="preset"> <input
+			type="submit" value="Speichern"></td>
+	</tr>
+</table>
+</form>
+
+<br>
+<form action="dimmerControl.php" method="POST"><input
+	type="hidden" name="featureInstanceId" value="%FEATURE_INSTANCE_ID%">
+<input type="hidden" name="ids" value="%IDS%"> <input
+	type="hidden" name="action" value="editSort">
+
+<table>
+	<td>
+	<table>
+		<tr>
+			<td>Presetname</td>
+			<td>Helligkeit</td>
+			<td>Sortierung</td>
+			<td>L&ouml;schen</td>
+		</tr>
+		<%CONFIG%>
+		<tr>
+			<td><input type="text" name="name%ACT_ID%" value="%NAME%"></td>
+			<td><input type="text" name="brightness%ACT_ID%"
+				value="%BRIGHTNESS%"></td>
+			<td><input type="text" name="sort%ACT_ID%" value="%SORT%" size=3></td>
+			<td><input type="checkbox" name="delete%ACT_ID%" value=1></td>
+		</tr>
+		</%CONFIG%>
+		<tr>
+			<td colspan=3 align=center><br>
+			<input type="submit" value="Speichern"></td>
+		</tr>
+	</table>
+	</td>
+	</tr>
+</table>
+</form>
+</%OPT_ADMIN%>
+
+<script type="text/javascript">
+
+var s = new Slider(document.getElementById("slider-1"), document.getElementById("slider-input-1"), "vertical");
+s.setValue(%INITIAL_VALUE%);
+s.setMinimum(0);
+s.setMaximum(100);
+document.getElementById("myValue").innerHTML = s.getValue();
+s.onchange = function () 
+{
+	if (document.getElementById("myValue").innerHTML!=s.getValue())
+	{
+  	  document.getElementById("myValue").innerHTML = s.getValue();
+	  triggerControl();
+	}
+};
+
+</script>
+</html>

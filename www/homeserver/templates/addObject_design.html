@@ -1,0 +1,30 @@
+Objekt zur Webpage hinzufügen
+<hr>
+<br>
+<script>
+	function openAssigned()
+	{
+		 %ASSIGNED%
+	}
+	
+  function openInitialElement()
+	{
+		%INITIAL_ELEMENT2%
+	}
+</script>
+<form action="editButtonPage.php" method="POST">
+<input type="hidden" name="pageId" value="%PAGE_ID%">
+<input type="hidden" name="action" value="addObject">
+<input type="hidden" name="submitted" value="1">
+
+<ul class="mktree" id="tree2">
+  %TREE_ELEMENTS%
+</ul>
+
+<br><br><br><%OPT_STEP1%><a href="javascript:openAssigned()">Alle diesem Raum zugewiesenen &ouml;ffnen</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><br><br>
+<input type="submit" value="Zuordnung einstellen">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</%OPT_STEP1%>
+<a href="editButtonPage.php?pageId=%PAGE_ID%">oder zur&uuml;ck</a>
+</form>

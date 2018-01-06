@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+ <title>Homeautomation System 2.0</title>
+ <link rel="StyleSheet" href="css/main.css" type="text/css" />
+ <LINK REL="stylesheet" HREF="css/mktree.css">
+ <script type="text/javascript" src="include/mktree.js?dummy=6"></script>
+</head>
+
+<script>
+var xmlhttp=false;
+if (typeof XMLHttpRequest != 'undefined') xmlhttp = new XMLHttpRequest();
+if (!xmlhttp) 
+{
+  try 
+  {
+    xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+  }
+  catch(e) 
+  {
+    try 
+    {
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    catch(e)
+    {
+    	xmlhttp = null;
+    }
+  }
+}
+
+var init=1;
+
+function checkUpdate()
+{
+	if (init==1) scrollTo(0,0);
+	
+	if (document.getElementById("treeUpdateControl").innerHTML=="..")
+	{
+		setTimeout("document.getElementById('treeUpdateControl').innerHTML=''",5000);
+		setTimeout("checkUpdate()",2000);
+		return;
+	}
+	
+	if (document.getElementById("treeUpdateControl").innerHTML==".")
+	{
+		setTimeout("document.getElementById('treeUpdateControl').innerHTML=''",5000);
+		setTimeout("checkUpdate()",1000);
+		return;
+	}
+	
+  try
+  {
+  	var date = new Date();
+  	var cb = date.getTime();
+  	xmlhttp.open("GET","treeUpdater.php?cb="+cb);
+    xmlhttp.onreadystatechange = function()
+    {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+      {
+    	   if (init!=1)
+    	   {
+           var result = xmlhttp.responseText;
+           if (result==1) document.write("<scr"+"ipt>location='index.php?tree=1&cb="+cb+"';</scr"+"ipt>");
+         }
+         
+         init=0;
+         setTimeout("checkUpdate()",2000);
+      }
+    }
+    xmlhttp.send(null);
+  } catch (e)
+  {
+  	//alert(e);
+  }
+}
+
+var lastOpen="%LAST_OPEN%";
+function highlight(instance)
+{
+	if (document.getElementById(lastOpen)!=null) document.getElementById(lastOpen).style.backgroundColor="";
+	document.getElementById(instance).style.backgroundColor="eeeeee";
+	lastOpen=instance;
+}
+</script>
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0" bgcolor="#C0D2EC" onload="setTimeout('checkUpdate()',500)">
+	<script>
+		function openInitialElement()
+		{
+			 %INITIAL_ELEMENT%
+			 //%INITIAL_ELEMENT2%
+			 document.getElementById("progress").style.visibility="hidden";
+			 document.getElementById("tree1").style.visibility="visible";
+			 document.getElementById("refresh").style.visibility="visible";
+		}
+	</script>
+<a href="controller.php?submitted=1" target="dummy"><img style="position:absolute;padding-left:3px;padding-top:0px;visibility:hidden" id="refresh" src="img/refresh.png" title="Controllerstatus aktualisieren"></a>	
+<img id=progress style="position:absolute;padding-left:20px;padding-top:40px" src="img/progress.gif">
+<div id=treeUpdateArea style="position:absolute;padding-left:20px;padding-top:0px;font-face:verdana;font-size:13px;"></div>
+<div id=treeUpdateControl style="position:absolute;top:-100px;visibility:hidden"></div>
+
+<table style="width:100%">
+<tr><td colspan=3 height=10 bgcolor=#C0D2EC></td></tr>
+<tr>
+ <td valign="top" width="5%" bgcolor="#C0D2EC"> 
+ 	<ul style="margin-left:-12px;visibility:hidden" class="mktree" id="tree1">
+  %TREE_ELEMENTS%
+  </ul>  
+ </td>
+ <td width="20">&nbsp;</td>
+ <td valign=top>
+ 	<div class="content" style="overflow: auto;" id="content">
+ 		<br>
+ 		<%MESSAGE%><b>%MESSAGE%</b><br><br></%MESSAGE%>
+    %CONTENT%
+  </div>
+ </td>
+</tr>
+</table>
+<div style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;font-size: 10px;color: #333;position:relative;bottom:0;padding-top:50px;padding-left:10px;">Ansicht: <a href='showView.php' target=main><font color=#333>%ANSICHT%</a><br>%PLATZ%&nbsp;</div>
+</body>
+</html>

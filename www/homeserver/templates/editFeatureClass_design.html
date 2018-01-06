@@ -1,0 +1,55 @@
+%TITLE%
+<hr>
+<br>
+
+<table cellspacing="10">
+ <form action="editFeatureClass.php" method="POST">
+  <input type="hidden" name="id" value="%ID%">
+  <tr>
+    <td>Name</td><td><input type="text" name="name" value="%FEATURE_NAME%" size="40"></td>
+    <td>GUI Control</td><td><input type="text" name="guiControl" value="%GUI_CONTROL%" size="25"></td>
+    <td></td>
+  </tr>
+  
+  <tr>
+    <td>Class ID</td><td><input type="text" name="classId" value="%CLASS_ID%" size="40"></td>
+    <td>Smoketest</td><td><input type="text" name="smoketest" value="%SMOKETEST%" size="25"></td>
+    <td></td>
+  </tr>
+  <tr><td></td>
+  <td colspan=5><%DELETE%><input type="checkbox" name="delete" value="1"> L&ouml;schen <div style='display:inline;padding-left:20px'>&nbsp;</div></%DELETE%>
+    View: <input type=radio name=view value=Standard %standardChecked%> Standard <input type=radio name=view value=Experte %experteChecked%> Experte <input type=radio name=view value=Entwickler %entwicklerChecked%> Entwickler
+  </td></tr>
+  <tr><td></td><td><input type="submit" name="submitted" value="%SUBMIT_TITLE%"></td></tr>
+ </form>
+</table>
+<br>
+<table width="100%">
+ <%ENTRIES%>
+  <tr><td colspan="2">Events / Functions / Results</td></tr>
+  <tr>
+   <td colspan="2">
+   	<div style="width:100%"><hr>
+    <table cellpadding="3">
+      <tr><td></td><td><b>Typ</td><td><b>Name</td><td><b>ID</td><%PARAM_TITLE%><td><b>%ACT_PARAM_TITLE%</td></%PARAM_TITLE%></tr>
+      <%FUNCTION%>
+       <tr>
+        <td><a href="editFeatureFunction.php?id=%FEATURE_FUNCTION_ID%&featureClassesId=%ID%"><img src="img/edit.gif" border=0 alt="&auml;ndern"></a></td>
+        <td><a href="editFeatureFunction.php?id=%FEATURE_FUNCTION_ID%&featureClassesId=%ID%">%TYPE%</a></td>
+        <td><a href="editFeatureFunction.php?id=%FEATURE_FUNCTION_ID%&featureClassesId=%ID%">%NAME%</a></td>
+        <td><a href="editFeatureFunction.php?id=%FEATURE_FUNCTION_ID%&featureClassesId=%ID%">%FUNCTION_ID%</a></td>
+        <%PARAM%><td><a href="editFeatureFunction.php?id=%FEATURE_FUNCTION_ID%&featureClassesId=%ID%">%PARAM%</a></td></%PARAM%>
+       </tr>
+      </%FUNCTION%>
+    </table>
+  </div>
+   </td>
+  </tr>
+  <form action="editFeatureFunction.php">
+  <input type="hidden" name="featureClassesId" value="%ID%">
+  <tr><td colspan=2><br><input type="submit" value="Neues Event, Function oder Result"></td></tr>
+  </form>
+  </%ENTRIES%>
+</table>
+
+

@@ -1,0 +1,43 @@
+<b>Softwareupdates</b>
+<hr>
+<br>
+<table cellpadding=5>
+<tr bgcolor=#eeeeee><td>Software</td><td>Lokale Version</td><td>Online Version</td><td>Update</td><td>Zwangsladen</td><td>Manuelles Update</td></tr>
+<tr><td>Homeserver Webapplikation</td><td>%VERSION_WEB_APPLICATION%</td><td>%VERSION_WEB_APPLICATION_ONLINE%</td><td><%OPT_UPDATE%><form action="updatesProceed.php" method="POST"><input type="hidden" name="action" value="update"><input type="submit" value="Aktualisieren"></form></%OPT_UPDATE%></td><td align=center><a href="http://www.haus-bus.de/releaseNotes.html" target="_blank">Releasenotes<br>anzeigen</td></tr>
+<tr><td>Maincontroller AR8-Firmware</td><td>%VERSION_MAIN_CONTROLLER%</td><td>%VERSION_MAIN_CONTROLLER_ONLINE%</td><td><%OPT_UPDATE_MAINCONTROLLER%><form action="updatesProceed.php" enctype="multipart/form-data" method="POST"><input type="hidden" name="action" value="updateFirmware"><input type="hidden" name="firmwareId" value="1"><input type="submit" value="Aktualisieren"></%OPT_UPDATE_MAINCONTROLLER%></td><td><input type=checkbox name='force' value='1'></td><td><input name="userfile" type="file" size="10" > <input type="submit" value="Aktualisieren"></td></form></td></tr>
+<tr><td>Multitaster MS6-Firmware</td><td>%VERSION_MULTI_TASTER%</td><td>%VERSION_MULTI_TASTER_ONLINE%</td><td><%OPT_UPDATE_MULTI_TASTER%><form action="updatesProceed.php" enctype="multipart/form-data" method="POST"><input type="hidden" name="action" value="updateFirmware"><input type="hidden" name="firmwareId" value="2"><input type="submit" value="Aktualisieren"></%OPT_UPDATE_MULTI_TASTER%></td><td><input type=checkbox name='force' value='1'></td><td><input name="userfile" type="file" size="10" > <input type="submit" value="Aktualisieren"></td></form></tr>
+<tr><td>Multitaster SD6-Firmware</td><td>%VERSION_MULTI_TASTER_SD6%</td><td>%VERSION_MULTI_TASTER_SD6_ONLINE%</td><td><%OPT_UPDATE_MULTI_TASTER_SD6%><form action="updatesProceed.php" enctype="multipart/form-data" method="POST"><input type="hidden" name="action" value="updateFirmware"><input type="hidden" name="firmwareId" value="3"><input type="submit" value="Aktualisieren"></%OPT_UPDATE_MULTI_TASTER_SD6%></td><td><input type=checkbox name='force' value='1'></td><td><input name="userfile" type="file" size="10" > <input type="submit" value="Aktualisieren"></td></form></tr>
+<tr><td>Maincontroller AR8-Booter</td><td>%VERSION_MAIN_CONTROLLER_BOOTER%</td><td>%VERSION_MAIN_CONTROLLER_BOOTER_ONLINE%</td><td><%OPT_UPDATE_MAINCONTROLLER_BOOTER%><form action="updatesProceed.php" enctype="multipart/form-data" method="POST"><input type="hidden" name="action" value="updateBooter"><input type="hidden" name="firmwareId" value="1"><input type="submit" value="Aktualisieren"></%OPT_UPDATE_MAINCONTROLLER_BOOTER%></td><td><input type=checkbox name='force' value='1'></td><td><input name="userfile" type="file" size="10" > <input type="submit" value="Aktualisieren"></td></form></td></tr>
+<tr><td>Multitaster MS6-Booter</td><td>%VERSION_MULTI_TASTER_BOOTER%</td><td>%VERSION_MULTI_TASTER_BOOTER_ONLINE%</td><td><%OPT_UPDATE_MULTI_TASTER_BOOTER%><form action="updatesProceed.php" enctype="multipart/form-data" method="POST"><input type="hidden" name="action" value="updateBooter"><input type="hidden" name="firmwareId" value="2"><input type="submit" value="Aktualisieren"></%OPT_UPDATE_MULTI_TASTER_BOOTER%></td><td><input type=checkbox name='force' value='1'></td><td><input name="userfile" type="file" size="10" > <input type="submit" value="Aktualisieren"></td></form></tr>
+<tr><td>Multitaster SD6-Booter</td><td>%VERSION_MULTI_TASTER_SD6_BOOTER%</td><td>%VERSION_MULTI_TASTER_SD6_BOOTER_ONLINE%</td><td><%OPT_UPDATE_MULTI_TASTER_SD6_BOOTER%><form action="updatesProceed.php" enctype="multipart/form-data" method="POST"><input type="hidden" name="action" value="updateBooter"><input type="hidden" name="firmwareId" value="2"><input type="submit" value="Aktualisieren"></%OPT_UPDATE_MULTI_TASTER_SD6_BOOTER%></td><td><input type=checkbox name='force' value='1'></td><td><input name="userfile" type="file" size="10" > <input type="submit" value="Aktualisieren"></td></form></tr>
+<tr><td>Sonoff WLAN Modul</td><td>%VERSION_SONOFF%</td><td>%VERSION_SONOFF_ONLINE%</td><td><%OPT_UPDATE_SONOFF%><form action="updatesProceed.php" enctype="multipart/form-data" method="POST"><input type="hidden" name="action" value="updateSonoff"><input type="hidden" name="firmwareId" value="5"><input type="submit" value="Aktualisieren"></%OPT_UPDATE_SONOFF%></td><td><input type=checkbox name='force' value='1'></td><td><input name="userfile" type="file" size="10" > <input type="submit" value="Aktualisieren"></td></form></tr>
+</table>
+<br>
+<table>
+<tr>
+<%OPT_READ%>
+<td>
+<form action="updates.php" method="POST">
+<input type="hidden" name="action" value="readOnlineVersion">
+<input type="submit" value="Onlineversionen lesen">
+</form>
+</td>
+</%OPT_READ%>
+</tr>
+</table>
+<br>
+<br>
+<b>Momentan geladene Versionen</b><br><br>
+<table>
+<tr bgcolor=#eeeeee><td>Typ</td><td>Name</td><td>Firmware-Version</td><td>Booter-Version</td></tr>
+<%VERSIONS%>
+<tr><td>%TYP% &nbsp;&nbsp;&nbsp;</td><td>%NAME% &nbsp;&nbsp;&nbsp;</td><td>%VERSION%</td><td>%BOOTER_VERSION%</td></tr>
+</%VERSIONS%>
+</table>
+<br>
+<br>
+<br>
+<a href="broadcastFirmware.php">Firmwarebroadcast</a>
+<br>
+
+

@@ -1,0 +1,120 @@
+<script type="text/javascript" src="include/ajaxWorker.js"></script>
+<script type="text/javascript" src="/homeserver/charts/jscolor.js"></script>
+
+<table cellspacing=0 cellpadding=0 border=0 width=100%>
+<tr><td>Diagramm %MODE%</td><td align=right>[<a href="editGraphs.php?action=deleteCache&id=%ID%">Cache löschen</a>]</td></tr>
+</table>
+<hr>
+%ERROR%
+
+<script>
+function showGraph(type)
+{
+	document.getElementById("desc").innerHTML="";
+	
+	if (type=="spline")
+    {
+		document.getElementById("pic").src="jpgraph/spline.jpg";
+		document.getElementById("desc").innerHTML="<br>Diskrete Stützknoten werden<br>durch weitere Punkte zu einer<br>Kurve interpoliert. Z.b. für<br>Temperatur-/Feuchtigkeitskurven";
+    }
+	else if (type=="") document.getElementById("pic").src="img/empty.gif";
+}
+
+function changeTime(type)
+{
+	if (type=="fixed")
+	{
+		document.getElementById("param1").innerHTML="<a href=\"javascript:NewCal('timeParam1','ddmmyyyy',true,24)\">Startzeit wählen <img src=\"img/cal.gif\" width=\"16\" height=\"16\" border=\"0\" alt=\"Zeitpunkt w&auml;hlen\"></a>";
+		document.getElementById("param2").innerHTML="<a href=\"javascript:NewCal('timeParam2','ddmmyyyy',true,24)\">Endezeit wählen <img src=\"img/cal.gif\" width=\"16\" height=\"16\" border=\"0\" alt=\"Zeitpunkt w&auml;hlen\"></a>";
+		document.getElementById("timeParam2").style.visibility="visible";
+	}
+	else if (type=="seconds")
+	{
+		document.getElementById("param1").innerHTML="Sekunden";
+		document.getElementById("param2").innerHTML="";
+		document.getElementById("timeParam2").style.visibility="hidden";
+	}
+	else if (type=="minutes")
+	{
+		document.getElementById("param1").innerHTML="Minuten";
+		document.getElementById("param2").innerHTML="";
+		document.getElementById("timeParam2").style.visibility="hidden";
+	}
+	else if (type=="hours")
+	{
+		document.getElementById("param1").innerHTML="Stunden";
+		document.getElementById("param2").innerHTML="";
+		document.getElementById("timeParam2").style.visibility="hidden";
+	}
+	else if (type=="days")
+	{
+		document.getElementById("param1").innerHTML="Tage";
+		document.getElementById("param2").innerHTML="";
+		document.getElementById("timeParam2").style.visibility="hidden";
+	}
+}
+</script>
+<br>
+<table cellspacing=0 cellpadding=0 border=0 width="100%">
+<tr>
+<td valign=top>
+  <table cellspacing="5">
+   <form action="editGraphs.php" method="POST">
+   <input type="hidden" name="id" value="%ID%">
+   <input type="hidden" name="action" value="submitGraph">
+   <tr><td>Name</td><td><input type="text" name="name" value="%NAME%" size="40"></td></tr>
+   <tr><td>Diagrammhöhe:</td><td><select style="width:180" name="heightMode">%HEIGHT_TYPE_OPTIONS%</select> <input type=text name='height' size=4 value='%HEIGHT%'></td></tr>
+   <!--tr><td>Stil</td><td><select name="theme">%THEME_OPTIONS%</select></td></tr-->
+   <tr><td>Zeitraum:</td><td><select style="width:180" name="timeType" onchange="changeTime(this.options[this.selectedIndex].value)">%TIME_TYPE_OPTIONS%</select></td></tr>
+   <tr><td></td><td><input style="width:180" type=text name=timeParam1 id=timeParam1 value="%TIME_PARAM_1%"> <div style="display: inline" id="param1"></div></td></tr>
+   <tr><td></td><td><input style="width:180" type=text name=timeParam2 id=timeParam2 value="%TIME_PARAM_2%"> <div style="display: inline" id="param2"></div></td></tr>
+   <tr><td>Signalabstand:</td><td><input type=text name="distValue" value="%DIST_VALUE%" size=9> <select name="distType" style="width:100">%DIST_TYPE_OPTIONS%</select> <img src="img/fragezeichen.gif" title="Mindestabstand zwischen zwei Messwerten, die in das Diagramm aufgenommen werden. Sollte verwendet werden, wenn sehr viele Messpunkte im Betrachtungszeitraum vorhanden sind."></td></tr>
+   <%OPT_DELETE%>
+   <tr><td></td><td><input type="checkbox" name="delete" value="1"> L&ouml;schen</td></tr>
+   </%OPT_DELETE%>
+   <tr><td></td><td><input type="submit" value="%SUBMIT_TITLE%"></td></tr>
+   </form>
+   </table>
+</td>
+<td valign=top width=30>&nbsp;</td>
+<td valign=top><img src="%IMAGE%" id="pic" border=0><br><div style="width:160;" id="desc"></div></td>
+</tr>
+</table>
+<%OPT_SIGNALS%>
+<br><br>
+URL des Diagramms<hr>
+» <a href="%LINK%" target="_blank">%LINK%</a>
+<br><br>
+Signale konfigurieren<hr>
+<table cellspacing=5 cellpadding=5>
+<tr><td></td><td><b>Signalname</b></td><td><b>Typ</b></td><td><b>Farbe</b></td><td><b>Signalevent</b></td><td><b>Y-Funktion</b></td></tr>
+<%SIGNALS%>
+<tr>
+	<td valign="top"><a href="editGraphs.php?id=%ID%&deleteSignal=%SIGNAL_ID%"><img src="img/removeSmall.gif" border=0 title="Signal entfernen"></a></td>
+	<td valign="top"><a href="editGraphs.php?id=%ID%&nameSignal=%SIGNAL_ID%">%SIGNAL_NAME%</a></td>
+	<td valign="top"><select name="signalType" onchange="location='editGraphs.php?id=%ID%&signalId=%SIGNAL_ID%&action=changeSignalType&signalType='+this.options[this.selectedIndex].value;">%GRAPH_TYPE_OPTIONS%</select></td>
+	<td valign="top"><input style="font-size:2px; width:50px;height:20px" class="color" value="%COLOR%" id="myColor%SIGNAL_ID%" size=5 onChange="sendAjax('editGraphs.php?id=%ID%&signalId=%SIGNAL_ID%&setColor='+this.value);setTimeout(function () {document.getElementById('myColor%SIGNAL_ID%').color.hidePicker();document.getElementById('myColor%SIGNAL_ID%').blur();},100);"></td>
+	<td valign="top">
+   <%SIGNAL_EVENTS%>
+    <nobr><a href="editGraphs.php?id=%ID%&deleteEvent=%EVENT_ID%"><img src="img/removeSmall.gif" border=0 title="Event entfernen"></a> <a href="editRules.php?action=addSignal&graphId=%ID%&signalId=%SIGNAL_ID%&signalEventId=%EVENT_ID%">%SIGNAL_EVENT%</a><br>
+   </%SIGNAL_EVENTS%><div align=center><a href="editRules.php?action=addSignal&graphId=%ID%&signalId=%SIGNAL_ID%"><img src="img/add.gif" border=0 title="Event hinzufügen"></a></div>
+  </td>
+  <td valign="top">
+   <%SIGNAL_FKTS%>
+    <nobr><a href="editGraphs.php?id=%ID%&signalId=%SIGNAL_ID%&signalEventId=%EVENT_ID%&action=editFkt">%FKT%</a><br>
+   </%SIGNAL_FKTS%>
+  <!--td valign=top><nobr><%OPT_DELETE_EVENT%><a href="editGraphs.php?id=%ID%&deleteEvent=%SIGNAL_ID%"><img src="img/removeSmall.gif" border=0 title="Event entfernen"></a></%OPT_DELETE_EVENT%> <a href="editRules.php?action=addSignal&graphId=%ID%&signalId=%SIGNAL_ID%">%SIGNAL_EVENT%</a> <%OPT_ADD_ALIAS%><a href="editRules.php?action=addSignal&graphId=%ID%&signalId=%SIGNAL_ID%"><br><img src="img/add.gif" border=0 title="Signal ergänzen"></a></%OPT_ADD_ALIAS%></td>
+  <td valign=top><nobr><a href="editGraphs.php?id=%ID%&signalId=%SIGNAL_ID%&action=editFkt">%FKT%</a></td-->
+  </td>
+</tr>
+</%SIGNALS%>
+<tr><td colspan=4><br><a href="editRules.php?action=addSignal&graphId=%ID%"><img src="img/add.gif" border=0 title="Signal ergänzen"></a></td></tr>
+</table>
+<br>
+</%OPT_SIGNALS%>
+
+<script>
+showGraph("%GRAPH_TYPE%");
+changeTime("%TIME_TYPE%");
+</script>
+<script language="javascript" type="text/javascript" src="include/datetimepicker.js?dummy=2"></script>

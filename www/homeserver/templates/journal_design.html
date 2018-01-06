@@ -1,0 +1,28 @@
+Journal
+<hr>
+<table>
+ <tr>
+  <td>
+
+<form action="journal.php" name="searchForm" method="POST">
+<table>
+ <tr><td align=right>Zeitraum: </td><td><input type="Text" name="von" id="von" maxlength="25" size="20" value="%VON%"> <a href="javascript:NewCal('von','ddmmyyyy',true,24)"><img src="img/cal.gif" width="16" height="16" border="0" alt="Zeitpunkt w&auml;hlen"></a></td><td align=right>bis:</td><td><input name="bis" type="Text" id="bis" maxlength="25" size="20" value="%BIS%"> <a href="javascript:NewCal('bis','ddmmyyyy',true,24)"><img src="img/cal.gif" width="16" height="16" border="0" alt="Zeitpunkt w&auml;hlen"></a> &nbsp;(dd.mm.yyyy hh:mm:ss)</td></tr>
+ <tr><td align=right>Typ: </td><td><select name="type">%TYP_OPTIONS%</select></td><td align=right>Funktion: </td><td colspan=1><select style="width:144px" name=function>%FUNCTION_OPTIONS%</select> <input type=checkbox name=noErrors value=1 %NO_ERRORS_CHECKED%> evErrors filtern</td></tr>
+ <tr><td align=right>Sender: </td><td><input type="text" name="sender" size="20" value="%SENDER%"> </td><td align=right>Empf&auml;nger:</td><td><input type="text" name="receiver" size="20" value="%RECEIVER%"></td></tr>
+ <tr><td align=right>Senderraum: </td><td><select style="width:144px" name=senderRaum>%SENDER_RAUM_OPTIONS%</select> </td><td align=right>Empf&auml;ngerraum:</td><td><select style="width:144px" name=receiverRaum>%RECEIVER_RAUM_OPTIONS%</select> </td> </tr>
+ <tr><td align=right>Anzahl Eintr&auml;ge: </td><td colspan=3><input type=text name=nrElements size=20 value='%NR_ELEMENTS%'></td></tr>
+ <tr><td></td><td colspan=2><input type="submit" name="submitted" value="Suchen"></td></form><td><nobr><input type="submit" name="submitted" value="Exportieren"> |<form style="display: inline;" action="journalImport.php" enctype="multipart/form-data" method="POST">&nbsp;&nbsp;<input type="file" name="inputFile" size=20><input type="submit"  name="submitted" value="Importieren" style="width:108"></form> | <form style="display: inline;" action="journal.php" method="POST"><input type=hidden name=action value=delete><input type=submit value="Journal leeren"></form></td></tr>
+</table>
+</td>
+</tr>
+</table>
+<table>
+<tr bgcolor="#aaaaaa"><td></td><td>Zeit</td><td>Funktion</td><td>Parameter</td><td>Sender</td><td>Empf&auml;nger</td><td>Typ</td><td>ID</td></tr>
+<%ENTRY%>
+<tr bgcolor="%BG%"><td><a href="journalDetails.php?id=%ID%" target="_blank"><img src="img/lupe.gif" border="0"></a></td><td>%TIME%</td><td>%FUNCTION%</td><td>%CLIP1%%PARAMS%</div></td><td>%CLIP2%%SENDER%</td><td>%CLIP2%%RECEIVER%</td><td>%TYP%</td><td>%ID%</td></tr>
+</%ENTRY%>
+</table>
+
+
+
+<script language="javascript" type="text/javascript" src="include/datetimepicker.js?dummy=2"></script>

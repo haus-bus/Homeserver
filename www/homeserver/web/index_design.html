@@ -1,0 +1,664 @@
+<html>
+<style type="text/css">
+.bordered
+{
+	border-width:1; 
+	border-color:#555555;
+	border-style:solid;
+}
+
+.raum
+{
+	font-face:"tahoma";
+	font-size:24px;
+	color:black;
+	font-weight: bold;
+}
+
+.text
+{
+	font-face:"tahoma";
+	font-size:24px;
+	color:white;
+}
+
+.textklein
+{
+	font-face:"tahoma";
+	font-size:16px;
+	color:white;
+}
+
+.label
+{
+	font-face:"tahoma";
+	font-size:16px;
+	color:black;
+}
+
+.buttonMaster
+{
+  margin-right: 15px; margin-bottom: 15px; float: left; padding-left: 10px; padding-right: 10px; min-width: 120px; height: 42px; background-image: url("verlauf_klein.gif"); background-color: #7F7F7F; display: table-cell; border-width: 1px 1px 5px; border-color:#7F7F7F; border-style: solid; text-align: center; vertical-align: middle;
+}
+
+.buttonTitle
+{
+    font-weight:bold;
+    padding-top:12px
+}
+
+.buttonInfo
+{
+    font-size:85%;
+    color:#999999;
+}
+
+</style>
+
+<script type="text/javascript" src="../webapp/ajax.js"></script>
+
+<script>
+var pollTime=500;
+var debugActive=0;
+var myObjects = new Array();
+var myRooms = new Array();
+var actShownMultitasterPanel=0;
+var lastShownMultitasterTime=0;
+ 
+%MY_OBJECTS%
+
+function checkRoomStatus()
+{
+	//myRooms[actObject["room"]][objectId]=status;
+	
+	var roomKey;
+  for (roomKey in myRooms) 
+  {
+  	var actRoomId = roomKey;
+  	if (actRoomId>0)
+  	{
+  		var arr = myRooms[actRoomId];
+  	  var objectKey;
+      var foundActive=0;
+  	  for (objectKey in arr)
+  	  {
+  		   if (arr[objectKey]==1)
+  		   {
+  		 	    foundActive=1;
+  		 	    break;
+  		   }
+  	  }
+  	
+  	  var obj = document.getElementById("theRoom"+actRoomId);
+  	  if (obj!=null)
+  	  {
+		    if (foundActive==1) obj.style.borderColor="green";
+  	 	  else obj.style.borderColor="#7F7F7F"
+  	 	}
+  	}
+  }
+}
+	
+function sendCommand(id, action, param)
+{
+	if (action=="on")
+	{
+		if (param=="multiTaster" || param=="Taster")
+		{
+			send("/homeserver/webapp/ajaxServer.php?command=click&id="+id+"&multiTaster=1", "dummyCallback");
+			if (param=="multiTaster") hideMultitaster(lastShownMultitaster);
+		}
+		else send("/homeserver/webapp/ajaxServer.php?command=click&id="+id, "dummyCallback");
+	}
+	else if (action=="up") send("/homeserver/webapp/ajaxServer.php?command=clickup&id="+id, "dummyCallback");
+	else if (action=="down") send("/homeserver/webapp/ajaxServer.php?command=clickdown&id="+id, "dummyCallback");
+	else if (action=="dimm" || action=="position") send("/homeserver/webapp/ajaxServer.php?command=setValue&id="+id+"&newValue="+param, "dummyCallback");
+		
+	if (navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate) navigator.vibrate(50);
+}
+
+function registerAllObjects()
+{
+	send("/homeserver/webapp/ajaxServer.php?command=registerObjects&%OBJECTS%", "registerCallback");
+}
+	
+function registerCallback(result)
+{
+	updateStatus();
+}
+
+function forceStatusRead()
+{
+  sendAsync("/homeserver/webapp/ajaxServer.php?command=readStatus");
+}	
+  
+function updateStatus()
+{
+	sendStatus("/homeserver/webapp/ajaxServer.php?command=updateMyStatus", "updateStatusCallback");
+}
+
+function updateStatusCallback(result)
+{
+	if (result!="")
+ 	{
+ 		 var changes=0;
+ 		 
+     var el = result.split(",");
+	   for (var i=0;i<el.length;i++)
+	   {
+	 	    var act = el[i].split("=");
+	 	    var objectId = act[0];
+	 	    act = act[1].split(";");
+		 	  
+	 	    var status=act[0];
+	 	    var text=act[1];
+		 	  
+	 	    var toDirection="";
+	 	    if (act.length>2) toDirection=act[2];
+	 	    
+	 	    var actObject = myObjects[objectId];
+	 	    
+	 	    if (myRooms[actObject["room"]]==null) myRooms[actObject["room"]]=new Array();
+	 	    
+	 	    if (actObject["status"]!=status || actObject["text"]!=text || toDirection!="")
+	 	    {
+	 	    	changes=1;
+ 		 	    actObject["status"]=status;
+	 	      actObject["text"]=text;
+	 	      
+ 	        if (actObject["type"]=="Schalter")
+ 	        {
+ 	      	   if (status==1) document.getElementById("status"+objectId).src="button_einzeln_gruen.png";
+ 	      	   else document.getElementById("status"+objectId).src="button_einzeln.png";
+ 	           if (document.getElementById("label"+objectId)!=null) document.getElementById("label"+objectId).innerHTML=text+" %";
+ 	           
+ 	           myRooms[actObject["room"]][objectId]=status;
+ 	           changes=1;
+ 	        }
+ 	        else if (actObject["type"]=="Dimmer")
+ 	        {
+ 	      	   if (status==1) document.getElementById("status"+objectId).src="button_einzeln_gruen.png";
+ 	      	   else document.getElementById("status"+objectId).src="button_einzeln.png";
+ 	           if (document.getElementById("label"+objectId)!=null) document.getElementById("label"+objectId).innerHTML=text+" %";
+ 	           
+ 	           myRooms[actObject["room"]][objectId]=status;
+ 	           changes=1;
+ 	        }
+ 	        else if (actObject["type"]=="Temperatursensor" || actObject["type"]=="Feuchtesensor")
+ 	        {
+ 	           if (document.getElementById("label"+objectId)!=null)
+ 	           {
+ 	            	document.getElementById("label"+objectId).innerHTML=text;
+                if (document.getElementById("label"+objectId+"#2")!=null) document.getElementById("label"+objectId+"#2").innerHTML=text;
+ 	           }
+ 	           //else alert("null -> "+objectId);
+ 	        }
+ 	        else if (actObject["type"]=="Rollladen")
+ 	        {
+ 	           if (document.getElementById("label"+objectId)!=null) document.getElementById("label"+objectId).innerHTML=text+" % zu";
+ 	           
+ 	           if (toDirection=="up")
+ 	           {
+ 	           	  document.getElementById("hoch"+objectId).src="hoch_einzeln_gruen.png";
+ 	           	  //setTimeout(function () {document.getElementById("hoch"+objectId).src="hoch_einzeln.png";},5000);
+ 	           }
+ 	           else if (toDirection=="down")
+ 	           {
+ 	           	  document.getElementById("runter"+objectId).src="runter_einzeln_gruen.png";
+ 	           	  //setTimeout(function () {document.getElementById("runter"+objectId).src="runter_einzeln.png";},5000);
+ 	           }
+ 	           else
+ 	           {
+ 	           		document.getElementById("hoch"+objectId).src="hoch_einzeln.png";
+ 	           		document.getElementById("runter"+objectId).src="runter_einzeln.png";
+ 	           }
+	 	      }
+	 	      else if (actObject["type"]=="CurrentReader")
+ 	        {
+ 	           if (document.getElementById("label"+objectId)!=null) document.getElementById("label"+objectId).innerHTML=text;
+ 	           if (document.getElementById("label2"+objectId)!=null) document.getElementById("label2"+objectId).innerHTML=toDirection;
+	 	      }
+	 	    }
+	 	  
+  		 	//if (toDirection!="") handleDirection(objectId, toDirection);
+		 }
+		 
+		 if (changes==1) checkRoomStatus();
+  }
+    
+  setTimeout("updateStatus()",pollTime);
+}
+
+function dummyCallback(result)
+{
+}
+
+function debugIt(message)
+{
+	if (debugActive==1) debug+=((new Date().getTime())/1000)+": "+message+"\n";
+}
+
+function showDebug()
+{
+  alert(debug);
+  debug="";
+}
+
+/**
+ * Prüft anhand vorhandener Touchevents, ob wir auf einem Handy laufen
+ */
+function isMobile()
+{
+	var supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
+	return supportsTouch;
+	//return window.Touch;
+}
+
+function getScrollY() 
+{
+    if( typeof( window.pageYOffset ) == 'number' ) return window.pageYOffset;
+    if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) return document.body.scrollTop;
+    if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) return document.documentElement.scrollTop;
+    return document.documentElement.scrollTop;
+}
+
+function getWindowsHeight() 
+{
+    if( typeof( window.innerWidth ) == 'number' ) return window.innerHeight;
+    if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) return document.documentElement.clientHeight;
+    if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) return document.body.clientHeight;
+    return document.body.clientHeight;
+}
+
+function showMultiTaster(id)
+{
+	actShownMultitasterPanel=id;
+	lastShownMultitasterTime = new Date().getTime();
+	document.getElementById("multiTasterPanel"+id).style.top=getWindowsHeight()/5+getScrollY();
+	document.getElementById("multiTasterPanel"+id).style.visibility="visible";
+}
+
+function hideMultitaster(id)
+{
+	actShownMultitasterPanel=0;
+	document.getElementById("multiTasterPanel"+id).style.visibility="hidden";
+}
+
+function checkHideMultitaster()
+{
+	if (actShownMultitasterPanel>0 && new Date().getTime()-lastShownMultitasterTime>2) hideMultitaster(actShownMultitasterPanel);
+}
+
+</script>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0" onload="registerAllObjects()" onclick="checkHideMultitaster();">
+<center><div id="header" style="height:1px"></div><br>
+<table cellspacing="0" cellpadding="0" border="0" width="98%">
+<tr><td align=center>
+<%MENU%>
+<a href="#room%ROOM_ID%" style="color:black">
+    <div id="theRoom%ROOM_ID%" class="buttonMaster">
+        <div class="buttontTitle">%ROOM_NAME%</div>
+        <div class="buttonInfo"><div style='display: INLINE' id='label%MY_TEMP_ROOM_%ROOM_ID%%#2'></div> <div style='display: INLINE' id='label%MY_HUMIDITY_ROOM_%ROOM_ID%%#2'></div> <div style='display: INLINE' id='label%MY_TEMP_ROOM2_%ROOM_ID%%#2'></div> <div style='display: INLINE' id='label%MY_HUMIDITY_ROOM2_%ROOM_ID%%#2'></div></div>
+    </div>
+</a>
+
+<!--a href="#room%ROOM_ID%" style="color:black"><div id="theRoom%ROOM_ID%" style="margin-right:15px;margin-bottom:15px;float:left;padding-left:10px;padding-right:10px;min-width:120px;height:62px;line-height: 62px;background-image: url(verlauf_klein.gif);background-color:#7F7F7F;display: table-cell;border-width:1px 1px 5px 1px;border-color:#7F7F7F;border-style:solid;text-align: center;vertical-align:middle;">%ROOM_NAME% <div style='display: INLINE' id='label%MY_TEMP_ROOM_%ROOM_ID%%#2'></div> <div style='display: INLINE' id='label%MY_HUMIDITY_ROOM_%ROOM_ID%%#2'></div></div></a-->
+</%MENU%>
+</td></tr>
+</table>
+<br>
+<table cellspacing="0" cellpadding="0" border="0" width="98%">
+
+<%OPT_RAUM%>
+<tr><td colspan="10" height=1><div id="room%ROOM_ID%" style="height:3px"></div></td></tr>
+<tr onclick="location.href='#header';return false;"><td colspan="10"><table cellspacing="0" cellpadding="0" border="0" width="100%" bgcolor="#E5E5E5" height=50 ><tr><td> &nbsp;&nbsp;<span class="raum">%RAUM%</span></td><td align=right><%OPT_FEUCHTE%>Luftfeuchtigkeit: <div style="display:inline" id="label%MY_ID%"></div></%OPT_FEUCHTE%><%OPT_BOTH%>&nbsp;&nbsp;&nbsp;</%OPT_BOTH%><%OPT_TEMP%>Temperatur: <div style="display:inline" id="label%MY_ID%"></div></%OPT_TEMP%> &nbsp;&nbsp; <%OPT_FEUCHTE_2%>Luftfeuchtigkeit2: <div style="display:inline" id="label%MY_ID%"></div></%OPT_FEUCHTE_2%><%OPT_BOTH_2%>&nbsp;&nbsp;&nbsp;</%OPT_BOTH_2%><%OPT_TEMP_2%>Temperatur2: <div style="display:inline" id="label%MY_ID%"></div></%OPT_TEMP_2%> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr></table></td></tr>
+<!--tr><td colspan="10" height="5" bgcolor="#E5E5E5" class="bordered"></td></tr-->
+%ELEMENTS%
+<tr><td colspan="10"><br><br></td></tr>
+</%OPT_RAUM%>
+
+<%OPT_ROLLO%>
+<!-- Trenner horizontal -->
+<tr><td colspan="7" height="10"></td></tr>
+
+<!-- Rollo Element start -->
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10" bgcolor="#7F7F7F"></td></tr>
+<tr bgcolor="#7F7F7F">
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <%LEFT%>
+ <!-- ROLLO_TEXT START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top">
+ 	<table width="100%" height="144" cellspacing=0 cellpadding=0 border=0>
+ 	<tr><td width="100%" height="72" valign="top"><div id="text%MY_ID%" class="text">%TEXT%</div></td></tr>
+ 	<tr><td width="100%" height="72" valign="bottom" align="center">
+ 	<table width="50%" height="31" cellspacing=0 cellpadding=0 border=0>
+	<tr><td bgcolor="#eeeeee" align=center valign=center class="bordered"><div id="label%MY_ID%" class="label"></div></td></tr>
+	</table>
+	</td>
+	</tr>
+	</table>
+ </td>
+ <!-- ROLLO_TEXT ENDE -->
+ </%LEFT%>
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <!-- ROLLO PRESETS START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top">
+	<table width="100%" height="144" cellspacing=0 cellpadding=0 border=0 >
+	<tr>
+	<td valign=top>
+	<table width="100%" height="62" cellspacing=0 cellpadding=0 border=0>
+	<tr><td background="verlauf_klein.gif" align=center valign=center class="bordered" onclick="sendCommand('%MY_ID%','position','%BUTTON1%')">%BUTTON1% % zu</td>
+	<td width="6">&nbsp;</td>
+	<td background="verlauf_klein.gif" align=center valign=center class="bordered" onclick="sendCommand('%MY_ID%','position','%BUTTON2%')">%BUTTON2% % zu</td>
+	</tr>
+	</table>
+	</td>
+	</tr>
+	<tr>
+	<td valign=bottom>
+	<table width="100%" height="62" cellspacing=0 cellpadding=0 border=0>
+	<tr>
+	<td background="verlauf_klein.gif" align=center valign=center class="bordered" onclick="sendCommand('%MY_ID%','position','%BUTTON3%')">%BUTTON3% % zu</td>
+	<td width="6">&nbsp;</td>
+	<td background="verlauf_klein.gif" align=center valign=center class="bordered" onclick="sendCommand('%MY_ID%','position','%BUTTON4%')">%BUTTON4% % zu</td>
+	</tr>
+	</table>
+	</tr>
+	</tr>
+	</table>
+ </td>
+ <!-- ROLLO PRESETS ENDE -->
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <%RIGHT%>
+ <!-- ROLLO TASTER START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top">
+ 	<table width="100%" height="144" cellspacing=0 cellpadding=0 border=0>
+	<tr>
+	<td valign="top" onclick="sendCommand('%MY_ID%','up',0)">
+  <table width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+  <tr><td align=center valign="center"><img src="hoch_einzeln.png" id="hoch%MY_ID%" border=0></td></tr>
+	</table>
+	</td>
+	</tr>
+  <tr>
+	<td valign="bottom" onclick="sendCommand('%MY_ID%','down',0)">
+	<table width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+	<tr><td align=center valign="center"><img src="runter_einzeln.png" id="runter%MY_ID%" border=0></td></tr>
+	</table>
+	</td>
+	</tr>
+	</table>
+ </td>
+ <!-- ROLLO TASTER ENDE -->
+ </%RIGHT%>
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+</tr>
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10"  bgcolor="#7F7F7F"></td></tr>
+<!-- Rollo Element ende -->
+</%OPT_ROLLO%>
+
+<%OPT_DIMMER%>
+<!-- Trenner horizontal -->
+<tr><td colspan="7" height="10"></td></tr>
+
+<!-- Dimmer Element start -->
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10" bgcolor="#7F7F7F"></td></tr>
+<tr bgcolor="#7F7F7F">
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <%LEFT%>
+ <!-- DIMMER TEXT START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top">
+ 	<table width="100%" height="144" cellspacing=0 cellpadding=0 border=0>
+ 		<tr>
+ 			<td valign=top height="72"><div id="text%MY_ID%" class="text">%TEXT%</div></td>
+ 		</tr>
+ 		<tr>
+ 			<td valign=bottom align=center height="72">
+ 			 <table width="50%" height="31" cellspacing=0 cellpadding=0 border=0>
+	      <tr><td bgcolor="#eeeeee" align=center valign=center class="bordered"><div id="label%MY_ID%" class="label"></div></td></tr>
+	     </table>
+ 			</td>
+ 		</tr>
+ 	</table>
+ </td>
+ <!-- DIMMER TEXT ENDE -->
+ </%LEFT%>
+ 			
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <!-- DIMMER PRESETS START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top">
+	<table width="100%" height="144" cellspacing=0 cellpadding=0 border=0 >
+	<tr>
+	<td valign=top>
+	<table width="100%" height="62" cellspacing=0 cellpadding=0 border=0>
+	<tr><td background="verlauf_klein.gif" align=center valign=center class="bordered" onclick="sendCommand('%MY_ID%','dimm','%BUTTON1%')">%BUTTON1% %</td>
+	<td width="6">&nbsp;</td>
+	<td background="verlauf_klein.gif" align=center valign=center class="bordered" onclick="sendCommand('%MY_ID%','dimm','%BUTTON2%')">%BUTTON2% %</td>
+	</tr>
+	</table>
+	</td>
+	</tr>
+	<tr>
+	<td valign=bottom>
+	<table width="100%" height="62" cellspacing=0 cellpadding=0 border=0>
+	<tr>
+	<td background="verlauf_klein.gif" align=center valign=center class="bordered" onclick="sendCommand('%MY_ID%','dimm','%BUTTON3%')">%BUTTON3% %</td>
+	<td width="6">&nbsp;</td>
+	<td background="verlauf_klein.gif" align=center valign=center class="bordered" onclick="sendCommand('%MY_ID%','dimm','%BUTTON4%')">%BUTTON4% %</td>
+	</tr>
+	</table>
+	</tr>
+	</tr>
+	</table>
+ </td>
+ <!-- DIMMER PRESETS ENDE -->
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <%RIGHT%>
+ <!-- DIMMER TASTER START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top" onclick="sendCommand('%MY_ID%','on',0)">
+	<table width="100%" height="144" background="verlauf_gross.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+		<tr><td align=center valign="center"><img src="button_einzeln.png" border=0 id="status%MY_ID%"></td></tr>
+	</table>
+ </td>
+ <!-- DIMMER TASTER ENDE -->
+ </%RIGHT%>
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+</tr>
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10"  bgcolor="#7F7F7F"></td></tr-->
+<!-- Dimmer Element ende -->
+</%OPT_DIMMER%>
+
+<%OPT_SCHALTER%>
+<!-- Trenner horizontal -->
+<tr><td colspan="7" height="10"></td></tr>
+
+<!-- Schalter Element start -->
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10" bgcolor="#7F7F7F"></td></tr>
+<tr bgcolor="#7F7F7F">
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <%LEFT%>
+ <!-- SCHALTER TEXT START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top">
+ 	<div id="text%MY_ID%" class="text">%TEXT%</div>
+ </td>
+ <!-- SCHALTER TEXT ENDE -->
+ </%LEFT%>
+
+ <td width="2%" bgcolor="#7F7F7F"></td>
+
+ <!-- SCHALTER MITTE START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top"></td>
+ <!-- SCHALTER MITTE ENDE -->
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+
+ <%RIGHT%>
+ <!-- SCHALTER TASTER START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top" onclick="sendCommand('%MY_ID%','on',0)">
+	<table width="100%" height="144" background="verlauf_gross.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+		<tr><td align=center valign="center"><img src="button_einzeln.png" border=0 id="status%MY_ID%"></td></tr>
+	</table>
+ </td>
+ <!-- SCHALTER TASTER ENDE -->
+ </%RIGHT%>
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+</tr>
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10"  bgcolor="#7F7F7F"></td></tr>
+<!-- Schalter Element ende -->
+</%OPT_SCHALTER%>
+
+<%OPT_CURRENT_READER%>
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10" bgcolor="#7F7F7F"></td></tr>
+<tr bgcolor="#7F7F7F">
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <%LEFT%>
+ <!-- TEXT1 START -->
+ <td width="30%" height="35" bgcolor="#7F7F7F" valign="top">
+ 	<table width="100%" height="35" cellspacing=0 cellpadding=0 border=0>
+ 		<tr><td valign=top height="35"><div id="text%MY_ID%" class="text">%TEXT%</div></td></tr>
+ 	</table>
+ </td>
+ <!-- TEXT1 ENDE -->
+ </%LEFT%>
+ 			
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <!-- TEXT2 START -->
+ <td width="30%" height="35" bgcolor="#7F7F7F" valign="top">
+ 	<table width="100%" height="35" cellspacing=0 cellpadding=0 border=0>
+ 		<tr>
+ 			<td valign=top height="35" align="center">
+ 				<table width="50%" height="31" cellspacing=0 cellpadding=0 border=0>
+	      <tr><td bgcolor="#eeeeee" align=center valign=center class="bordered"><div id="label%MY_ID%" class="label"></div></td></tr>
+	     </table>
+ 		</tr>
+ 	</table>
+ 	<table width="100%" height="20" cellspacing=0 cellpadding=0 border=0>
+ 	<tr><td align=center height="20"><div class="textklein">1: %CURRENT_1D% | 7: %CURRENT_7D% | 30: %CURRENT_30D%</div></td></tr>
+ 	</table>
+ </td>
+ <!-- TEXT2 ENDE -->
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <%RIGHT%>
+ <!-- TEXT3 START -->
+ <td width="30%" height="35" bgcolor="#7F7F7F" valign="top">
+ 	<table width="100%" height="35" cellspacing=0 cellpadding=0 border=0>
+ 		<tr>
+ 			<td valign=top height="35" align="center">
+ 				<table width="50%" height="31" cellspacing=0 cellpadding=0 border=0>
+	      <tr><td bgcolor="#eeeeee" align=center valign=center class="bordered"><div id="label2%MY_ID%" class="label"></div></td></tr>
+	     </table>
+ 		</tr>
+ 	</table>
+ </td>
+ <!-- TEXT3 ENDE -->
+ </%RIGHT%>
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+</tr>
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10"  bgcolor="#7F7F7F"></td></tr-->
+<!-- Dimmer Element ende -->
+ </%OPT_CURRENT_READER%>
+
+ <%OPT_ONE_TASTER%>
+   <td valign=top width="50%" align=center>
+ 		<table width="73%" height="100" background="verlauf_gross.gif" cellspacing=0 cellpadding=0 border=0 class="bordered" onclick="sendCommand('%MY_ID%','on','Taster')">
+		 <tr><td align=center valign="center">%TASTER_LABEL%</td></tr>
+	  </table>
+	 </td>
+ </%OPT_ONE_TASTER%>
+
+ <%OPT_MULTI_TASTER%>
+   <td valign=top width="50%" align=center>
+ 		<table width="73%" height="100" background="verlauf_gross.gif" cellspacing=0 cellpadding=0 border=0 class="bordered" onclick="showMultiTaster('%MULTI_TASTER_ID%')">
+		 <tr><td align=center valign="center">%TASTER_LABEL%</td></tr>
+ 		 <tr bgcolor=black height="8"><td> </td></tr>
+	  </table>
+	 </td>
+ </%OPT_MULTI_TASTER%>
+
+ <%OPT_TASTER_LABEL%>
+  <td valign=top width="50%"><div class="text">Taster</div></td>
+ </%OPT_TASTER_LABEL%>
+
+<%OPT_TASTER%>
+<!-- Trenner horizontal -->
+<tr><td colspan="7" height="10"></td></tr>
+
+<!-- Taster Element start -->
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10" bgcolor="#7F7F7F"></td></tr>
+<tr bgcolor="#7F7F7F">
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <td width="30%" height="100" bgcolor="#7F7F7F" valign="top">
+ 	<table cellspacing=0 cellpadding=0 border=0 width="100%">
+ 		<tr>
+ 			%POS1%
+ 			%POS2%
+	  </tr>
+	 </table>
+ </td>
+
+ <td width="2%" bgcolor="#7F7F7F"></td>
+
+ <!-- Taster MITTE START -->
+ <td width="30%" height="100" bgcolor="#7F7F7F" valign="top">
+ 	 	<table cellspacing=0 cellpadding=0 border=0 width="100%">
+ 		<tr>
+ 			%POS3%
+ 			%POS4%
+	  </tr>
+	 </table>
+ </td>
+ <!-- Taster MITTE ENDE -->
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+
+ <td width="30%" height="100" bgcolor="#7F7F7F" valign="top">
+ 	<table cellspacing=0 cellpadding=0 border=0 width="100%">
+ 		<tr>
+ 			%POS5%
+ 			%POS6%
+	  </tr>
+	 </table>
+ </td>
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+</tr>
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10"  bgcolor="#7F7F7F"></td></tr>
+<!-- Taster Element ende -->
+</%OPT_TASTER%>
+
+</table>
+<form>
+	<input type="button" value="Forciertes Update" onclick="forceStatusRead()">
+</form>
+<br>
+
+<%MULTITASTER_PANELS%>
+<table id="multiTasterPanel%MULTI_TASTER_ID%" style="position:absolute;left:20%;visibility:hidden;" width="60%" border=1 cellspacing=0 cellpadding=0 class="bordered">
+	<%MULTITASTER_ROW%>
+  <tr background="verlauf_gross.gif">
+  	<td height=144 width="50%" align=center onclick="sendCommand('%MY_FIRST_ID%','on','multiTaster')"><img src="button_einzeln.png" border=0 margin-top="20px" id="status%MY_FIRST_ID%"></td>
+  	<td height=144 width="50%" align=center onclick="sendCommand('%MY_SECOND_ID%','on','multiTaster')"><img src="button_einzeln.png" border=0 margin-top="20px" id="status%MY_SECOND_ID%"></td>
+  </tr>
+</%MULTITASTER_ROW%>
+</table>
+</%MULTITASTER_PANELS%>

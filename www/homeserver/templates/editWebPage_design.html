@@ -1,0 +1,32 @@
+<table cellspacing=0 cellpadding=0 border=0 width=100%><tr>
+<td>%TITLE%</td>
+<td align=right>%TITLE2%</td>
+</tr></table>
+<hr>
+<br>
+<table cellspacing=0 cellpadding=0 border=0 width="100%">
+ <tr>
+  <td valign=top width=300>
+    Hier können Einstellungen für die tabellarische Webapplikation vorgenommen werden:<br><br><br>
+	<form action="editWebPage.php" method="POST"><input type=hidden name=submitted value=1>
+	<u>Dimmer</u><br>
+	<table cellspacing="10">
+	 <tr><td>Helligkeitbuttons: </td><td>Stufe1: <input type=text name=stufe1 value='%STUFE1%' size=2> Stufe2: <input type=text name=stufe2 value='%STUFE2%' size=2> Stufe3: <input type=text name=stufe3 value='%STUFE3%' size=2> Stufe4: <input type=text name=stufe4 value='%STUFE4%' size=2> </td></tr>
+	</table>
+	<br>
+	<u>Rollos</u><br>
+	<table cellspacing="10">
+	 <tr><td>Positionsbuttons: </td><td>Stufe1: <input type=text name=rolloStufe1 value='%ROLLO_STUFE1%' size=2> Stufe2: <input type=text name=rolloStufe2 value='%ROLLO_STUFE2%' size=2> Stufe3: <input type=text name=rolloStufe3 value='%ROLLO_STUFE3%' size=2> Stufe4: <input type=text name=rolloStufe4 value='%ROLLO_STUFE4%' size=2> </td></tr>
+	</table>
+	<br>
+	<u>Raumauswahlkopfzeile</u><br>
+	<table cellspacing="10">
+	 <tr><td>Zusatzinfos: </td><td><input type=checkbox name=roomTemp value=1 %TEMP_CHECKED%> Temperatur anzeigen <input type=checkbox name=roomHumidity value=1 %HUMIDITY_CHECKED%> Luftfeuchtigkeit anzeigen</td></tr>
+	</table>
+	<br>
+	<input type=submit value="Speichern">
+	</form>
+  </td>
+ </tr>
+</table>
+

@@ -1,0 +1,20 @@
+Standort konfigurieren
+<hr>
+<br>
+<form action="editNetwork.php" method="POST">
+<input type="hidden" name="submitted" value="1">
+
+<table cellspacing="10">
+<tr><td>Proxy-Server:</td><td><input type=text size=20 name=proxyIp value='%PROXY%'></td><td>Port:</td><td><input type=text size=5 name=proxyPort value='%PROXY_PORT%'></td></tr>
+<tr><td>Hausbus-Netzwerk:</td><td><input type=text size=20 name=networkIp value='%NETWORK_IP%'></td><td></td><td>(z.b. 192.168.0.255)</td></tr>
+<tr><td></td><td><input type="submit" value="Speichern"></td></tr>
+</table>
+</form>
+
+<br>
+<u>Netzwerkeinstellungen</u><br>
+Diese Einstellungen werden verwendet, um z.b. für das Onlineupdate eine Verbindung zum Server aufbauen zu können.<br>
+Ist kein Proxy-Server vorhanden, sollte das Feld leer bleiben.<br>
+Ausserdem ist es möglich die Hausautomatisierung in einem separaten Netzwerksegment laufen zu lassen.<br>
+Dazu einfach die IP des Segments eintragen. Damit mit allen Controllern an diesem Segment kommuniziert werden kann,<br>
+sollte an der letzten Stelle 255 (Broadcast) stehen.

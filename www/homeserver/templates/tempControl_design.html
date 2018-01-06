@@ -1,0 +1,59 @@
+<html>
+	
+<script>
+var xmlhttpStatus=false;
+if (typeof XMLHttpRequest != 'undefined') xmlhttpStatus = new XMLHttpRequest();
+if (!xmlhttpStatus) 
+{
+  try 
+  {
+	  xmlhttpStatus = new ActiveXObject("Msxml2.XMLHTTP");
+  }
+  catch(e) 
+  {
+    try 
+    {
+    	xmlhttpStatus = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    catch(e)
+    {
+    	xmlhttpStatus = null;
+    }
+  }
+}
+
+
+var lastStatusId=%INITIAL_STATUS_ID%;
+function checkStatus()
+{
+  try
+  {
+    xmlhttpStatus.open("GET","tempControl.php?featureInstanceId=%FEATURE_INSTANCE_ID%&action=status"+"&lastStatusId="+lastStatusId);
+    xmlhttpStatus.onreadystatechange = function()
+    {
+      if (xmlhttpStatus.readyState == 4 && xmlhttpStatus.status == 200)
+      {
+          var actValue = xmlhttpStatus.responseText;
+          //alert(actValue);
+          var pos= actValue.indexOf("#");
+          if (pos!=-1)
+          {
+            lastStatusId=actValue.substring(0,pos);
+            actValue =actValue.substring(pos+1);
+            document.getElementById("temp").innerHTML=actValue+" °C";
+          }
+      
+          setTimeout("checkStatus()",5000);
+      }
+    }
+    xmlhttpStatus.send(null);
+  } catch (e){}
+}
+
+</script>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0" onload="checkStatus()">
+	
+	<div id="temp">%TEMP% °C</div> 
+</body>
+</html>

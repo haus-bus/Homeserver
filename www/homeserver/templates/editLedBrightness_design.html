@@ -1,0 +1,20 @@
+LED Statusfeedback-Helligkeit konfigurieren
+<hr>
+<br>
+<form action="editLedBrightness.php" method="POST">
+<input type="hidden" name="submitted" value="1">
+
+<table cellspacing="10">
+<tr><td>Helligkeit LED Statusfeedback</td><td><input type=text size=5 name=brightness value='%BRIGHTNESS%'> %</td></tr>
+<tr><td>Helligkeit LED LogicalButtons</td><td><input type=text size=5 name=logicalBrightness value='%LOGICAL_BRIGHTNESS%'> %</td></tr>
+<tr><td></td><td><input type="submit" value="Speichern"></td></tr>
+</table>
+</form>
+
+<br>
+<u>Helligkeit LED Statusfeedback</u><br>
+Diese Einstellung bestimmt die Helligkeit der LEDs, wenn sie zur Statusanzeige eines Aktors verwendet werden
+<br><br>
+<u>Helligkeit LED LogicalButtons</u><br>
+Diese Einstellung bestimmt die Helligkeit eines logischen Taster, also einem logischen Verbund aus mehreren LEDs und Tastern.<br>
+Ein logischer Taster wird oft als Nachtlicht verwendet, so dass die Helligkeit mit diesem Parameter bestimmt werden kann

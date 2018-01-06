@@ -1,0 +1,27 @@
+Signalparameter bearbeiten
+<hr>
+<br>
+<form action="editBaseConfig.php" method="POST">
+<input type="hidden" name="action" value="editSignalParams">
+<input type="hidden" name="submitted" value="1">
+<input type="hidden" name="groupId" value="%GROUP_ID%">
+<input type="hidden" name="ruleSignalId" value="%RULE_SIGNAL_ID%">
+<input type="hidden" name="featureFunctionId" value="%FEATURE_FUNCTION_ID%">
+
+<table>
+<%PARAM%>
+<tr>
+ <td><b>%PARAM_NAME%</b></td>
+ <td>%PARAM_ENTRY%</td>
+ <td>&nbsp;&nbsp;(%COMMENT%)</td>
+</tr>
+</%PARAM%>
+<tr>
+ <td></td>
+ <td><%OPT_SUBMIT%><br><input type="submit" value="Speichern"></%OPT_SUBMIT%></td>
+ <td></td>
+</tr>
+</table>
+</form>
+<br><br>
+[<a href="editBaseConfig.php?groupId=%GROUP_ID%">zur&uuml;ck</a>]

@@ -1,0 +1,102 @@
+Basiskonfiguration / Aktorverhalten 
+<hr>
+
+<script type="text/javascript" src="include/ajaxWorker.js"></script>
+
+<script>
+	function waiting()
+	{
+		 document.body.style.backgroundColor="#eeeeee";
+		 var obj = document.getElementById("myForm");
+		 for ($i=0;$i<obj.elements.length;$i++)
+     {
+       if (obj.elements[$i].type=="checkbox" || obj.elements[$i].type=="select") obj.elements[$i].disabled=true;
+     }
+	}
+</script>
+</script>
+<br><form id='myForm'>
+<table class="basic">
+<tr>
+ <td align="center"><!--a href="editBaseConfig.php?groupId=%GROUP_ID%&action=changeActive&active=%ACTIVE_STATUS%"><div style="width:100%;height:20px;background-color:%ACTIVE_COLOR%" title="%ACTIVE_TITLE%"></div></a--></td>
+ <td align="center">Signale</td>
+ <td align="center"><nobr>%FKT1%</td>
+ <td align="center"><nobr>%FKT2%</td>
+ <%OPT_FKT3%><td align="center"><nobr>%FKT3%</td></%OPT_FKT3%>
+ <%OPT_FKT4%><td align="center"><nobr>%FKT4%</td></%OPT_FKT4%>
+ <%OPT_LED_STATUS%><td align="center"><nobr>LED<br>Statusanzeige</td></%OPT_LED_STATUS%>
+ <td align="center"><nobr>G&uuml;ltigkeitszeitraum<br>Start / Ende</td>
+ <!--td align="center"><nobr>G&uuml;ltigkeitszeitraum<br>Ende</td-->
+ <td align="center">Template</td>
+ <td align="center">Extras</td>
+ <!--td align="center">Lock</td-->
+</tr>
+<%RULES%>
+<tr>
+ <td align="center" valign="center"><%OPT_DELETE%><nobr><a href="editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeActive&active=%ACTIVE_STATUS%"><img src='%ACTIVITY_IMAGE%' title='%ACTIVE_TITLE%'></a><br><a href="editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=deleteRule"><img src="img/remove.gif" border=0 title="L&ouml;schen"></a> <a href="editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=copyRule"><img style="padding-top:5px" src="img/addBlue.gif" border=0 title="Kopieren"></a></%OPT_DELETE%></td>
+ <td valign="top">
+  <%SIGNALS%><nobr><a href="editBaseConfig.php?action=removeSignal&groupId=%GROUP_ID%&ruleId=%RULE_ID%&signalId=%SIGNAL_ID%"><img src="img/removeSmall.gif" border="0"></a> <%OPT_EDIT_SIGNAL%><a href="editBaseConfig.php?action=editSignalParams&groupId=%GROUP_ID%&ruleId=%RULE_ID%&ruleSignalId=%SIGNAL_ID%&featureFunctionId=%FEATURE_FUNCTION_ID%"></%OPT_EDIT_SIGNAL%>%SIGNAL_ROOM% » %SIGNAL_NAME%</a><br></%SIGNALS%>
+  <div align=center><%OPT_ADD_SIGNAL%><a href="editBaseConfig.php?action=addSignal&groupId=%GROUP_ID%&ruleId=%RULE_ID%"><img src="img/add.gif" title="Signal hinzuf&uuml;gen" border=0></a></%OPT_ADD_SIGNAL%> <%OPT_COPY_SIGNAL%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="editBaseConfig.php?action=addSignalCopy&groupId=%GROUP_ID%&ruleId=%RULE_ID%"><font size=1>kopieren</a></%OPT_COPY_SIGNAL%></div>
+ </td>
+ <td valign="top" align="center">%FIRST%</td>
+ <td valign="top" align="center">%SECOND%</td>
+ <%OPT_FKT3_SPALTE%><td valign="top" align="center">%THIRD%</td></%OPT_FKT3_SPALTE%>
+ <%OPT_FKT4_SPALTE%><td valign="top" align="center">%FOURTH%</td></%OPT_FKT4_SPALTE%>
+ <%OPT_LED_STATUS_SPALTE%><td valign="top">%LED_STATUS%</td></%OPT_LED_STATUS_SPALTE%>
+ <%OPT_TIMES%>
+ <td valign="top">
+ 	<nobr>
+ 		<select style="width:60px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartDay&startDay='+this.options[this.selectedIndex].value);">%TIME_START_DAY_OPTIONS%</select> <select style="width:80px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartTime&startTime='+this.options[this.selectedIndex].value);">%TIME_START_TIME_OPTIONS%</select> <select style="width:70px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartTimeMinute&startTimeMinute='+this.options[this.selectedIndex].value);">%TIME_START_TIME_MINUTE_OPTIONS%</select> <font style="font-size:9px">täglich</font><br>
+ 		<select style="width:60px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndDay&endDay='+this.options[this.selectedIndex].value);">%TIME_END_DAY_OPTIONS%</select> <select style="width:80px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndTime&endTime='+this.options[this.selectedIndex].value);">%TIME_END_TIME_OPTIONS%</select> <select style="width:70px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndTimeMinute&endTimeMinute='+this.options[this.selectedIndex].value);">%TIME_END_TIME_MINUTE_OPTIONS%</select> &nbsp;<input type=checkbox %INTRADAY_CHECKED% name='intrayday%RULE_ID%' onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeIntraday&intradayState='+this.checked);">
+ 	</nobr>
+ </td>
+ <!--td valign="top"><nobr><select style="width:40px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndDay&endDay='+this.options[this.selectedIndex].value);">%TIME_END_DAY_OPTIONS%</select> <select style="width:40px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndTime&endTime='+this.options[this.selectedIndex].value);">%TIME_END_TIME_OPTIONS%</select> <select style="width:40px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndTimeMinute&endTimeMinute='+this.options[this.selectedIndex].value);">%TIME_END_TIME_MINUTE_OPTIONS%</select></nobr></td-->
+
+</%OPT_TIMES%>
+<%OPT_TEMPLATES%><td valign="top"><select style="width:150px" name=template onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeTemplate&template='+this.options[this.selectedIndex].value);">%TEMPLATE_OPTIONS%</select></td></%OPT_TEMPLATES%>
+<%OPT_EXTRAS%><td valign="top"><select style="width:150px" name=extras onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeExtras&extra='+this.options[this.selectedIndex].value);">%EXTRAS_OPTIONS%</select></td></%OPT_EXTRAS%>
+<!--%OPfT_LOCK%><td valign="top"><input type=checkbox %LOCK_CHECKED% name='lock%RULE_ID%' onChange="location='editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeLock&lockState='+this.checked;"></td></%OPT_LOCK%-->
+
+</tr>
+<tr><td colspan=6></td></tr>
+</%RULES%>
+</table>
+<!--/div-->
+<br>
+<table>
+	<tr>
+		<td><input type=button value='Regeln &uuml;bermitteln' onclick="location='editRules.php?action=submitRules'"></td>
+		<td width=50>&nbsp;</td>
+		<td>[<a href="editBaseConfig.php?action=chooseTimeSignal&groupId=%GROUP_ID%">Zeitgesteuerung einf&uuml;gen</a>]</td>
+		<td width=50>&nbsp;</td>
+  	<td>[<a href="editBaseConfig.php?action=copyToClipboard&groupId=%GROUP_ID%">Alle Regeln kopieren</a>] </td>
+		<td width=50>&nbsp;</td>
+  	<td>[<a href="editBaseConfig.php?action=insertFromClipboard&groupId=%GROUP_ID%">Regeln einf&uuml;gen</a>]</td>
+  </tr>
+</table>
+<br><br>
+</form>
+<br><br><br>
+
+<u>Bedeutung Funktionstypen:</u><br><br>
+In den einzelnen Spalten der Funktionstype wird die gew&uuml;nschte Reaktion konfiguriert, wenn &uuml;ber das zugeh&ouml;rige Signal der Aktor...<br>
+- AN: ...angeschaltet wird <br>
+- AUS: ...ausgeschaltet wird <br>
+- DIMM: ...hoch- oder runtergedimmt wird (z.b. Dimmen bei Gehalten-Start und Dimmenstop bei Gehalten-Ende) <br>
+- PRESET: ...auf einen voreingestellten Wert gefahren werden soll (z.b. z.b. 50% Helligkeit bei Doppelklick) <br>
+<br><br>
+<u>Bedeutung LED-Statusanzeige:</u><br><br>
+- KEIN: Led wird nicht f&uuml;r Statusanzeige verwendet<br>
+- AKTOR_EINZELN: Led leuchtet genau mit dem Zustand des Einzelaktors<br>
+- TEILSZENE: Led leuchtet nur dann, wenn genau die hinterlegte Szene aktiv ist<br>
+- KOMPLETTSZENE: Led leuchtet nur dann, wenn genau die hinterlegte Szene aktiv ist<br>
+- TEILGRUPPE: Wann immer ein Aktor der Gruppe an ist, leuchtet die Led<br>
+
+<br><br>
+<u>Bedeutung des Gültigkeitzeitraums:</u><br><br>
+Hier kann die Gültigkeit der Regel auf den angebenen Start- und Endezeitpunkt beschränkt werden.<br>
+Wird als Stunde Tagsüber oder Nachts gewählt, dann ist die Regel aktiv, wenn der Sonnenaufgang bzw. Sonnenuntergang gemeldet wurde.<br>
+Wird das "täglich" Häkchen gewählt, dann gilt der Zeitraum auf Tagesbasis, d.h. Beispiel MO 08:00 Uhr bis FR 20:00 Uhr bedeutet dann nicht<br>
+"Von Montag 8:00 Uhr durchgängig bis Freitag 20 Uhr, sondern von Montag bis Freitag jeweils von 8 bis 20 Uhr"
+
+<br><br>

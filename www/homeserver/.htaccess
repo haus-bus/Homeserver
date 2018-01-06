@@ -1,0 +1,11 @@
+php_value error_reporting 7125
+php_value upload_max_filesize 16M
+php_value post_max_size 16M
+AuthUserFile /var/www//homeserver/.htpasswd
+AuthName 'Homeserver Login'
+AuthType Basic
+require user homeserver
+order deny,allow
+deny from all
+allow from 192.168
+satisfy any

@@ -1,0 +1,48 @@
+%CLASS_NAME%: Templatezuordnung (Basisfunktionen->Signaltyp)
+<hr>
+<br>
+<form action="templateConfig.php" method="POST">
+	<input type="hidden" name=submitted value=1>
+	<input type="hidden" name=id value='%ID%'>
+<table cellspacing=0 cellpadding=0 border=0>
+	<tr>
+		<td>
+			<b>Default-Template:</b>
+<table class="basic">
+<%TEMPLATES%>
+<tr><td width=100 align=right>%FKT% &nbsp;</td></td><td>%TEMPLATE%</td></tr>
+</%TEMPLATES%>
+</table>
+</td></tr>
+<tr><td align=right><br><input type=submit value="Speichern"></td></tr>
+</table>
+</form>
+<br>
+<b>Wichtig:</b><br>
+- Nur Funktion AN und AUS d&uuml;rfen gleich belegt sein<br>
+- Wenn Gedr&uuml;ckt verwendet wird, d&uuml;rfen Klick und Doppelklick nicht mehr verwendet werden<br>
+<br><br>
+<form action="templateConfig.php" method="POST">
+	<input type="hidden" name=submitted value=1>
+	<input type="hidden" name=id value='%ID%'>
+	<input type="hidden" name=action value='new'>
+<table cellspacing=0 cellpadding=0 border=0>
+	<tr>
+		<td>
+			<b>Neues Template anlegen:</b>
+<table class="basic">
+	<tr><td width=100 align=right>Templatename &nbsp;</td></td><td><input type=text size=15 name=neuname></td></tr>
+	%NEW_TEMPLATES%
+</table>
+</td></tr>
+<tr><td align=right><br><input type=submit value="Speichern"></td></tr>
+</table>
+</form>
+<br><br>
+<b>Gespeicherte Templates:</b><br>
+<table cellspacing=0 cellpadding=0 border=0>
+ <%SAVED_TEMPLATES%>
+ <tr><td valign=top><a href='templateConfig.php?id=%ID%&delete=%SAVED_ID%'><img src="img/removeSmall.gif" title="Template l&ouml;schen"></a> &nbsp;%NAME%: &nbsp;</td><td>%SAVED_NAME%</td></tr>
+ </%SAVED_TEMPLATES%>
+</table>
+

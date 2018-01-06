@@ -1,0 +1,132 @@
+<html>
+<head>
+ <script type="text/javascript" src="/homeserver/charts/jquery-1.11.2.min.js"></script>
+ <script type="text/javascript">
+ 	
+ $(function () 
+ {
+ 	  Highcharts.setOptions(
+ 	  {
+        lang: 
+        {
+            month: [' Januar', ' Februar', ' März', ' April', ' Mai', ' Juni', ' Juli', ' August', ' September', ' Oktober', ' November', ' Dezember'],
+            shortMonths: [' Jan', ' Feb', ' Mrz', ' Apr', ' Mai', ' Jun', ' Jul', ' Aug', ' Sep', ' Okt', ' Nov', ' Dez'],
+            weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
+        },
+      
+        global: 
+        {
+          useUTC: false
+        }
+    });
+    
+    $('#container').highcharts(
+    {
+        chart: 
+        {
+            zoomType: 'x',
+            panning: true,
+            panKey: 'shift'
+            %height%
+        },
+        
+        legend: {
+            align: 'center',
+            verticalAlign: 'bottom',
+            layout: 'vertical',
+            x: 0,
+            y: 0
+        },
+        
+        title: 
+        {
+            text: '%TITLE%'
+        },
+        
+        subtitle: 
+        {
+            text: '%SUBTITLE%'
+        },
+        
+        xAxis: 
+        {
+            type: 'datetime',
+            dateTimeLabelFormats: 
+            {
+	             millisecond: '%H:%M:%S.%L',
+	             second: '%H:%M:%S',
+	             minute: '%H:%M',
+	             hour: '%H:%M',
+	             day: '%e. %b',
+	             week: '%e. %b',
+	             month: '%b \'%y',
+	             year: '%Y'
+            },
+            labels: 
+            {
+                rotation: 90,
+                y: 20
+            },
+            tickPixelInterval: 50
+        },
+        
+        yAxis: 
+        {
+            title: 
+            {
+                text: '%Y_AXIS_TITLE%'
+            }
+        },
+       
+        plotOptions: 
+        {
+            area: 
+            {
+                fillColor: 
+                {
+                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
+                    stops: 
+                    [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
+                },
+                marker: 
+                {
+                    radius: 2
+                },
+                lineWidth: 1,
+                states: 
+                {
+                    hover: 
+                    {
+                        lineWidth: 1
+                    }
+                },
+                threshold: null
+            }
+            
+        },
+
+        series: 
+        [
+         <%SERIES%>
+         {
+            type: '%SERIES_TYPE%',
+            %STEPS%
+            name: '%SIGNAL_NAME%',
+            data: [%data%],
+            color: '#%SIGNAL_COLOR%'
+         }
+         </%SERIES%>
+        ]
+    });
+});
+</script>
+</head>
+<body>
+<script src="/homeserver/charts/highcharts.js"></script>
+<script src="/homeserver/charts/exporting.js"></script>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+</body>
+</html>

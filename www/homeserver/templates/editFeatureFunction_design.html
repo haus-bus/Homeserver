@@ -1,0 +1,73 @@
+%TITLE%
+<hr>
+<br>
+
+<table cellspacing="10">
+ <form action="editFeatureFunction.php" method="POST">
+ <input type="hidden" name="id" value="%ID%">
+ <input type="hidden" name="featureClassesId" value="%FEATURE_CLASSES_ID%">
+ <input type="hidden" name="paramIds" value="%PARAM_IDS%">
+ <tr><td width="100">Typ</td><td><select name="type">%TYPE_OPTIONS%</select></td></tr>
+ <tr><td>Name</td><td><input type="text" name="name" value="%NAME%" size="40"></td></tr>
+ <tr><td>Funktions ID</td><td><input type="text" name="functionId" value="%FUNCTION_ID%" size="40"></td></tr>
+ <tr><td></td><td><%DELETE%><input type="checkbox" name="delete" value="1"> L&ouml;schen <div style='display:inline;padding-left:20px'>&nbsp;</div></%DELETE%>
+    View: <input type=radio name=view value=Standard %standardChecked%> Standard <input type=radio name=view value=Experte %experteChecked%> Experte <input type=radio name=view value=Entwickler %entwicklerChecked%> Entwickler
+ </td></tr>
+ <tr>
+  <td colspan="2">
+   <table>
+    <%PARAMS%>
+    <tr>
+     <td>
+      <table style="border-width:1px; border-color:gray;border-style:solid;">
+       <tr>
+        <td width="100">%PARAM_TITLE%</td>
+        <td>
+         <table>
+          <tr><td>Name</td><td><input type="text" name="paramName%PARAM_ID%" value="%PARAM_NAME%" size="26"> <font size=1>Zum L&ouml;schen Namen entfernen</font></td></tr>
+          <tr><td>Datentyp</td><td><select name="paramType%PARAM_ID%">%PARAM_TYPE_OPTIONS%</select>
+            <div style='display:inline;padding-left:76px'>&nbsp;</div><font size=1>View: <input type=radio name="view%PARAM_ID%" value=Standard %standardChecked%> Standard <input type=radio name="view%PARAM_ID%" value=Experte %experteChecked%> Experte <input type=radio name="view%PARAM_ID%" value=Entwickler %entwicklerChecked%> Entwickler
+          </td></tr>
+          <%ENUM%>
+            <input type="hidden" name="paramEnum%PARAM_ID%_ids" value="%PARAM_ENUM_IDS%">
+            <tr>
+             <td>Enumwerte</td>
+             <td>
+              <table>
+               <%ENUM_VALUE%>
+               <tr>
+                <td>Name: <input type="text" name="paramEnumName%PARAM_ID%_%ENUM_ID%" value="%ENUM_NAME%" size="15"></td>
+                <td>Wert: <input type="text" name="paramEnumValue%PARAM_ID%_%ENUM_ID%" value="%ENUM_VALUE%" size="15"></td>
+               </tr>
+               </%ENUM_VALUE%>
+              </table>
+             </td>
+            </tr>
+          </%ENUM%>
+          <%BITMASK%>
+            <tr>
+             <td>Bitbedeutungen</td>
+             <td>
+             	<%BIT_VALUE%>
+             	 Name Bit %BIT_POS%: <input type="text" name="paramBitName%PARAM_ID%_%BIT_POS%" value="%BIT_NAME%" size="55"><br>
+              </%BIT_VALUE%>
+             </td>
+            </tr>
+          </%BITMASK%>
+          <tr><td>Beschreibung</td><td><textarea name="paramComment%PARAM_ID%" rows=2 cols=60>%COMMENT%</textarea></td></tr>
+         </table>
+        </td>
+       </tr>
+      </table>
+     </td>
+    </tr> 
+    </%PARAMS%>
+   </table>
+  </td>
+ </tr>
+ <tr><td></td><td><br></td></tr>
+ <tr><td></td><td><table width="100%" cellspacing=0 cellpadding=0 border=0><tr><td><input type="submit" name="submitted" value="%SUBMIT_TITLE%"></td><td align="right"><a href="editFeatureClass.php?id=%FEATURE_ID%">oder zur&uuml;ck</a></td></tr></table></td></tr>
+ </form>
+</table>
+
+

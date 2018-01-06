@@ -1,0 +1,36 @@
+Online Backup konfigurieren
+<hr>
+<br>
+<form action="editOnlineBackup.php" method="POST">
+<input type="hidden" name="submitted" value="1">
+
+<table cellspacing="10">
+<tr><td>Backup User ID</td><td><input type=text size=20 name=backupUserId value='%BACKUP_USER_ID%'></td></tr>
+<tr><td></td><td><input type="submit" value="Speichern"></td></tr>
+</table>
+</form>
+
+<br>
+<table width=90% border=0>
+<tr>
+<td valign="top" width="50%">
+<u>Vorhandene Online Backups</u><br><br>
+%ONLINE%
+</td>
+<td valign="top" width="50%">
+<u>Vorhandener Snapshot</u><br><br>
+%SNAPSHOT%
+<br>
+<br>
+[<a href="editOnlineBackup.php?action=snapshot&backupUserId=%BACKUP_USER_ID%">Einmaligen Snapshot erstellen</a>]
+</td>
+</tr>
+</table>
+
+
+<br><br><br><br><hr>
+Das Onlinebackup speichert jede Nacht die wichtigsten persönlichen Daten online mit einem persönlichen Passwort auf haus-bus.de<br>
+Dazu gehören die Datenbank, die Webapplikation und das Verzeichnis User, in dem persönliche Batchskripte abgelegt werden können.<br>
+Aus diesem Backup kann dann jederzeit die persönliche Konfiguration wiederhergestellt werden (z.b. nach einer Neuinstallation).<br>
+Das Backup funktioniert ausschließlich bei einer Homeserverinstalltion auf einem Raspberry PI.<br>
+Die nötige User-ID kann kostenlos per Mail an info@haus-bus.de angefordert werden.<br>

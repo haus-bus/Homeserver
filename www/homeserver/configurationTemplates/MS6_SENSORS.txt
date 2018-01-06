@@ -1,0 +1,12 @@
+; Hardwarekonfigurationstemplate
+; Zeilen können auskommentiert werden, wenn ihr Wert nicht verändert werden soll
+
+[DigitalPort 16]
+;pin0=GESPERRT
+;pin1=GESPERRT
+pin2=UNUSED
+pin3=UNUSED
+pin4=DHT_SENSOR
+pin5=UNUSED
+;pin6=TASTER
+;pin7=TASTER

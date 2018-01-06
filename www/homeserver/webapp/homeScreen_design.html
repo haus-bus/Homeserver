@@ -1,0 +1,136 @@
+<html>
+<script>
+	var startWidth=(window.innerWidth/2)-20;
+	var startHeight=(window.innerHeight/2)-35;
+	var nrIds=4;
+	var config= new Array();
+	
+	function init()
+	{
+		 for(i=0;i<nrIds;i++)
+		 {
+		 	  config[i] = new Object();
+		 	  
+		 	  var row = Math.floor(i/2);
+		 	  var col = i%2;
+		 	  
+ 		 	  config[i]["left"]=(startWidth*col+10*(col+1))+"px";
+ 		 	  var add=0;
+ 		 	  if (i>1) add=25;
+ 		 	  config[i]["top"]=(10+startHeight*row+add)+"px";
+		 	  config[i]["timer"]=600000;
+		 	  config[i]["timerVar"]="";
+		 	  if (i==0) config[i]["src"]="http://raspberry.fritz.box/homeserver/webapp/";
+		 	  else if (i==1) config[i]["src"]="http://www.wetteronline.de/?gid=10430&pcid=pc_radar_map&pid=p_modell_mapsprog&sid=WeatherLoop";
+		 	  else if (i==2) config[i]["src"]="http://www.bild.de";
+		 	  else if (i==3) config[i]["src"]="http://aktien.finanztreff.de/aktien_einzelkurs_uebersicht.htn?i=9566826";
+		 	  
+		 	  document.getElementById("buttonResize"+i).disabled=false;
+		 	  document.getElementById("buttonRefresh"+i).disabled=false;
+		 	  
+		 	  var myElement = document.getElementById("id"+i);
+		 	  myElement.src=config[i]["src"];
+		 	  myElement.width=startWidth;
+		 	  myElement.height=startHeight;
+		 	  
+ 		 	  var myOuter = document.getElementById("outerid"+i);
+ 		 	  myOuter.style.width=startWidth;
+		 	  myOuter.style.height=startHeight;
+        myOuter.style.visibility="visible";
+		 }
+		 
+		 positionAll();
+	}
+
+	function resize(theId)
+	{
+		var myElement = document.getElementById("id"+theId);
+		var myOuter = document.getElementById("outerid"+theId);
+		
+		if (myElement.width==startWidth) 
+		{
+			hideAllExcept(theId);
+			
+			myOuter.style.left="10px";
+			myOuter.style.top="10px";
+			myElement.width=window.innerWidth-30;
+			myElement.height=window.innerHeight-40;
+		}
+		else
+		{
+			myOuter.style.left=config[theId]["left"];
+			myOuter.style.top=config[theId]["top"];
+			myElement.width=startWidth;
+			myElement.height=startHeight;
+			positionAll();
+		}
+	}
+	
+	function positionAll()
+	{
+		 for(i=0;i<nrIds;i++)
+		 {
+		 	  var myOuter = document.getElementById("outerid"+i);
+		 	  
+		 	  myOuter.style.left=config[i]["left"];
+		 	  myOuter.style.top=config[i]["top"];
+		 	  
+		 	  config[i]["timerVar"] = setTimeout("autoUpdate("+i+")",config[i]["timer"]);
+ 		 }
+	}
+	
+	function autoUpdate(i)
+	{
+		  refresh(i);
+  	  config[i]["timerVar"] = setTimeout("autoUpdate("+i+")",config[i]["timer"]);
+	}
+	
+	function hideAllExcept(theId)
+	{
+		 for(i=0;i<nrIds;i++)
+		 {
+		 	  if (config[i]["timerVar"]!="") clearTimeout(config[i]["timerVar"]);
+		 	  if (i==theId) continue;
+		 	  document.getElementById("outerid"+i).style.top="-1000px";
+ 		 }
+	}
+		
+	function refresh(theId)
+	{
+		var myElement = document.getElementById("id"+theId);
+		
+		var pos = myElement.src.indexOf("cb=");
+		if (pos==-1)
+		{
+			pos = myElement.src.indexOf("?");
+			if (pos==-1) myElement.src=myElement.src+"?cb="+new Date().getTime();
+			else myElement.src=myElement.src+"&cb="+new Date().getTime();
+		}
+		else myElement.src = myElement.src.substring(0,pos+4)+new Date().getTime();
+	}
+</script>
+
+<body onload="init()">
+
+<div id="outerid0" style="position:absolute;visibility:hidden">
+ <input id="buttonResize0" disabled type=button value="Resize" onclick="resize(0)"> <input type=button id="buttonRefresh0" disabled value="Refresh" onclick="refresh(0)"><br>
+ <iframe id="id0" width=1 height=1 frameborder=0></iframe>
+</div>
+
+<div id="outerid1" style="position:absolute;visibility:hidden">
+ <input id="buttonResize1" disabled type=button value="Resize" onclick="resize(1)"> <input type=button id="buttonRefresh1" value="Refresh" onclick="refresh(1)"><br>
+ <iframe id="id1" width=1 height=1 frameborder=0></iframe>
+</div>
+
+<div id="outerid2" style="position:absolute;visibility:hidden">
+ <input id="buttonResize2" disabled type=button value="Resize" onclick="resize(2)"> <input type=button id="buttonRefresh2" value="Refresh" onclick="refresh(2)"><br>
+ <iframe id="id2" width=1 height=1 frameborder=0></iframe>
+</div>
+
+<div id="outerid3" style="position:absolute;visibility:hidden">
+ <input id="buttonResize3" disabled type=button value="Resize" onclick="resize(3)"> <input type=button id="buttonRefresh3" value="Refresh" onclick="refresh(3)"><br>
+ <iframe id="id3" width=1 height=1 frameborder=0></iframe>
+</div>
+
+</body>
+</html>

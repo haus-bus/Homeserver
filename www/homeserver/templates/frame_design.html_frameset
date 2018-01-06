@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Homeautomation System 2.0</title>
+<link rel="StyleSheet" href="css/main.css" type="text/css" />
+<script type="text/javascript" src="include/dtree.js"></script>
+</head>
+<body  style="overflow-x:hidden" >
+<div style="background-color:#C0D2EC;width:100%;height:20px;">
+	<div style="position:relative;left:202px;top:2px;font-face:arial;font-size:12px;">[<a href='index.php?tree=1'><font color=black>Aktualisieren</a>]</div>
+</div>	
+<div class="dtree" style="padding:5px">
+ <script type="text/javascript">
+ <!--
+ d = new dTree('d');
+ %TREE_ELEMENTS%
+ document.write(d);
+ //-->
+ </script>
+ <p class="content" align="center">
+  Alles <a href="javascript: d.openAll();">öffnen</a>|<a	href="javascript: d.closeAll();">schließen</a>
+ </p>
+</div>
+</body>
+</html>

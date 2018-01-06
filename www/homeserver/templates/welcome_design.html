@@ -1,0 +1,260 @@
+Releasenotes
+<hr><br>
+<b>23.10.2017</b><br>
+- Problem beim Backup durch Umstellung auf SSL behoben<br>
+<br>
+<b>18.09.2017</b><br>
+- Unterstützung von WLAN Geräten über TCP/IP (Sonoff)<br>
+<br>
+<b>10.09.2017</b><br>
+- Zeitsteuerungen für externe Controller (z.b. Sonoff) funktionieren nicht<br>
+<br>
+<b>06.07.2017</b><br>
+- Userbackup wird nun per HTTPS übertragen<br>
+<br>
+<b>04.05.2017</b><br>
+- Formatierungsfehler im Zeitformat auf X-Achs in den Diagrammen behoben<br>
+<br>
+<b>01.05.2017</b><br>
+- Erster Support eines S0 Stromzählers über Sonoff. Siehe auch Wikiartikel <a href="http://www.haus-bus.de/wiki/index.php/SONOFF_WLAN_Relay_einbinden" target="_blank"><u>SONOFF</u></a> und <a href="http://www.haus-bus.de/wiki/index.php/SONOFF_als_S0_Stromz%C3%A4hler_einbinden" target="_blank"><u>S0 Reader</u></a><br>
+<br>
+<b>19.03.2017</b><br>
+- Tabellarische Oberfläche unterstützt nun auch 2 Temperatursensoren in einem Raum <br>
+<br>
+<b>03.01.2017</b><br>
+- Neue Konfigurationsmöglichkeiten für die tabellarische Webapplikation. Siehe System->Webapplikation->Tabellarische Oberfläche <br>
+<br>
+<b>02.10.2016</b><br>
+- Mantis ID 0000089: Im Journal kann jetzt auch nach Räumen gefiltern werden<br>
+<br>
+<b>08.06.2016</b><br>
+- Neue Funktion mit der man bei den Regeln den angebenen Gültigkeitszeitraum auf täglicher Basis definieren kann<br>
+<br>
+<b>28.04.2016</b><br>
+- Onlinebackup adaptiert für neues Homeserverimage für Raspberry PI 3<br>
+<br>
+<b>17.04.2016</b><br>
+- Neue Version von der Baumimplementierung, die keine Einfrierprobleme oder lange Antwortzeiten im Firefox mehr verursacht<br>
+- Performanceoptimierung bei der Baumanzeige, sowie bei den Regeln<br>
+- Kleinere Fixes beim Firmwareladen<br>
+<br>
+<b>31.03.2016</b><br>
+- Fehler beim Firmwareupdate behoben, durch den die Datenbank korrupt wurde, wenn die Interfacebeschreibung der Firmware zu lang war<br>
+<br>
+<b>11.02.2016</b><br>
+- Mini Webapp zeigt nun auch Einzeltaster, die keinem LogicalButton zugeordnet sind<br>
+<br>
+<b>09.01.2016</b><br>
+- Mini Webapp zeigt nun auch LogicalButtons<br>
+<br>
+<b>02.01.2016</b><br>
+- Raspberry meldet nun 50 virtuellen Schalter. Infos zur Verwendung <a href='http://www.haus-bus.de/wiki/index.php/Virtuelle_Schalter_verwenden_um_z.b._Funksteckdosen_anzusteuern' target='_blank'>HIER IM WIKI</a><br>
+<br>
+<b>02.01.2016</b><br>
+- Ermittlung von Sonnenauf- und Untergangszeiten umgestellt, so dass diese nun auch offline berechnet werden können.<br>
+- Gleichzeitig den Wetter-Aktor von der Serverinstanz entfernt. Die neuen Einstellungen befinden sich nun bei den anderen Standorteinstellungen unter Einstellungen -> Weitere Einstellungen -> Standorteinstellungen.<br>
+- Fix beim Firmwarebroadcast für nen SD6 Taster <br>
+<br>
+<b>28.12.2015</b><br>
+- Textfeld anstatt Textzeile für mehr Platz bei exec Parametern<br>
+- Konfigurationsmöglichkeit eines HTACCESS Passworts unter Einstellungen -> Weitere Einstellungen -> Passwortschutz, um den Homeserver besser zu schützen <br>
+<br>
+<b>22.11.2015</b><br>
+- Neue Hilfsfunktionen, um im userPlugin Daten eines Busteilnehmers aus der Datenbank zu lesen. Siehe userPlugin.php<br>
+<br>
+<b>19.09.2015</b><br>
+- Unterstützung vom neuen Multitaster SD6<br>
+<br>
+<b>18.09.2015</b><br>
+- Räume in der Webapp zeigen nun an, ob ein Schalter oder Dimmer angeschaltet ist<br>
+<br>
+<b>30.08.2015</b><br>
+- Wenn ein Controller neu startet, werden automatisch ModuleId, Configuration und RemoteObjects abgefragt und der Baum aktualisiert<br>
+<br>
+<b>27.08.2015</b><br>
+- Erweiterung/Überarbeitung UserPlugin<br>
+<br>
+<b>26.08.2015</b><br>
+- Neues PHP Plugin, mit dem man auf einfache Art und Weise eigene Plugins schreiben kann. Dabei können alle Busevents ausgewertet und alle Aktionen ausgelöst werden.<br>
+- Alle weiteren Informationen findet ihr unter http://www.haus-bus.de/install.pdf unten im Kapitel ´Erweiterte/umfangreiche Skripte in PHP einbinden´<br>
+- Bitte beachtet, dass das Userplugin wie dort beschrieben einmalig per SSH aktiviert werden muss.<br>
+- Danach findet ihr eine genaue Beschreibung im Skript homeserver/userPlugin.php<br>
+<br>
+<b>16.08.2015</b><br>
+- Performanceoptimierung beim udpWorker<br>
+<br>
+<b>12.07.2015</b><br>
+- Beim Onlinebackup gibt es nun auch die Möglichkeit neben den nächtlichen Backups einen akuellen Snapshot zu erstellen.<br>
+<br>
+<b>06.07.2015</b><br>
+- Neuer CSV Export der Bustimings<br>
+- Auflösungsunabhängiger Zeilenumbruch beim Menü der Miniapp <br>
+- Miniapp kann jetzt seitenvertauscht dargestellt werden für rechtsseitiges Scrollen, indem die App aufgerufen wird per: http://raspberry/homeserver/web/?inverted=1<br>
+- Android Startapp kann runtergeladen werden unter: www.haus-bus.de/homeserver.apk (Vorher Installation von fremden Quellen in den Androideinstellungen erlauben und nach dem Start in der Konfiguration der App obigen Link eingeben)<br>
+<br>
+<b>05.07.2015</b><br>
+- Neue Funktion zur Busdiagnose: Verwaltung -> Busdiagnose<br>
+<br>
+<b>10.06.2015</b><br>
+- Bugfix beim Firmwareladen (sporadisch wurden Controller ohne Update ungewollt übersprungen)<br>
+- Kompatibilität der neuen Miniapp /web zu verschiedenen Handys verbessert (iphone)<br>
+- Ein Klick auf den Raum in der Miniapp springt nun wieder hoch zum Menü <br>
+<br>
+<b>07.06.2015</b><br>
+- Neues Raummenü für Miniwebapp<br>
+<br>
+<b>05.06.2015</b><br>
+- Handy vibriert nun kurz beim Betätigen einer Funktion<br>
+<br>
+<b>04.06.2015</b><br>
+- Neue Miniwebapplikation mit Gesamtübersicht aller Aktoren pro Raum. Erreichbar unter <a href='http://raspberry/homeserver/web' target='_blank'>http://raspberry/homeserver/web</a> <br>
+- <a href='http://www.haus-bus.de/install.pdf' target='_blank'>Installationsanleitung</a> erweitert, um ein Kapitel zur Aktivierung von WINS auf dem Raspberry, um die Namensauflösung auf Windowsrechnern zu verbessern<br>
+<br>
+<b>30.05.2015</b><br>
+- Man kann nun Gruppen komplett deaktivieren/aktivieren <br>
+<br>
+<b>02.05.2015</b><br>
+- Kleines Fixes <br>
+- Neue Regelübersicht nach Taster<br>
+<br>
+<b>28.03.2015</b><br>
+- Bugfix: Räume ohne zugeordnete Features wurden im Baum nicht angezeigt <br>
+<br>
+<b>22.03.2015</b><br>
+- Zu langer Timeout beim manuellen Booterupdate behoben<br>
+- Performancebug beim Regelngenerieren behoben<br>
+- Mantis ID 0000074: Designanpassungen<br>
+- Mantis ID 0000072: Bug beim Erweitern einer Enum<br>
+- Mantis ID 0000063: Nach dem Löschen von Signalgruppen, konnten Regelleichen verbleiben<br>
+<br>
+<b>05.01.2015</b><br>
+- Neuer Diagrammtyp 'Events', mit dem man einzelne Punkte (Events) anzeigen kann<br>
+<br>
+<b>03.01.2015</b><br>
+- Komplettüberarbeitung der Webseitendiagramme. Neue schnelles Chartbibliothek. Neues Caching für schnelleren Aufruf der Diagramme<br>
+- Leider müssen bestehende Diagramme neu angelegt werden<br>
+- Neues Skript cronHourly im user Verzeichnis, dass einmal pro Stunde aufgerufen wird und regelmäßig Aufgaben ermöglicht<br>
+<br>
+<b>02.01.2015</b><br>
+- In den Zusatzregeln können nun auch wieder Zeitsteuerungen konfiguriert werden<br>
+- Löschen von Elementen optimiert. Datenbankintegrität wird direkt geprüft<br>
+- Nächstes Update ermöglicht nun auch eine Aktualisierung der Raspberry Datenbankkonfiguration<br>
+<br>
+<b>27.12.2014</b><br>
+- Neue Funktion, um Basisregeln temporär zu deaktivieren<br>
+<br>
+<b>25.12.2014</b><br>
+- Seitenbaum leicht umgestellt und neue Funktionen Regelübersicht ergänzt<br>
+<br>
+<b>04.10.2014</b><br>
+- Performanceoptiomierung bei der Regelkonfiguration<br>
+<br>
+<b>21.09.2014</b><br>
+- Neuer Proxyfeatures. Siehte Konfiguration -> Netzwerkeinstellungen<br>
+<br>
+<b>04.09.2014</b><br>
+- Bugfix: setTime wurde zu häufig verschickt, was zum Blockieren der Datenbank bei sehr vielen Busteilnehmern führen konnte<br>
+<br>
+<b>18.08.2014</b><br>
+- Mantis ID 0000076: timeBase von LEDs und Schaltern wird nun bei der Regelgenerierung berücksichtig<br>
+<br>
+<b>13.08.2014</b><br>
+- Diese Releasenotes werden nun auch unter Softwareupdates verlink, so dass man schon vor dem Update sehen kann, was sich in einer neuen Version geändert hat<br>
+- Fehler behoben in Regelgenerierung durch den Regeln gelöscht wurden die ausschließich als Signal evClicked im Zustand alle hatten<br>
+<br>
+<b>07.08.2014</b><br>
+- Fix Webapplikation: Auf einigen Tablets funktionierten die Touchevents nicht korrekt<br>
+<br>
+<b>05.08.2014</b><br>
+- Mehrere Fixes in der Regelgenerierung und Regelübertragung<br>
+- Performanceoptimierung Webapplikation<br>
+<br>
+<b>30.06.2014</b><br>
+- Optimierung der Regelgenerierung. Es werden weniger automatische Gruppen erzeugt.<br>
+- Neue Funktion in den Zusatzregel läßt auch Funtionen fremder Aktoren auswählen und auch FUNCTIONS + RESULTS in den Regeln verwenden
+- Sonderzeichen werden auf Raspberry nun richtig dargestellt<br>
+<br>
+<b>04.05.2014</b><br>
+- Neues automatisches nächtliches Onlinebackup konfigurierbar unter System -> Grundeinstellungen -> Weitere Einstellungen -> Online Backup<br>
+- Neues optimiertes Basisimage für Raspberry PI verfügbar<br>
+<br>
+<b>15.04.2014</b><br>
+- Regelmäßige Datenbankoptimierung ergänzt, um die Performance zu erhalten<br>
+<br>
+<b>14.04.2014</b><br>
+- Javascript Fehlermeldungspopup entfernt<br>
+<br>
+<b>09.02.2014</b><br>
+- Schwerwiegend: Fehlerbehebung für Fehler in Version 254 durch den nicht immer alle Regeln übermittelt wurden.<br>
+- Datenbankaufräumen nun in TimeSyncer verlagert, damit die auf jeden Fall von Zeit zu Zeit passiert. Bisher nur beim Aufruf von ControllerStatusAktualisieren<br>
+- Kleinere Optimierungen und Behebungen <br>
+<br>
+<b>19.01.2014</b><br>
+- Erweiterte Diagramfunktionen made by Viktor<br>
+- Rebusteres Firmwareladen und Regelübermitteln durch mehr Recoveries made by Herm<br>
+<br>
+<b>06.01.2014</b><br>
+- Erste Testversion für Statistikdiagramme unter Menüpunkt Webapplikation<br>
+<br>
+<b>09.12.2013</b><br>
+- Unterstützung Bewegungsmelder in Webapplikation<br>
+- Kleinere Bugfixes<br>
+<br>
+<b>10.11.2013</b><br>
+- Neue Sichtenfunktion Standard/Experte/Entwickler zur Verbesserung der Übersicht<br>
+- In den nächsten Versionen werden für den normalen Nutzer unnötige Funktionen ausgeblendet werden<br>
+<br>
+<b>08.11.2013</b><br>
+- Mantis ID 0000065: Gruppenkaskadierung bei Signalgruppen korrigiert<br>
+- Mantis ID 0000062: Gruppen aus mehreren gleichartigen Aktoren können nun auch mit den normalen Basisregeln angesteuert werden (Vorher wurden nur noch die Schalterfunktionen als kleiner gemeinsamer Nenner angeboten)<br>
+<br>
+<b>02.11.2013</b><br>
+- Mantis ID 0000060: Ping an Firmwareinstanz verursachte Timeout, wenn nur der Booter aktualisiert wurde<br>
+- Mantis ID 0000061: PC Controller wird bei allen automatischen Konfigurationen übersprungen <br>
+<br>
+<b>01.11.2013</b><br>
+- Mantis ID 0000064: In Basisregeln und Zusatzregeln waren nur die Signale einer Signalgruppen auswählbar<br>
+<br>
+<b>28.10.2013</b><br>
+- Mantis ID 0000063: Signale von logischen Gruppen können nun auch in den Zusatzregeln ausgewählt werden <br>
+- Kleinere Fixes <br>
+<br>
+<b>27.10.2013</b><br>
+- Neues Feature Logische Signalgruppen<br>
+&nbsp;&nbsp;Gruppen können nur als logischen UND oder ODER Verknüpfung konfiguriert werden. Genaue Beschreibung findet ihr bei den Gruppen<br>
+- Datenbankverbindung wurde wieder auf TCP/IP umgestellt, damit der Homeserver unter Windows und Linux gleich funktioniert<br>
+&nbsp;&nbsp;Achtung: Wer den Server in der letzten Version unter Windows verwendet, muss die die Datei unter mysql\bin\my.ini editieren und<br>
+&nbsp;&nbsp;enable-named-pipe sowie skip-networking auskommentieren (Raute) und socket=mysql einkommentieren<br> 
+<br>
+<b>03.09.2013</b><br>
+- Unterstützung von Taster <-> Bewegungsmelderkombination in Basisregeln unter Extras<br>
+<br>
+<b>20.08.2013</b><br>
+- Mantis ID 0000054: LED-Feedback wird nun auch für manuell erstelle Gruppen unterstützt.<br>
+<br>
+<b>09.06.2013</b><br>
+- Diverse Fixes bei der Regelgenerierung<br>
+<br>
+<b>07.06.2013</b><br>
+<b>Firmware Version 0.68 integriert:</b><br>
+- DimmerInterface setBrightness( brightness, duration) geändert<br>
+- Dimmerkonfiguration um dimmingRangeStart und dimmingRangeEnd erweitert und auf den Bereich 0-100 begrenzt<br>
+- Dimmerkonfiguration fadingTime und dimmingTime auf den Bereich 0-200 (entspricht 50ms-10s) begrenzt<br>
+- Einschaltdauer bei LogicalButton, LED, PowerSocket und Dimmer einheitlich 0-65535s<br>
+- LogicalButton und LED setMinBrightness um Parameter "duration" erweitert<br>
+<br><br>      
+<b>06.06.2013</b><br>
+- LogicalButtons werden als Aktor bei der Gruppengenerierung ignoriert, da diese auch keine Events schicken<br>
+- Bugfix beim Generieren der Preset Basisregeln und beim Generieren der Standardstates<br>
+<br><br>
+<b>04.06.2013</b><br>
+- In Basisregeln bei allen Aktoren die Schaltdauer als Auswahlmöglichkeit ergänzt (Funktioniert aber erst mit neuer FW)<br>
+- In Basisregeln der LogicalButtons kann nun eine individuelle Helligkeit oder Konfig für die konfigurierte Helligkeit wählen (Nachtlichtfunktion)<br>
+- Im Funktionstemplate der Taster Event Losgelassen (evFree) ergänzt (für Bewegungsmelderfunktion)<br>
+<br><br>
+<b>02.06.2013</b><br>
+- Mantis ID 0000051: Workaround: Rollos werden nur noch mir anderen Rollos in eine Gruppe gepackt <br>
+- Wird Led-Feedback "Komplettszene" gewählt, führt Event evGroupUndefined in der zugehörigen Gruppen zum Gruppenzustand aus (zuvor an) <br>
+- Events für Sonnenauf- und Untergang können nur auch mit Gültigkeitszeitraum versehen werden <br>
+- Tagsüber und Nachts wurde nun auch als Gültigkeitsende der Regeln unterstützt <br>
+- Kleinere Fehlerbehebungen <br>

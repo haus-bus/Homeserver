@@ -1,0 +1,19 @@
+Controller "%CONTROLLER_NAME%" wiederherstellen
+<hr>
+Bitte hier den Controller w&auml;hlen, mit dem der Controller %CONTROLLER_NAME% wiederhergestellt werden soll.<br>
+Achtung: Der gew&auml;hlte Controller wird dabei gel&ouml;scht!<br><br>
+<table>
+ <tr>
+  <td valign=top>
+  <form action="restoreController.php" method="POST">
+  	<input type="hidden" name="submitted" value="1">
+  <input type="hidden" name="id" value="%ID%">
+  <select name=newController><option value=''>-- Controller ausw&auml;hlen --
+  	%CONTROLLER_OPTIONS%
+  </select> &nbsp;&nbsp;&nbsp;<input type=submit value='Mit gew&auml;hltem Controller wiederherstellen'></form>
+  <br><br>
+
+  </td>
+ </tr>
+</table>
+<br><br>

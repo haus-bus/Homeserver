@@ -1,0 +1,1 @@
+nircmdc setvolume 0 65536 65536

@@ -1,0 +1,28 @@
+
+<form action="editLocation.php" method="POST">
+<input type="hidden" name="submitted" value="1">
+
+<table cellspacing="10">
+<tr><td colspan=5>Standort konfigurieren<hr><br></td></tr>
+<tr><td>Land:</td><td><input type=text size=20 name=locationCountry value='%LOCATION_COUNTRY%'> (z.b. Deutschland)</td><td width=50></td><td>Latitude:</td><td>%LATITUDE%</td></tr>
+<tr><td>Postleitzahl</td><td><input type=text size=20 name=locationZipCode value='%LOCATION_ZIP_CODE%'></td><td width=50></td><td>Longitude:</td><td>%LONGITUDE%</td></tr>
+<tr><td>Zeitzone</td><td><input type=text size=20 name=timeZone value='%TIME_ZONE%'> (z.b. Europe/Berlin)</td><td width=50></td><td>GMT Offset:</td><td>%GMT_OFFSET%</td></tr>
+<tr><td></td><td><input type="submit" value="Speichern"></td></tr>
+</form>
+<tr><td colspan=5><br><br></td></tr>
+
+<tr><td colspan=5>Sonnenauf- und Untergang konfigurieren<hr><br></td></tr>
+<form action="editLocation.php" method="POST">
+<input type="hidden" name="submitted" value="1">
+<input type="hidden" name="suntimes" value="1">
+
+<tr><td>Offset Sonnenaufgang:</td><td><input type=text size=6 name=offsetSunrise value='%OFFSET_SUNRISE%'> +- Minuten zum berechnenen Sonnenaufgang</td><td width=50></td><td>Heutiger Sonnenaufgang:</td><td>%SUNRISE% Uhr</td></tr>
+<tr><td>Offset Sonnenuntergang:</td><td><input type=text size=6 name=offsetSunset value='%OFFSET_SUNSET%'> +- Minuten zum berechnenen Sonnenuntergang</td><td width=50></td><td>Heutiger Sonnenuntergang:</td><td>%SUNSET% Uhr</td></tr>
+<tr><td></td><td><input type="submit" value="Speichern"></td></tr>
+</table>
+</form>
+
+<br>
+<u>Info</u><br>
+Für die Ermittlung der Längen- und Breitengrade ist einmalig eine Internetverbindung nötig.<br>
+Die Zeiten für Sonnenauf- und Untergang können innerhalb der Regeln verwendet werden, um Aktionen auszulösen.

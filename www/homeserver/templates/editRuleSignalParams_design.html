@@ -1,0 +1,28 @@
+Signalparameter bearbeiten
+<hr>
+<br>
+<form action="editRules.php" method="POST">
+<input type="hidden" name="action" value="editSignalParams">
+<input type="hidden" name="submitted" value="1">
+<input type="hidden" name="groupId" value="%GROUP_ID%">
+<input type="hidden" name="featureFunctionId" value="%FEATURE_FUNCTION_ID%">
+<input type="hidden" name="ruleSignalId" value="%RULE_SIGNAL_ID%">
+<input type="hidden" name="logicalGroupMode" value="%LOGICAL_GROUP_MODE%">
+
+<table>
+<%PARAM%>
+<tr>
+ <td><b>%PARAM_NAME%</b></td>
+ <td>%PARAM_ENTRY%</td>
+ <td>&nbsp;&nbsp;(%COMMENT%)</td>
+</tr>
+</%PARAM%>
+<tr>
+ <td></td>
+ <td><%OPT_SUBMIT%><br><input type="submit" value="Speichern"></%OPT_SUBMIT%></td>
+ <td></td>
+</tr>
+</table>
+</form>
+<br><br>
+[<a href="editRules.php?groupId=%GROUP_ID%&logicalGroupMode=%LOGICAL_GROUP_MODE%">zur&uuml;ck</a>]

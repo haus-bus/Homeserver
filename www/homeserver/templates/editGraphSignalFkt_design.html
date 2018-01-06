@@ -1,0 +1,19 @@
+Signalfunktion editieren
+<hr>
+Hier können Eventparameter miteinander verrechnet werden und so den Y-Achsen-Wert des Diagramms bilden.<br>
+Hat das Event keine Parameter, kann ein fixer Wert angegeben werden. Z.b. 1,2,3, um verschiedene Events voneinander abzusetzen.<br>
+Als Rechenregel kann ein beliebiger mathematischer Ausdruck angegeben werden.<br>
+Z.b. Parameter1 * 100 + Parameter2 (Parameterschreibweise muss beachtet werden!)<br>
+Die verfügbaren Parameternamen werden rechts angezeigt: <br><br><br>
+
+<form action="editGraphs.php" method="POST">
+<input type=hidden name=action value="editFkt">
+<input type=hidden name=submitted value=1>
+<input type=hidden name=id value='%ID%'>
+<input type=hidden name=signalId value='%SIGNAL_ID%'>
+<input type=hidden name=signalEventId value='%SIGNAL_EVENT_ID%'>
+Funktion: <input type=text name="fkt" value="%FKT%" size=40> <input type=submit value="Ändern">
+</form>
+<br><br><br>
+<u>Verfügbare Parameter:</u><br> 
+%PARAMS%

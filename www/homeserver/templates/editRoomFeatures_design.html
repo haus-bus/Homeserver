@@ -1,0 +1,29 @@
+Funktionszuordnung zu Raum "%ROOM_NAME%" &auml;ndern
+<hr>
+<br>
+<script>
+	function openAssigned()
+	{
+		 %ASSIGNED%
+	}
+  
+  function openInitialElement()
+	{
+		%INITIAL_ELEMENT2%
+	}
+	</script>
+</script>
+<form action="editRoomFeatures.php" method="POST">
+<input type="hidden" name="id" value="%ID%">
+<ul class="mktree" id="tree2">
+  %TREE_ELEMENTS%
+</ul>
+<br><br><br><a href="javascript:openAssigned()">Alle diesem Raum zugewiesenen &ouml;ffnen</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><br><br>
+<input type="submit" name="submitted" value="Zuordnung einstellen">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="editRoom.php?id=%ID%">oder zur&uuml;ck</a>
+</form>
+<br><br>
+Nicht zugewiesene:<br>
+%NOT_ASSIGNED%

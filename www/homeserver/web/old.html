@@ -1,0 +1,49 @@
+<%OPT_TEMP%>
+<!-- Trenner horizontal -->
+<tr><td colspan="10" height="10"></td></tr>
+
+<!-- Temperatur Element start -->
+<tr><td colspan="10" height="10" bgcolor="#7F7F7F"></td></tr>
+<tr bgcolor="#7F7F7F">
+ <td rowspan=3 width="2%" bgcolor="#7F7F7F"></td>
+ <td colspan=2 width="30%" height="62" bgcolor="#7F7F7F" valign="top"><div id="text%MY_ID%" class="text">%TEXT%</div></td>
+ <td rowspan=3 width="2%" bgcolor="#7F7F7F"></td>
+ <td colspan=2 width="30%" height="62" bgcolor="#7F7F7F" valign="top" align=center>
+ 	<table width="50%" height="31" cellspacing=0 cellpadding=0 border=0>
+	 <tr>
+	 	 <td bgcolor="#eeeeee" align=center valign=center class="bordered">
+	 	 	 <div id="label%MY_ID%" class="label"></div></td>
+	 	 </td>
+	 </tr>
+	</table>
+ </td>
+ <td rowspan=3 width="2%" bgcolor="#7F7F7F"></td>
+ <td rowspan=3 colspan=2 width="30%" height="62" bgcolor="#7F7F7F" valign="top">
+	<table width="100%" height="134" background="verlauf_gross.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+		<tr><td align=center valign="center"><img src="temp_einzeln.png" border=0></td></tr>
+	</table>
+ </td>
+ <td rowspan=3 width="2%" bgcolor="#7F7F7F"></td>
+</tr>
+<tr>
+	<td colspan="2" height="10"  bgcolor="#7F7F7F"></td>
+	<td colspan="2" height="10"  bgcolor="#7F7F7F"></td>
+</tr>
+
+<tr bgcolor="#7F7F7F">
+ <td colspan="2" width="30%" height="62" bgcolor="#7F7F7F" valign="bottom" align="center">
+  <%OPT_TEXT2%><div id="text%MY_ID_2%" class="text">%TEXT2%</div></%OPT_TEXT2%>
+ </td>
+ <td colspan="2" width="30%" height="62" bgcolor="#7F7F7F" valign="bottom" align=center>
+ 	<table width="50%" height="31" cellspacing=0 cellpadding=0 border=0>
+	 <tr>
+	 	 <td bgcolor="#eeeeee" align=center valign=center class="bordered">
+	 	 	<%OPT_LABEL2%><div id="label%MY_ID_2%" class="label"></div></%OPT_LABEL2%>
+	 	 </td>
+	 </tr>
+	</table>
+ </td>
+</tr>
+<tr><td colspan="10" height="10"  bgcolor="#7F7F7F"></td></tr>
+<!-- Temperatur Element ende -->
+</%OPT_TEMP%>

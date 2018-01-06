@@ -1,0 +1,38 @@
+Alte Objekte l&ouml;schen
+<hr>
+<script>
+	function checkAll()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("obj")!=-1)
+          document.forms[0].elements[$i].checked=true;
+    }
+	}
+
+	function uncheckAll()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("obj")!=-1)
+          document.forms[0].elements[$i].checked=false;
+    }
+	}
+	
+</script>
+
+<br>
+<%OPT%>
+<form action="deleteObjects.php" method="POST"><input type=hidden name=submitted value=1>
+	Die folgenden Objekte sind zum L&ouml;schen markiert.<br>
+	Bitte pr&uuml;fen und ggf. Objekte deselektieren und dann l&ouml;schen:<br><br>
+
+<a href="javascript:checkAll()">Alle aktivieren</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;<a href="javascript:uncheckAll()">Alle deaktivieren</a> <br><br>
+
+<%ELEMENTS%>
+<input type=checkbox checked value='1' name="obj%ID%"> %NAME% <br>
+</%ELEMENTS%>
+<br><br>
+<input type="submit" name="submitted" value="Selektierte Objekte l&ouml;schen">
+</form>
+</%OPT%>

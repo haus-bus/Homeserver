@@ -1,0 +1,79 @@
+<script type="text/javascript" src="include/ajaxWorker.js"></script>
+
+Regeln bearbeiten
+<hr>
+<br>
+<table class="basic">
+<tr>
+ <td align="center"></td>
+ <td align="center">&nbsp;Aktivierungs-<br>Zustand&nbsp;</td>
+ <td align="center">Triggersignale</td>
+ <td align="center">&nbsp;Folgezustand&nbsp;</td>
+ <td align="center">Aktionen</td>
+ <td align="center">G&uuml;ltigkeitszeitraum<br>Start / Ende</td>
+ <!--td align="center">G&uuml;ltigkeitszeitraum<br>Ende</td-->
+ <td align="center">Lock</td>
+</tr>
+<%RULES%>
+<tr>
+ <td align="center" valign="top"><%OPT_DELETE%><a href="editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=deleteRule"><img src="img/remove.gif" border=0 title="l&ouml;schen"></a></%OPT_DELETE%></td>
+ <td align="center" valign="top"><select onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeActivationState&activationStateId='+this.options[this.selectedIndex].value);">%ACTIVATION_STATE_OPTIONS%</select></td>
+ <td valign="top">
+  <%SIGNALS%>
+  <nobr><a href="editRules.php?action=removeSignal&groupId=%GROUP_ID%&ruleId=%RULE_ID%&signalId=%SIGNAL_ID%"><img src="img/removeSmall.gif" border="0"></a> <a href="editRules.php?action=editSignalParams&groupId=%GROUP_ID%&ruleId=%RULE_ID%&ruleSignalId=%SIGNAL_ID%&featureFunctionId=%FEATURE_FUNCTION_ID%">%SIGNAL_ROOM% <!--» %SIGNAL_CLASS%-->» %SIGNAL_NAME% » %SIGNAL_FUNCTION%</a><br>
+  </%SIGNALS%>
+  <div align=center><a href="editRules.php?action=addSignal&groupId=%GROUP_ID%&ruleId=%RULE_ID%"><img src="img/add.gif" title="Signal hinzuf&uuml;gen" border=0></a> <%OPT_COPY_SIGNAL%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="editRules.php?action=addSignalCopy&groupId=%GROUP_ID%&ruleId=%RULE_ID%"><font size=1>kopieren</a></%OPT_COPY_SIGNAL%></div>
+ </td>
+ <td align="center" valign="top"><select onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeResultingState&resultingStateId='+this.options[this.selectedIndex].value);">%RESULTING_STATE_OPTIONS%</select></td>
+ <td valign="top">
+  <%ACTIONS%>
+  <nobr><a href="editRules.php?action=removeAction&groupId=%GROUP_ID%&ruleId=%RULE_ID%&actionId=%ACTION_ID%"><img src="img/removeSmall.gif" border="0"></a> <a href="editRules.php?action=editActionParams&groupId=%GROUP_ID%&ruleId=%RULE_ID%&ruleActionId=%ACTION_ID%&featureFunctionId=%FEATURE_FUNCTION_ID%">%ACTION_ROOM% <!--» %ACTION_CLASS%-->» %ACTION_NAME% » %ACTION_FUNCTION%</a><br>
+  </%ACTIONS%>
+  <div align=center><a href="editRules.php?action=addAction&groupId=%GROUP_ID%&ruleId=%RULE_ID%"><img src="img/add.gif" title="Aktion hinzuf&uuml;gen" border=0></a> <%OPT_COPY_ACTION%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="editRules.php?action=addActionCopy&groupId=%GROUP_ID%&ruleId=%RULE_ID%"><font size=1>kopieren</a></%OPT_COPY_ACTION%></div>
+ </td>
+ <td><nobr>
+ 	 <select style="width:60px" onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartDay&startDay='+this.options[this.selectedIndex].value);">%TIME_START_DAY_OPTIONS%</select> <select style="width:80px" onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartTime&startTime='+this.options[this.selectedIndex].value);">%TIME_START_TIME_OPTIONS%</select> <select style="width:70px" onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartTimeMinute&startTimeMinute='+this.options[this.selectedIndex].value);">%TIME_START_TIME_MINUTE_OPTIONS%</select> <font style="font-size:9px">täglich</font><br>
+ 	 <select style="width:60px" onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndDay&endDay='+this.options[this.selectedIndex].value);">%TIME_END_DAY_OPTIONS%</select> <select style="width:80px" onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndTime&endTime='+this.options[this.selectedIndex].value);">%TIME_END_TIME_OPTIONS%</select> <select style="width:70px" onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndTimeMinute&endTimeMinute='+this.options[this.selectedIndex].value);">%TIME_END_TIME_MINUTE_OPTIONS%</select> &nbsp;<input type=checkbox %INTRADAY_CHECKED% name='intrayday%RULE_ID%' onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeIntraday&intradayState='+this.checked);"
+ 	 </nobr>
+ </td>
+ <!--td><nobr><select style="width:40px" onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndDay&endDay='+this.options[this.selectedIndex].value);">%TIME_END_DAY_OPTIONS%</select> <select style="width:40px" onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndTime&endTime='+this.options[this.selectedIndex].value);">%TIME_END_TIME_OPTIONS%</select> <select style="width:40px" onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndTimeMinute&endTimeMinute='+this.options[this.selectedIndex].value);">%TIME_END_TIME_MINUTE_OPTIONS%</select></nobr></td-->
+ <td><input type=checkbox %LOCK_CHECKED% name='lock%RULE_ID%' onChange="sendAjax('editRules.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeLock&lockState='+this.checked);"></td>
+</tr>
+</%RULES%>
+</table>
+<br><br>
+<table>
+<tr>
+ <td valign=top>
+ 	<form>
+ 	<input type="button" value="1 neue Regel hinzuf&uuml;gen"  onclick="location='editRules.php?groupId=%GROUP_ID%&action=addRule'" style="width:180">
+ 	<br><br>
+ 	<input type="button" value="2 neue Regeln hinzuf&uuml;gen"  onclick="location='editRules.php?groupId=%GROUP_ID%&action=addTwoRules'" style="width:180">
+ 	</form>
+ </td>
+ <td width=30>&nbsp;</td>
+ <td valign=top>
+ 	<form>
+ 	<input type="button" value="Regeln kopieren"  onclick="location='editRules.php?groupId=%GROUP_ID%&action=copyToClipboard'" style="width:150">
+ 	<br><br>
+ 	<input type="button" value="Regeln einf&uuml;gen"  onclick="location='editRules.php?groupId=%GROUP_ID%&action=insertFromClipboard'" style="width:150">
+ 	</form>
+ </td>
+ <td width=30>&nbsp;</td>
+ <td valign=top>
+ 	<form>
+ 		<input type="button" value="Aktionen verdoppeln"  onclick="location='editRules.php?groupId=%GROUP_ID%&action=doubleActions'" style="width:220">
+ 	<br><br>
+ 		<input type="button" value="Zeitsteuerung hinzufügen"  onclick="location='editRules.php?groupId=%GROUP_ID%&action=addTimeSignal'" style="width:220">
+ 	<br><br>
+  </form>
+ </td>
+ <td width=30>&nbsp;</td>
+ <td valign=top>
+ 	<form>
+ 		<input type="button" value="Regeln an die Controller senden"  onclick="location='editRules.php?groupId=%GROUP_ID%&action=submitRules'" style="width:220">
+ 	<br><br>
+  </form>
+ </td>
+</tr>
+</table>

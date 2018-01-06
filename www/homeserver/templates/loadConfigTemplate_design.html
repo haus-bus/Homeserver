@@ -1,0 +1,16 @@
+Controller mittels Konfigurationstemplate konfigurieren <hr>
+<br><br>
+<table cellspacing=0 cellpadding=0>
+ <tr>
+  <td valign=top>
+   <form action="editController.php" method="POST" enctype="multipart/form-data" method="POST">
+    <input type="hidden" name="id" value="%ID%">
+    <input type="hidden" name="action" value="loadConfigTemplate">
+    <input type="hidden" name="confirm" value="1">
+    Template: <input name="userfile" type="file" size="22"> <input type="submit" value="Template laden und konfigurieren">
+   </form>
+  </td>
+ </tr>
+</table>
+<br><br>
+<a href="editController.php?id=%ID%">zur&uuml;ck</a>

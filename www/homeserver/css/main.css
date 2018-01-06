@@ -1,0 +1,68 @@
+
+.content 
+{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #333;
+	white-space: nowrap;
+}
+
+.content a
+{
+	color: #333;
+	text-decoration: none;
+}
+
+.content a:hover
+{
+  color: #333;
+	text-decoration: underline;
+}
+
+.content hr 
+{
+  border: 0px;
+  width: 100%;
+  border-top: ridge   3px #C0D2EC;
+  border-bottom: transparent;
+}
+
+
+.content td
+{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #333;
+	white-space: nowrap;
+}
+
+
+table.basic
+{
+	border-width: 1px;
+	border-spacing: 2px;
+	border-style: solid;
+	border-color: gray;
+	border-collapse: collapse;
+	background-color: white;
+}
+
+table.basic th 
+{
+	border-width: 1px;
+	padding: 2px;
+	border-style: inset;
+	border-color: gray;
+	background-color: white;
+	-moz-border-radius: ;
+}
+
+table.basic td 
+{
+	border-width: 1px;
+	padding: 2px;
+	border-style: inset;
+	border-color: gray;
+	background-color: white;
+	-moz-border-radius: ;
+}

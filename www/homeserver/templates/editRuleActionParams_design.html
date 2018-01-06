@@ -1,0 +1,27 @@
+Aktionsparameter bearbeiten
+<hr>
+<br>
+<form action="editRules.php" method="POST">
+<input type="hidden" name="action" value="editActionParams">
+<input type="hidden" name="submitted" value="1">
+<input type="hidden" name="groupId" value="%GROUP_ID%">
+<input type="hidden" name="featureFunctionId" value="%FEATURE_FUNCTION_ID%">
+<input type="hidden" name="ruleActionId" value="%RULE_ACTION_ID%">
+
+<table>
+<%PARAM%>
+<tr>
+ <td valign=top><b>%PARAM_NAME%</b></td>
+ <td valign=top>%PARAM_ENTRY%</td>
+ <td valign=top>%COMMENT%</td>
+</tr>
+</%PARAM%>
+<tr>
+ <td></td>
+ <td><%OPT_SUBMIT%><input type="submit" value="Speichern"></%OPT_SUBMIT%></td>
+ <td></td>
+</tr>
+</table>
+</form>
+<br><br>
+[<a href="editRules.php?groupId=%GROUP_ID%&logicalGroupMode=%LOGICAL_GROUP_MODE%">zur&uuml;ck</a>]

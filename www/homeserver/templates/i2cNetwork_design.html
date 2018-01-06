@@ -1,0 +1,43 @@
+<style type="text/css">
+	
+.bordered
+{
+	border-width:1; 
+	border-color:#555555;
+	border-style:solid;
+	border-collapse:collapse;
+}
+
+.borderedTd
+{
+	border-width:1; 
+	border-color:#555555;
+	border-style:solid;
+}
+</style>
+
+Netzwerkstopologie und Bustiming
+<hr>
+<br><u>Ermittelte Netzwerktopologie</u>
+<br><br>
+<table class="bordered">
+	<tr><td align=center class="borderedTd">&nbsp;<b>ID&nbsp;</td><td class="borderedTd">&nbsp;<b>Ethernetgateway&nbsp;</td><td class="borderedTd"><b>&nbsp;I2C Controller&nbsp;</td></tr>
+<%NETWORK%>
+	<tr><td align=center class="borderedTd">%NETWORK_ID%</td><td class="borderedTd">&nbsp;%ETHERNET%&nbsp;</td><td class="borderedTd">&nbsp;%I2C%&nbsp;</td></tr>
+</%NETWORK%>
+</table>
+<br>%ERROR%<br>
+[<a href="i2cNetwork.php?action=renew">Netzwerkstopologie neu ermitteln</a>] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<a href="i2cNetwork.php?action=email">Inhalt dieser Seite downloaden</a>]<br><br>
+
+<br><u>Ermittelte Bus-Timings</u>
+<br><br>
+<%NETWORK_TIMINGS%>
+<b>Netzwerk %NETWORK_ID% - Gateway: %NETWORK_ETHERNET%</b> [<a href="i2cNetwork.php?action=renewTiming&network=%NETWORK_ID%">aktualisieren</a>]<br>
+
+%MATRIX%
+<br>	
+</%NETWORK_TIMINGS%>
+
+[<a href="i2cNetwork.php?action=renewAllTimings">Alle Netzwerktimings neu ermitteln</a>] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<a href="i2cNetwork.php?action=csv">Messdaten als CSV speichern</a>]<br><br>
+
+

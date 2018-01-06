@@ -1,0 +1,63 @@
+<html>
+<head>
+<link rel="StyleSheet" href="css/main.css" type="text/css" />
+</head>
+
+<script>
+var xmlhttp=false;
+if (typeof XMLHttpRequest != 'undefined') xmlhttp = new XMLHttpRequest();
+if (!xmlhttp) 
+{
+  try 
+  {
+    xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+  }
+  catch(e) 
+  {
+    try 
+    {
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    catch(e)
+    {
+    	xmlhttp = null;
+    }
+  }
+}
+
+function checkUpdate()
+{
+  try
+  {
+	var date = new Date();
+    xmlhttp.open("GET","liveEvents.php?checkUpdate=%LASTID%&cb="+date.getTime());
+    xmlhttp.onreadystatechange = function()
+    {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+      {
+          var result = xmlhttp.responseText;
+          if (Number(xmlhttp.responseText)>0) location='liveEvents.php?lastId='+result+"&firstId=%FIRSTID%";
+          else setTimeout("checkUpdate()",500);
+      }
+    }
+    xmlhttp.send(null);
+  } catch (e){}
+}
+</script>
+
+<body onload="checkUpdate()"><div class="content">
+Live Events
+<hr>
+<table>
+<%ENTRY%>
+<tr bgcolor='%BG%'>
+<td><font size=1>%ID%</td>
+<td><font size=1>%TIME%</td>
+<td><font size=1>%FUNCTION%</td>
+<td><font size=1>%SENDER%</td>
+<td><font size=1>%PARAMS%</td>
+</tr>
+</%ENTRY%>
+</table>
+</div>
+</body>

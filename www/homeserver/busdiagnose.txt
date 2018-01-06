@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+ <link rel="StyleSheet" href="css/main.css" type="text/css" />
+ <LINK REL="stylesheet" HREF="css/mktree.css">
+ <script type="text/javascript" src="include/mktree.js"></script>
+</head>
+
+<body marginheight="0" marginwidth="0" topmargin="0">
+<table cellspacing=0 cellpadding=0 border=0 width="98%">
+<tr>
+	<td width=20><nobr>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td>
+<div style="margin-right:16px" class="content" style="overflow: auto;" id="content">
+	<br>
+	
+  <style type="text/css">
+	
+.bordered
+{
+	border-width:1; 
+	border-color:#555555;
+	border-style:solid;
+	border-collapse:collapse;
+}
+
+.borderedTd
+{
+	border-width:1; 
+	border-color:#555555;
+	border-style:solid;
+}
+</style>
+
+Netzwerkstopologie und Bustiming
+<hr>
+<br><u>Ermittelte Netzwerktopologie</u>
+<br><br>
+<table class="bordered">
+	<tr><td align=center class="borderedTd">&nbsp;<b>ID&nbsp;</td><td class="borderedTd">&nbsp;<b>Ethernetgateway&nbsp;</td><td class="borderedTd"><b>&nbsp;I2C Controller&nbsp;</td></tr>
+
+	<tr><td align=center class="borderedTd">1</td><td class="borderedTd">&nbsp;503 Flur&nbsp;</td><td class="borderedTd">&nbsp;19075 M-Taster Haustür&nbsp;</td></tr>
+
+	<tr><td align=center class="borderedTd">2</td><td class="borderedTd">&nbsp;22909 Eltern Schlafzimmer&nbsp;</td><td class="borderedTd">&nbsp;1541 Elternschlafzimmer I2C, 1000 M-Taster Eingang Elternschlafzimmer, 13976 M-Taster Bett Herm, 19342 M-Taster Bett Tina&nbsp;</td></tr>
+
+	<tr><td align=center class="borderedTd">3</td><td class="borderedTd">&nbsp;14896 Carolins Zimmer&nbsp;</td><td class="borderedTd">&nbsp;28900 M-Taster Eingang Carolins Zimmer&nbsp;</td></tr>
+
+	<tr><td align=center class="borderedTd">4</td><td class="borderedTd">&nbsp;11581 Spielzimmer&nbsp;</td><td class="borderedTd">&nbsp;18343 M-Taster Eingang Spielzimmer&nbsp;</td></tr>
+
+	<tr><td align=center class="borderedTd">5</td><td class="borderedTd">&nbsp;21336 Küche&nbsp;</td><td class="borderedTd">&nbsp;25874 M-Taster Küche Kochinsel&nbsp;</td></tr>
+
+	<tr><td align=center class="borderedTd">6</td><td class="borderedTd">&nbsp;22784 Herms Ecke&nbsp;</td><td class="borderedTd">&nbsp;20043 M-Taster Wohnzimmer Herms Ecke, 8270 M-Taster Eingang Wohnzimmer, 29725 Herms Ecke I2C&nbsp;</td></tr>
+
+	<tr><td align=center class="borderedTd">7</td><td class="borderedTd">&nbsp;25661 Badezimmer&nbsp;</td><td class="borderedTd">&nbsp;12622 M-Taster Badezimmer&nbsp;</td></tr>
+
+</table>
+<br><br>
+<br><br>
+
+<br><u>Ermittelte Bus-Timings</u>
+<br><br>
+
+<b>Netzwerk 1 - Gateway: 503 Flur</b> <br>
+
+<table class='bordered'><tr><td class='borderedTd'></td><td class='borderedTd'><b>503</b></td><td class='borderedTd'><b>19075</b></td></tr><tr><td class='borderedTd'></td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td></tr><tr><td class='borderedTd'><b>19075</b></td><td class='borderedTd' align=right>248 247</td><td class='borderedTd' align=right>230 230</td></tr><tr><td class='borderedTd'><b>503</b></td><td class='borderedTd' align=right>229 229</td><td class='borderedTd' align=right>228 227</td></tr></table>
+<br>	
+
+<b>Netzwerk 2 - Gateway: 22909 Eltern Schlafzimmer</b> <br>
+
+<table class='bordered'><tr><td class='borderedTd'></td><td class='borderedTd'><b>22909</b></td><td class='borderedTd'><b>19342</b></td><td class='borderedTd'><b>13976</b></td><td class='borderedTd'><b>1000</b></td><td class='borderedTd'><b>1541</b></td></tr><tr><td class='borderedTd'></td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td></tr><tr><td class='borderedTd'><b>22909</b></td><td class='borderedTd' align=right>235 235</td><td class='borderedTd' align=right>241 240</td><td class='borderedTd' align=right>242 241</td><td class='borderedTd' align=right>241 240</td><td class='borderedTd' align=right>246 245</td></tr><tr><td class='borderedTd'><b>1541</b></td><td class='borderedTd' align=right>242 241</td><td class='borderedTd' align=right>238 238</td><td class='borderedTd' align=right>240 239</td><td class='borderedTd' align=right>238 237</td><td class='borderedTd' align=right>235 235</td></tr><tr><td class='borderedTd'><b>1000</b></td><td class='borderedTd' align=right>246 246</td><td class='borderedTd' align=right>243 242</td><td class='borderedTd' align=right>245 245</td><td class='borderedTd' align=right>236 236</td><td class='borderedTd' align=right>249 248</td></tr><tr><td class='borderedTd'><b>13976</b></td><td class='borderedTd' align=right>245 244</td><td class='borderedTd' align=right>241 240</td><td class='borderedTd' align=right>235 235</td><td class='borderedTd' align=right>242 241</td><td class='borderedTd' align=right>246 246</td></tr><tr><td class='borderedTd'><b>19342</b></td><td class='borderedTd' align=right>246 246</td><td class='borderedTd' align=right>235 235</td><td class='borderedTd' align=right>245 244</td><td class='borderedTd' align=right>243 242</td><td class='borderedTd' align=right>248 248</td></tr></table>
+<br>	
+
+<b>Netzwerk 3 - Gateway: 14896 Carolins Zimmer</b> <br>
+
+<table class='bordered'><tr><td class='borderedTd'></td><td class='borderedTd'><b>14896</b></td><td class='borderedTd'><b>28900</b></td></tr><tr><td class='borderedTd'></td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td></tr><tr><td class='borderedTd'><b>28900</b></td><td class='borderedTd' align=right>242 241</td><td class='borderedTd' align=right>229 229</td></tr><tr><td class='borderedTd'><b>14896</b></td><td class='borderedTd' align=right>229 229</td><td class='borderedTd' align=right>231 231</td></tr></table>
+<br>	
+
+<b>Netzwerk 4 - Gateway: 11581 Spielzimmer</b> <br>
+
+<table class='bordered'><tr><td class='borderedTd'></td><td class='borderedTd'><b>11581</b></td><td class='borderedTd'><b>18343</b></td></tr><tr><td class='borderedTd'></td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td></tr><tr><td class='borderedTd'><b>18343</b></td><td class='borderedTd' align=right>241 240</td><td class='borderedTd' align=right>229 229</td></tr><tr><td class='borderedTd'><b>11581</b></td><td class='borderedTd' align=right>229 229</td><td class='borderedTd' align=right>232 231</td></tr></table>
+<br>	
+
+<b>Netzwerk 5 - Gateway: 21336 Küche</b> <br>
+
+<table class='bordered'><tr><td class='borderedTd'></td><td class='borderedTd'><b>25874</b></td><td class='borderedTd'><b>21336</b></td></tr><tr><td class='borderedTd'></td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td></tr><tr><td class='borderedTd'><b>25874</b></td><td class='borderedTd' align=right>231 231</td><td class='borderedTd' align=right>244 243</td></tr><tr><td class='borderedTd'><b>21336</b></td><td class='borderedTd' align=right>234 233</td><td class='borderedTd' align=right>231 231</td></tr></table>
+<br>	
+
+<b>Netzwerk 6 - Gateway: 22784 Herms Ecke</b> <br>
+
+<table class='bordered'><tr><td class='borderedTd'></td><td class='borderedTd'><b>22784</b></td><td class='borderedTd'><b>20043</b></td><td class='borderedTd'><b>8270</b></td><td class='borderedTd'><b>29725</b></td></tr><tr><td class='borderedTd'></td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td></tr><tr><td class='borderedTd'><b>22784</b></td><td class='borderedTd' align=right>229 229</td><td class='borderedTd' align=right>234 233</td><td class='borderedTd' align=right>236 236</td><td class='borderedTd' align=right>239 238</td></tr><tr><td class='borderedTd'><b>29725</b></td><td class='borderedTd' align=right>236 236</td><td class='borderedTd' align=right>233 232</td><td class='borderedTd' align=right>236 235</td><td class='borderedTd' align=right>229 229</td></tr><tr><td class='borderedTd'><b>8270</b></td><td class='borderedTd' align=right>239 238</td><td class='borderedTd' align=right>235 234</td><td class='borderedTd' align=right>230 230</td><td class='borderedTd' align=right>241 240</td></tr><tr><td class='borderedTd'><b>20043</b></td><td class='borderedTd' align=right>241 241</td><td class='borderedTd' align=right>230 230</td><td class='borderedTd' align=right>240 240</td><td class='borderedTd' align=right>243 242</td></tr></table>
+<br>	
+
+<b>Netzwerk 7 - Gateway: 25661 Badezimmer</b> <br>
+
+<table class='bordered'><tr><td class='borderedTd'></td><td class='borderedTd'><b>25661</b></td><td class='borderedTd'><b>12622</b></td></tr><tr><td class='borderedTd'></td><td class='borderedTd'>SCL SDA</td><td class='borderedTd'>SCL SDA</td></tr><tr><td class='borderedTd'><b>12622</b></td><td class='borderedTd' align=right>238 239</td><td class='borderedTd' align=right>229 229</td></tr><tr><td class='borderedTd'><b>25661</b></td><td class='borderedTd' align=right>229 229</td><td class='borderedTd' align=right>236 235</td></tr></table>
+<br>	
+
+
+<br><br>
+
+
+
+</div>
+</td>
+</tr>
+</table>
+</body>
+</html>

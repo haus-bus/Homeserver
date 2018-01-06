@@ -1,0 +1,10 @@
+Hier können alle aktuell in der Datenbank gespeicherten Key/Value Paare aus dem Userplugin eingesehen und gelöscht werden
+<hr>
+<br>
+<table cellspacing=3 cellpadding=3 border=0 >
+<tr><td><td><td>KEY</td><td>VALUE</td></tr>
+<%ELEMENTS%>
+<tr><td><a href="editUserPluginData.php?delete=%KEY_ENCODED%"><img src="img/remove.gif" title="löschen"></a><td><td>%KEY%</td><td><a href="editUserPluginData.php?edit=%KEY_ENCODED%">%VALUE%</a></td></tr>
+</%ELEMENTS%>
+</table>
+<form>

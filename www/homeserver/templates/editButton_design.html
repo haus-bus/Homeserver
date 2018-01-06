@@ -1,0 +1,27 @@
+%TITLE%
+<hr>
+<br>
+<table cellspacing=0 cellpadding=0 border=0 width="100%">
+<tr>
+<td valign=top>
+  <table cellspacing="10">
+   <form action="editButtonPage.php" method="POST" id="myForm">
+   <input type="hidden" name="action" id="myAction" value="submitButton">
+   <input type="hidden" name="pageId" value="%PAGE_ID%">
+   <input type="hidden" name="lineId" value="%LINE_ID%">
+   <input type="hidden" name="buttonId" value="%BUTTON_ID%">
+   <tr><td>Name</td><td><input type="text" name="name" value="%BUTTON_NAME%" size="40"></td></tr>
+   <tr><td>Position</td><td><input type="text" name="pos" value="%POS%" size="5"> (1 = ganz links in der Zeile, 2-X rechts folgend)</td></tr>
+   <tr><td valign=top>Signal <br>/ Link</td><td><input type="text" name="signal" value="%SIGNAL%" size="50"> <input type=button onclick="document.getElementById('myAction').value='chooseSignal';document.getElementById('myForm').submit();" value="Signal w&auml;hlen"> oder <input type=button onclick="document.getElementById('myAction').value='choosePage';document.getElementById('myForm').submit();" value="Subseite w&auml;hlen"><br>
+  <font size=1>(Alternativ kann auch eine URL startend mit "http://" angegeben werden)</td></tr>
+
+   <%OPT_DELETE%><tr><td></td><td><input type="checkbox" name="delete" value="1"> L&ouml;schen</td></tr></%OPT_DELETE%>
+   <tr><td></td><td><br></td></tr>
+   <tr><td></td><td><input type="submit" value="%SUBMIT_TITLE%"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   	<a href="editButtonPage.php?pageId=%PAGE_ID%">Zur&uuml;ck</a></td></tr>
+   </form>
+  </table>
+</td>
+</tr>
+</table>
+<form>

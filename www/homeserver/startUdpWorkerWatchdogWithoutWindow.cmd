@@ -1,0 +1,1 @@
+nowindow watchdogUdpWorker.cmd

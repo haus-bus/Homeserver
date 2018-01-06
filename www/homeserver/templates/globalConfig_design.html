@@ -1,0 +1,57 @@
+%TITLE%
+<hr>
+<br>
+
+<script>
+	function checkAll()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("instance")!=-1)
+          document.forms[0].elements[$i].checked=true;
+    }
+	}
+
+	function uncheckAll()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("instance")!=-1)
+          document.forms[0].elements[$i].checked=false;
+    }
+	}
+	
+</script>
+<b>Verf&uuml;gbare Online-Instanzen:</b> &nbsp;&nbsp;&nbsp; <a href="javascript:checkAll()">Alle aktivieren</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;<a href="javascript:uncheckAll()">Alle deaktivieren</a> <br><br>
+<form action="globalConfig.php" method="POST">
+<input type="hidden" name="id" value="%ID%">
+
+<table>
+  <%INSTANCES%>
+   <tr><td><input type="checkbox" checked name="instance%FEATURE_INSTANCE_ID%" value="1"></td><td>%FEATURE_NAME%</td></tr>
+  </%INSTANCES%>
+</table>
+<br>
+<br>
+<%OPT_CONFIG%>
+<b>Konfigurationsparameter:</b><br>
+<table>
+ <%PARAM%>
+  <tr>
+   <td>%PARAM_NAME%</td>
+   <td>%PARAM_ENTRY%</td>
+   <td>%COMMENT%</td>
+  </tr>
+ </%PARAM%>
+</table>
+<br>
+<input type="submit" name="submitted" value="Globale Konfiguration durchf&uuml;hren">
+</%OPT_CONFIG%>
+<%OPT_NO_CONFIG%>
+<b>Keine Konfigurationsm&ouml;glichkeiten vorhanden</b>
+</%OPT_NO_CONFIG%>
+</form>
+</body>
+</html>
+
+

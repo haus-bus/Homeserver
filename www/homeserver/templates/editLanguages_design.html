@@ -1,0 +1,25 @@
+Internationalisierung
+<hr>
+<br>
+<form action="editLanguages.php" method="POST">
+<input type="hidden" name="action" value="chooseLanguage">
+<table cellspacing="10">
+<tr><td>Sprache</td><td><select name="language">%LANGUAGE_OPTIONS%</select> &nbsp;&nbsp;&nbsp;<input type=checkbox value="1" name="update"> Datenbank aktualisieren</td></tr>
+<tr><td></td><td><input type="submit" value="W&auml;hlen"></td></tr>
+</table>
+</form>
+
+<br><br>
+&uuml;bersetzungen
+<hr>
+<form action="editLanguages.php" method="POST">
+<input type="hidden" name="ids" value="%IDS%">
+<input type="hidden" name="language" value="%LANGUAGE%">
+<table>
+<tr><td><b>FW-Name</td><td width=10>&nbsp;</td><td><b>&uuml;bersetzung</td></tr>
+<%ENTRIES%>
+<tr><td>%KEY%</td><td width=10>&nbsp;</td><td><input size=35 type=text name='key%ID%' value='%TRANSLATION%'></td></tr>
+</%ENTRIES%>
+<tr><td></td><td width=10>&nbsp;</td><td><input type="Submit" name="submitted" value="Speichern"></td></tr>
+</table>
+</form>

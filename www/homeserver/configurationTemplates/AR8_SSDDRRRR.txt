@@ -1,0 +1,36 @@
+; Hardwarekonfigurationstemplate
+; Zeilen können auskommentiert werden, wenn ihr Wert nicht verändert werden soll
+
+[controller]
+startupDelay=0
+logicalButtonMask=0
+;deviceId=25661
+reportMemoryStatusTime=0
+slotType0=SOCKET
+slotType1=SOCKET
+slotType2=DIMMER
+slotType3=DIMMER
+slotType4=SHUTTER
+slotType5=SHUTTER
+slotType6=SHUTTER
+slotType7=SHUTTER
+
+[DigitalPort 80]
+;pin0=GESPERRT
+;pin1=GESPERRT
+pin2=UNUSED
+pin3=UNUSED
+;pin4=GESPERRT
+;pin5=GESPERRT
+pin6=IR_SENSOR
+pin7=OW_BUS
+
+[DigitalPort 96]
+pin0=UNUSED
+pin1=UNUSED
+pin2=UNUSED
+pin3=UNUSED
+pin4=UNUSED
+pin5=UNUSED
+pin6=UNUSED
+pin7=UNUSED

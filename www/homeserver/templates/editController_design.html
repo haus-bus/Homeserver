@@ -1,0 +1,88 @@
+<!--Controller "%CONTROLLER_NAME%" bearbeiten
+<hr-->
+<table cellspacing=0 cellpadding=0>
+ <tr>
+  <td valign=top>
+  <form action="editController.php" method="POST">
+  <input type="hidden" name="id" value="%ID%">
+  <table cellspacing=0 cellpadding=0>
+   <tr><td>Object ID</td><td>&nbsp;%OBJECT_ID_FORMATED%</td></tr>
+   <tr><td>Status</td><td>&nbsp;%STATUS%</td></tr>
+   <tr><td>Name</td><td>&nbsp;<input type="text" name="name" value="%CONTROLLER_NAME%" size="39"> <input type="checkbox" name="delete" value="1"> L&ouml;schen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="submitted" value="&auml;ndern"></td></form>
+   <%OPT_FW_UPDATE%>
+   <form action="editController.php" enctype="multipart/form-data" method="POST"><input type="hidden" name="id" value="%ID%"><input type="hidden" name="action" value="fwUpdate">
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Firmwareupdate</td><td>&nbsp;<input name="userfile" type="file" size="22" ><input type="checkbox" name="force" value="1"> Zwangsladen <input type="submit" value="Update"></td>
+   </form>
+   </%OPT_FW_UPDATE%> 
+   </tr>
+  </table>
+  </td>
+ </tr>
+</table>
+<br>
+<a href="editRules.php?action=readRules&objectId=%OBJECT_ID%"><u>Regeln auslesen</a></u>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="restoreController.php?id=%ID%"><u>Controller wiederherstellen</a></u>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=recover"><u>Konfiguration wiederherstellen</a></u>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=restoreFactorySettings"><u>Auslieferzustand wiederherstellen</a></u>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=loadConfigTemplate"><u>Konfigurationstemplate laden</a></u>
+<%OPT_ACTIVATE_BOOTLOADER%>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=activateBootloader"><u>Bootloader aktivieren</a>
+</%OPT_ACTIVATE_BOOTLOADER%>
+<br><br><br>
+
+<%FUNCTION%>
+<form action="editController.php" method="POST">
+<input type="hidden" name="id" value="%ID%">
+<input type="hidden" name="action" value="callMethod">
+<input type="hidden" name="objectId" value="%OBJECT_ID%">
+<input type="hidden" name="featureFunctionId" value="%FEATURE_FUNCTION_ID%">
+<tr>
+ <td valign=top width=170><b>%FUNCTION%</td>
+ <td valign=top><input type="submit" value="Aufrufen"></td>
+ <td width=20>&nbsp;</td>
+ <td valign=top>
+ 	<table cellspacing=0 cellpadding=0>
+  <%PARAM%>
+   <tr height=27><td width=70>%PARAM_NAME%</td><td>&nbsp;&nbsp;%PARAM_ENTRY%</td><td>&nbsp;&nbsp;<img src="img/fragezeichen.gif" title="%COMMENT%"></td></tr>
+  </%PARAM%>
+  </table> 
+ </td>	
+</tr>
+</form>
+<tr><td height="10"> </td></tr>
+</%FUNCTION%>
+
+Funktionen
+<div style="background:url(img/scheckig.gif);width:100%">
+<hr>
+<table>
+%FUNCTIONS%
+</table>
+</div>
+
+<br>
+Ergebnisse
+<hr>
+<div style="background:url(img/scheckig.gif);width:100%">
+<table>
+%RESULTS%
+</table>
+</div>
+
+<br>
+Aktionen
+<div style="background:url(img/scheckig.gif);width:100%">
+<hr>
+<table>
+%ACTIONS%
+</table>
+</div>
+
+<br>
+Events
+<hr>
+<div style="background:url(img/scheckig.gif);width:100%">
+<table>
+%EVENTS%
+</table>
+</div>

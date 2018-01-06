@@ -1,0 +1,29 @@
+Gruppenzuordnung &auml;ndern
+<hr>
+<br>
+<script>
+	function openAssigned()
+	{
+		 %ASSIGNED%
+	}
+	
+  function openInitialElement()
+	{
+		%INITIAL_ELEMENT2%
+	}
+</script>
+<form action="editGroup.php" method="POST">
+<input type="hidden" name="id" value="%ID%">
+<input type="hidden" name="submitted" value="1">
+<input type="hidden" name="action" value="%ACTION_TYPE%">
+
+<ul class="mktree" id="tree2">
+  %TREE_ELEMENTS%
+</ul>
+
+<br><br><br><a href="javascript:openAssigned()">Alle diesem Raum zugewiesenen &ouml;ffnen</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><br><br>
+<input type="submit" value="Zuordnung einstellen">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="editGroup.php?id=%ID%">oder zur&uuml;ck</a>
+</form>

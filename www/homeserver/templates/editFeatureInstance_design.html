@@ -1,0 +1,132 @@
+<!--%FEATURE_TYP% "%FEATURE_NAME%" bearbeiten
+<hr-->
+<form action="editFeatureInstance.php" method="POST">
+<input type="hidden" name="id" value="%ID%">
+<table cellspacing=0 cellpadding=0>
+	<tr><td>
+<table cellspacing=0 cellpadding=0>
+<tr><td>Typ</td><td>&nbsp;&nbsp;%FEATURE_TYP%</td></tr>
+<tr><td>Object ID&nbsp;</td><td>&nbsp;&nbsp;%OBJECT_ID_FORMATED%</td></tr>
+<tr><td>Zugeordnete R&auml;ume</td><td>&nbsp;&nbsp;%ROOMS%</td></tr>
+<tr><td>Zugeordnete Gruppen</td><td>&nbsp;&nbsp;%GROUPS%</td></tr>
+
+<tr><td>Name</td><td>&nbsp;&nbsp;<input type="text" name="name" value="%FEATURE_NAME%" size="58"> <%OPT_DELETE%> <input type="checkbox" name="delete" value="1"> L&ouml;schen</%OPT_DELETE%> &nbsp;&nbsp;
+<%OPT_WEATHER%>
+</td></tr>
+<tr><td>Offset</td><td>&nbsp;&nbsp;<input type="text" name="offsetSunrise" value="%OFFSET_SUNRISE%" size="10"> +- Minuten zum berechnenen Sonnenaufgang</td></tr>
+<tr><td>Offset</td><td>&nbsp;&nbsp;<input type="text" name="offsetSunset" value="%OFFSET_SUNSET%" size="10"> +- Minuten zum berechnenen Sonnenuntergang</td></tr>
+<tr><td></td><td>&nbsp;&nbsp;
+</%OPT_WEATHER%>
+<input type="submit" name="submitted" value="&auml;ndern"></td></tr>
+</table>
+</form>
+</td>
+<td width=70>&nbsp;&nbsp;&nbsp;</td>
+<td valign=top></td>
+</tr>
+</table>
+<br>
+
+
+<%FUNCTION%>
+<form action="editFeatureInstance.php" method="POST">
+<input type="hidden" name="id" value="%ID%">
+<input type="hidden" name="action" value="callMethod">
+<input type="hidden" name="objectId" value="%OBJECT_ID%">
+<input type="hidden" name="featureFunctionId" value="%FEATURE_FUNCTION_ID%">
+<tr>
+ <td valign=top width=150>%FUNCTION%</td>
+ <!--td width=20>&nbsp;</td-->
+ <td valign=top><input type="submit" value="Aufrufen"></td>
+ <td width=20>&nbsp;</td>
+ <td valign=top>
+ 	<table cellspacing=0 cellpadding=0>
+  <%PARAM%>
+   <tr height=27><td width=70>%PARAM_NAME%</td><td>&nbsp;&nbsp;%PARAM_ENTRY%</td><td>&nbsp;&nbsp;<img src="img/fragezeichen.gif" title="%COMMENT%"></td></tr>
+  </%PARAM%>
+  </table> 
+ </td>	
+</tr>
+</form>
+<tr><td height="10"> </td></tr>
+</%FUNCTION%>
+
+Actions
+<div style="background:url(img/scheckig.gif);width:100%">
+<hr>
+<table>
+%ACTIONS%
+</table>
+</div>
+
+<br>
+Functions
+<div style="background:url(img/scheckig.gif);width:100%">
+<hr>
+<table>
+%FUNCTIONS%
+</table>
+</div>
+
+<br>
+Results
+<hr>
+<div style="background:url(img/scheckig.gif);width:100%">
+<table>
+%RESULTS%
+</table>
+</div>
+
+<br>
+Events
+<hr>
+<div style="background:url(img/scheckig.gif);width:100%">
+<table>
+%EVENTS%
+</table>
+</div>
+
+
+<script>
+var xmlhttpStatus=false;
+if (typeof XMLHttpRequest != 'undefined') xmlhttpStatus = new XMLHttpRequest();
+if (!xmlhttpStatus) 
+{
+  try 
+  {
+	  xmlhttpStatus = new ActiveXObject("Msxml2.XMLHTTP");
+  }
+  catch(e) 
+  {
+    try 
+    {
+    	xmlhttpStatus = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    catch(e)
+    {
+    	xmlhttpStatus = null;
+    }
+  }
+}
+
+function addInstanceIdFromClipboard(event, obj)
+{
+  try
+  {
+    xmlhttpStatus.open("GET","instanceData.php?info=instanceId&id="+event.dataTransfer.getData("text/plain"));
+    xmlhttpStatus.onreadystatechange = function()
+    {
+      if (xmlhttpStatus.readyState == 4 && xmlhttpStatus.status == 200)
+      {
+          var response = xmlhttpStatus.responseText;
+          if (response!="") obj.value=response;
+      }
+    }
+    xmlhttpStatus.send(null);
+  } catch (e)
+  {
+  	alert(e);
+  }
+}
+
+</script>

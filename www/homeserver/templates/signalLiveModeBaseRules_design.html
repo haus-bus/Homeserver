@@ -1,0 +1,57 @@
+<html>
+<head>
+<link rel="StyleSheet" href="css/main.css" type="text/css" />
+</head>
+<script>
+var xmlhttp=false;
+if (typeof XMLHttpRequest != 'undefined') xmlhttp = new XMLHttpRequest();
+if (!xmlhttp) 
+{
+  try 
+  {
+    xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+  }
+  catch(e) 
+  {
+    try 
+    {
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    catch(e)
+    {
+    	xmlhttp = null;
+    }
+  }
+}
+
+var lastId=%FIRST_ID%;
+function checkUpdate()
+{
+  try
+  {
+	var date = new Date();
+    xmlhttp.open("GET","signalLiveModeBaseRules.php?check=1&action=%ACTION%&lastId="+lastId+"&groupId=%GROUP_ID%&ruleId=%RULE_ID%&cb="+date.getTime());
+    xmlhttp.onreadystatechange = function()
+    {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+      {
+          var result = xmlhttp.responseText;
+          var pos = result.indexOf("#");
+          if (pos!=-1)
+          {
+              lastId=result.substring(0,pos);
+              var content = result.substring(pos+1);
+              document.getElementById("content").innerHTML= content+document.getElementById("content").innerHTML;
+              setTimeout("checkUpdate()",5);
+          }
+          else setTimeout("checkUpdate()",500);
+      }
+    }
+    xmlhttp.send(null);
+  } catch (e){}
+}
+</script>
+
+<body onload="checkUpdate()" leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div class="content" id="content"></div>
+</body>
