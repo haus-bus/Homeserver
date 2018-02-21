@@ -1,0 +1,13 @@
+{
+    "require": {
+        "php-di/php-di": "^5.4",
+        "doctrine/annotations": "^1.4",
+        "doctrine/cache": "~1.4"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "homeserver\\apiv1\\": "./"
+        }
+    }
+}
