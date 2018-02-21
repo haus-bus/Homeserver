@@ -39,7 +39,7 @@ class FeatureRepository extends BaseRepository
         }
         $featureTableName = $this->tableName;
         $roomFeatureTableName = $this->roomFeatureRepo->getTableName();
-        $rows = $this->db->query("SELECT * FROM $featureTableName WHERE id IN (SELECT featureInstanceId FROM $roomFeatureTableName WHERE roomId = $roomId)");
+        $rows = $this->db->select("SELECT * FROM $featureTableName WHERE id IN (SELECT featureInstanceId FROM $roomFeatureTableName WHERE roomId = $roomId)");
 
         $result = [];
         foreach ($rows as $row) {
