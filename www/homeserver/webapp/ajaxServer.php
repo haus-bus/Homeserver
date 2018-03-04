@@ -120,7 +120,7 @@ else if ($command == "click")
       {
         $duration = $functionParam1;
         if ($duration == "") $duration = "0";
-        callObjectMethodByName($id, "on", array ("onTime" => $duration ));
+        callObjectMethodByName($id, "on", array ("duration" => $duration ));
       }
     }
   }
@@ -306,8 +306,8 @@ function updateStatus()
     else if ($data->featureClassesId == $temperatureClassesId)
     {
       $myStatus = $data->paramData[0]->dataValue . "." . $data->paramData[1]->dataValue;
-      if ( $_SESSION["utf8Encoding"] == 1) $myStatus .= utf8_encode("°") . "C";
-      else $myStatus .= "°C";
+      if ( $_SESSION["utf8Encoding"] == 1) $myStatus .= utf8_encode("ï¿½") . "C";
+      else $myStatus .= "ï¿½C";
       if ($data->name == "Status") setObjectStatus($obj->senderObj, 1, $myStatus);
     }
     else if ($data->featureClassesId == $humidityClassesId)
