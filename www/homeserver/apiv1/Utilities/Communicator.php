@@ -207,10 +207,15 @@ class Communicator implements ICommunicator
      * @throws \Exception if the configuration could not be accessed
      */
     private function getBroadcastNetworkIp() {
-        $conf = $this->confRepository->getById(45);
-        if ($conf == null || $conf->getValue() == "")
+        try {
+            $conf = $this->confRepository->getById(45);
+            if ($conf == null || $conf->getValue() == "")
+                return '255.255.255.255';
+            else
+                return $conf->getValue();
+    
+        } catch (\Exception $ex) {
             return '255.255.255.255';
-        else
-            return $conf->getValue();
+        }
     }
 }

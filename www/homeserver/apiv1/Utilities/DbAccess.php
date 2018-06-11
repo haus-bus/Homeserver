@@ -116,8 +116,8 @@ class DbAccess
     {
         $rows = array();
         $result = $this->query($query);
-        if ($result == false) {
-            throw new \Exception(self::$connection->connect_error);
+        if ($result === false) {
+            throw new \Exception(self::$connection->connect_error . ": $query");
         }
         while ($row = $result->fetch_assoc()) {
             // fixme: encoding
