@@ -955,8 +955,7 @@ if ($action == "activateBootloader" || $action == "fwUpdate")
         die("Fehler 3");
     
     $orig = $_FILES['userfile']['name'];
-    if ($force != 1 && $orig != "" && strpos($orig, $neededFirmware)  === FALSE)
-        die("Fehler: Nicht kompatible Firmware. Erwartet wird: " . $row[0]);
+    if ($force != 1 && $orig != "" && strpos($orig, $neededFirmware)  === FALSE && $row[0]!='MS6') die("Fehler: Nicht kompatible Firmware. Erwartet wird: " . $row[0]);
     if ($orig == "")
     {
       $newestFirmware = "";
@@ -1023,7 +1022,9 @@ if ($action == "activateBootloader" || $action == "fwUpdate")
       if ($firstWriteId == - 1)
         $firstWriteId = $lastLogId;
       
-      $result = callObjectMethodByNameAndRecover($objectId, "writeMemory", $data, "MemoryStatus", 2, 3,0);
+      usleep(50000);
+      
+      $result = callObjectMethodByNameAndRecover($objectId, "writeMemory", $data, "MemoryStatus", 2, 3,1);
       if ($result==-1)
       {
       	updateControllerStatus ();

@@ -324,10 +324,10 @@ function callObjectMethodByNameAndRecover($objectId, $methodName, $params, $resu
      //echo "A".$result."<br>";
       if ($result!=-1)
         return $result;
-      echo "Recovery bei $objectId $methodName <br>";
+      echo "Recovery bei $objectId $methodName ... (waitSeconds = $waitSeconds, repetitions=".($i+1)."/".$repetitions.", fail=$fail)<br>";
       flushIt();
    }
-   
+
    if ($fail==1)
       die("Antwort nicht empfangen $objectId $methodName");
    else

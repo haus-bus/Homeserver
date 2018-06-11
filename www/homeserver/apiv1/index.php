@@ -56,15 +56,25 @@ try {
                     ARRAY_FILTER_USE_KEY));
             break;
 
+        case "OPTIONS":
+            header("Access-Control-Allow-Origin: *");
+            header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
+            header("Access-Control-Allow-Credentials: false");
+            header("Access-Control-Max-Age: 86400");
+            header("Access-Control-Allow-Headers: X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
+            return;
+
         default:
             throw new \Exception("The requestMethod '$method' is undefined in this api");
     }
 
     // return output
+    header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
     echo json_encode($result);
 
 } catch (\Exception $ex) {
+    header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
     http_response_code(404);
     echo json_encode(array(

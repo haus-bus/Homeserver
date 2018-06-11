@@ -8,10 +8,10 @@
   <table cellspacing=0 cellpadding=0>
    <tr><td>Object ID</td><td>&nbsp;%OBJECT_ID_FORMATED%</td></tr>
    <tr><td>Status</td><td>&nbsp;%STATUS%</td></tr>
-   <tr><td>Name</td><td>&nbsp;<input type="text" name="name" value="%CONTROLLER_NAME%" size="39"> <input type="checkbox" name="delete" value="1"> L&ouml;schen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="submitted" value="&auml;ndern"></td></form>
+   <tr><td>Name</td><td>&nbsp;<input type="text" name="name" value="%CONTROLLER_NAME%" size="39"> <input type="checkbox" name="delete" value="1"> L&ouml;schen &nbsp;&nbsp;<input type="submit" name="submitted" value="&auml;ndern"></td></form>
    <%OPT_FW_UPDATE%>
    <form action="editController.php" enctype="multipart/form-data" method="POST"><input type="hidden" name="id" value="%ID%"><input type="hidden" name="action" value="fwUpdate">
-    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Firmwareupdate</td><td>&nbsp;<input name="userfile" type="file" size="22" ><input type="checkbox" name="force" value="1"> Zwangsladen <input type="submit" value="Update"></td>
+    <td>&nbsp;&nbsp;Firmwareupdate</td><td>&nbsp;<input name="userfile" type="file" size="22" ><input type="checkbox" name="force" value="1"> Zwangsladen <input type="submit" value="Update"></td>
    </form>
    </%OPT_FW_UPDATE%> 
    </tr>
@@ -21,12 +21,13 @@
 </table>
 <br>
 <a href="editRules.php?action=readRules&objectId=%OBJECT_ID%"><u>Regeln auslesen</a></u>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="restoreController.php?id=%ID%"><u>Controller wiederherstellen</a></u>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=recover"><u>Konfiguration wiederherstellen</a></u>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=restoreFactorySettings"><u>Auslieferzustand wiederherstellen</a></u>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=loadConfigTemplate"><u>Konfigurationstemplate laden</a></u>
+&nbsp;&nbsp;&nbsp;<a href="editRules.php?action=submitRules&singleControllerId=%OBJECT_ID%"><u>Regeln schreiben</a></u>
+&nbsp;&nbsp;&nbsp;<a href="restoreController.php?id=%ID%"><u>Controller wiederherstellen</a></u>
+&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=recover"><u>Konfiguration wiederherstellen</a></u>
+&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=restoreFactorySettings"><u>Auslieferzustand wiederherstellen</a></u>
+&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=loadConfigTemplate"><u>Konfigurationstemplate laden</a></u>
 <%OPT_ACTIVATE_BOOTLOADER%>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=activateBootloader"><u>Bootloader aktivieren</a>
+&nbsp;&nbsp;&nbsp;<a href="editController.php?id=%ID%&action=activateBootloader"><u>Bootloader aktivieren</a>
 </%OPT_ACTIVATE_BOOTLOADER%>
 <br><br><br>
 

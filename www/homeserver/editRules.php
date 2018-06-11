@@ -127,7 +127,8 @@ else if ($action == "submitRules")
 
   // Zu allen Features von online Controllern Gruppenregeln suchen
   $filterDone = "";
-  $erg = QUERY("select id,objectId,name,firmwareId,size from controller where bootloader!='1' and online='1'");
+  if ($singleControllerId!="") $andSingleController=" and objectId='$singleControllerId'";
+  $erg = QUERY("select id,objectId,name,firmwareId,size from controller where bootloader!='1' and online='1' $andSingleController");
   while ( $obj = MYSQL_FETCH_OBJECT($erg) )
   {
   	//echo "Controller ".$obj->name."<br>";
@@ -232,7 +233,7 @@ else if ($action == "submitRules")
       ksort($rulesData);
       
       $dataChanged = checkAndTraceDataDifferences($groups, $obj->id, $rulesData, $dataPos);
-      if ($dataChanged || $nocache == 1)
+      if ($dataChanged || $nocache == 1 || $singleControllerId!="")
       {
         echo "<nobr> $nrGroups Regeln an Controller " . $obj->name . " ($dataPos Bytes)<br>";
         flushIt();
@@ -314,105 +315,108 @@ else if ($action == "submitRules")
     file_put_contents("0x".decHex($objectId).".bin", $fileBuffer);
   }
   
-  echo "</td><td width=20>&nbsp;</td><td valign=top><font face=verdana size=2>";
-  echo "<u>Konfiguriere Taster</u><br>";
-  flushIt();
-  
-  $tasterClassesId = getClassesIdByName("Taster");
-  
-  $erg = QUERY("select name, functionId,id from featureFunctions where type='EVENT' and featureClassesId='$tasterClassesId'");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  if ($singleControllerId=="")
   {
-    $tasterEvents[$obj->functionId] = $obj->name;
-    $tasterEventsId[$obj->id] = $obj->name;
-  }
-  
-  $notifyOnCovered = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnCovered");
-  $notifyOnClicked = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnClicked");
-  $notifyOnDoubleClicked = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnDoubleClicked");
-  $notifyOnStartHold = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnStartHold");
-  $notifyOnEndHold = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnEndHold");
-  $notifyOnFree = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnFree");
-  
-  $bitmask = "";
-  $erg = QUERY("SELECT distinct featureInstanceId, functionId, controller.id from rulesignals join featureInstances on (featureInstances.id = rulesignals.featureInstanceId) join featureClasses on (featureClasses.id = featureInstances.featureClassesId) join featureFunctions on (featureFunctions.id=featureFunctionId) join controller on (controller.id = featureInstances.controllerId) where featureClasses.id='$tasterClassesId'  and online='1' and groupAlias='0' order by featureInstanceId");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
-  {
-    if ($bitmask[$obj->featureInstanceId] == "") $bitmask[$obj->featureInstanceId] = 0;
+    echo "</td><td width=20>&nbsp;</td><td valign=top><font face=verdana size=2>";
+    echo "<u>Konfiguriere Taster</u><br>";
+    flushIt();
     
-    if ($tasterEvents[$obj->functionId] == "evCovered") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnCovered);
-    else if ($tasterEvents[$obj->functionId] == "evClicked") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnClicked);
-    else if ($tasterEvents[$obj->functionId] == "evDoubleClick") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnDoubleClicked);
-    else if ($tasterEvents[$obj->functionId] == "evHoldStart") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnStartHold);
-    else if ($tasterEvents[$obj->functionId] == "evHoldEnd") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnEndHold);
-    else if ($tasterEvents[$obj->functionId] == "evFree") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnFree);
-  }
-  
-  
-  // Und noch Signale aus den Diagrammen berücksichtigen
-  $erg = QUERY("SELECT DISTINCT featureInstanceId, graphsignalevents.functionId
-FROM graphsignalevents
-JOIN featureInstances ON ( featureInstances.id = graphsignalevents.featureInstanceId )
-JOIN featureClasses ON ( featureClasses.id = featureInstances.featureClassesId )
-JOIN featureFunctions ON ( featureFunctions.id = graphsignalevents.functionId )
-JOIN controller ON ( controller.id = featureInstances.controllerId )
-WHERE featureClasses.id = '1'
-AND online = '1'
-ORDER BY featureInstanceId");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
-  {
-    if ($bitmask[$obj->featureInstanceId] == "") $bitmask[$obj->featureInstanceId] = 0;
+    $tasterClassesId = getClassesIdByName("Taster");
     
-    if ($tasterEventsId[$obj->functionId] == "evCovered") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnCovered);
-    else if ($tasterEventsId[$obj->functionId] == "evClicked") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnClicked);
-    else if ($tasterEventsId[$obj->functionId] == "evDoubleClick") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnDoubleClicked);
-    else if ($tasterEventsId[$obj->functionId] == "evHoldStart") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnStartHold);
-    else if ($tasterEventsId[$obj->functionId] == "evHoldEnd") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnEndHold);
-    else if ($tasterEventsId[$obj->functionId] == "evFree") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnFree);
-  }
-  
-  foreach ( $bitmask as $featureInstanceId => $mask )
-  {
-    $erg3 = MYSQL_QUERY("select controller.size as controllerSize,controller.name as controllerName,controller.objectId as controllerObjectId, featureInstances.name as featurInstanceName from featureInstances join controller on (controller.id=featureInstances.controllerId) where featureInstances.id='$featureInstanceId' limit 1") or die(MYSQL_ERROR());
-    $obj3 = MYSQL_FETCH_OBJECT($erg3);
-    if ($obj3->controllerSize == "999") continue; // PC rauslassen
-    $tasterName = $obj3->controllerName . "-" . $obj3->featurInstanceName;
-    
-    callInstanceMethodByName($featureInstanceId, "getConfiguration");
-    $result = waitForInstanceResultByName($featureInstanceId, 2, "Configuration", $lastLogId, "funtionDataParams", 0);
-    if ($result == - 1)
+    $erg = QUERY("select name, functionId,id from featureFunctions where type='EVENT' and featureClassesId='$tasterClassesId'");
+    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
     {
-      echo "Wiederholung bei $tasterName <br>";
-      flushIt();
+      $tasterEvents[$obj->functionId] = $obj->name;
+      $tasterEventsId[$obj->id] = $obj->name;
+    }
+    
+    $notifyOnCovered = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnCovered");
+    $notifyOnClicked = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnClicked");
+    $notifyOnDoubleClicked = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnDoubleClicked");
+    $notifyOnStartHold = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnStartHold");
+    $notifyOnEndHold = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnEndHold");
+    $notifyOnFree = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnFree");
+    
+    $bitmask = "";
+    $erg = QUERY("SELECT distinct featureInstanceId, functionId, controller.id from rulesignals join featureInstances on (featureInstances.id = rulesignals.featureInstanceId) join featureClasses on (featureClasses.id = featureInstances.featureClassesId) join featureFunctions on (featureFunctions.id=featureFunctionId) join controller on (controller.id = featureInstances.controllerId) where featureClasses.id='$tasterClassesId'  and online='1' and groupAlias='0' order by featureInstanceId");
+    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    {
+      if ($bitmask[$obj->featureInstanceId] == "") $bitmask[$obj->featureInstanceId] = 0;
+      
+      if ($tasterEvents[$obj->functionId] == "evCovered") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnCovered);
+      else if ($tasterEvents[$obj->functionId] == "evClicked") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnClicked);
+      else if ($tasterEvents[$obj->functionId] == "evDoubleClick") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnDoubleClicked);
+      else if ($tasterEvents[$obj->functionId] == "evHoldStart") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnStartHold);
+      else if ($tasterEvents[$obj->functionId] == "evHoldEnd") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnEndHold);
+      else if ($tasterEvents[$obj->functionId] == "evFree") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnFree);
+    }
+    
+    
+    // Und noch Signale aus den Diagrammen berücksichtigen
+    $erg = QUERY("SELECT DISTINCT featureInstanceId, graphsignalevents.functionId
+  FROM graphsignalevents
+  JOIN featureInstances ON ( featureInstances.id = graphsignalevents.featureInstanceId )
+  JOIN featureClasses ON ( featureClasses.id = featureInstances.featureClassesId )
+  JOIN featureFunctions ON ( featureFunctions.id = graphsignalevents.functionId )
+  JOIN controller ON ( controller.id = featureInstances.controllerId )
+  WHERE featureClasses.id = '1'
+  AND online = '1'
+  ORDER BY featureInstanceId");
+    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    {
+      if ($bitmask[$obj->featureInstanceId] == "") $bitmask[$obj->featureInstanceId] = 0;
+      
+      if ($tasterEventsId[$obj->functionId] == "evCovered") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnCovered);
+      else if ($tasterEventsId[$obj->functionId] == "evClicked") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnClicked);
+      else if ($tasterEventsId[$obj->functionId] == "evDoubleClick") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnDoubleClicked);
+      else if ($tasterEventsId[$obj->functionId] == "evHoldStart") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnStartHold);
+      else if ($tasterEventsId[$obj->functionId] == "evHoldEnd") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnEndHold);
+      else if ($tasterEventsId[$obj->functionId] == "evFree") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnFree);
+    }
+    
+    foreach ( $bitmask as $featureInstanceId => $mask )
+    {
+      $erg3 = MYSQL_QUERY("select controller.size as controllerSize,controller.name as controllerName,controller.objectId as controllerObjectId, featureInstances.name as featurInstanceName from featureInstances join controller on (controller.id=featureInstances.controllerId) where featureInstances.id='$featureInstanceId' limit 1") or die(MYSQL_ERROR());
+      $obj3 = MYSQL_FETCH_OBJECT($erg3);
+      if ($obj3->controllerSize == "999") continue; // PC rauslassen
+      $tasterName = $obj3->controllerName . "-" . $obj3->featurInstanceName;
+      
       callInstanceMethodByName($featureInstanceId, "getConfiguration");
       $result = waitForInstanceResultByName($featureInstanceId, 2, "Configuration", $lastLogId, "funtionDataParams", 0);
       if ($result == - 1)
       {
-        echo "Fehler bei $tasterName <br>";
+        echo "Wiederholung bei $tasterName <br>";
         flushIt();
-        continue;
+        callInstanceMethodByName($featureInstanceId, "getConfiguration");
+        $result = waitForInstanceResultByName($featureInstanceId, 2, "Configuration", $lastLogId, "funtionDataParams", 0);
+        if ($result == - 1)
+        {
+          echo "Fehler bei $tasterName <br>";
+          flushIt();
+          continue;
+        }
       }
+      
+      $holdTimeout = getResultDataValueByName("holdTimeout", $result);
+      $eventMask = getResultDataValueByName("eventMask", $result);
+      if ($eventMask > 127) $mask += 128;
+      $waitForDoubleClickTimeout = getResultDataValueByName("waitForDoubleClickTimeout", $result);
+      
+      $configArray = array (
+          "holdTimeout" => $holdTimeout,
+          "waitForDoubleClickTimeout" => $waitForDoubleClickTimeout,
+          "eventMask" => $mask 
+      );
+      $dataChanged = checkAndTraceConfigData($featureInstanceId, $configArray);
+      
+      if ($dataChanged || $nocache == 1)
+      {
+        echo "<nobr>$tasterName: hold = $holdTimeout, doubleClick = $waitForDoubleClickTimeout, mask = $mask <br>";
+        flushIt();
+        callInstanceMethodByName($featureInstanceId, "setConfiguration", $configArray);
+      }
+      //else liveOut("<i>Ungeändert: $tasterName: hold = $holdTimeout, doubleClick = $waitForDoubleClickTimeout, mask = $mask</i>");
     }
-    
-    $holdTimeout = getResultDataValueByName("holdTimeout", $result);
-    $eventMask = getResultDataValueByName("eventMask", $result);
-    if ($eventMask > 127) $mask += 128;
-    $waitForDoubleClickTimeout = getResultDataValueByName("waitForDoubleClickTimeout", $result);
-    
-    $configArray = array (
-        "holdTimeout" => $holdTimeout,
-        "waitForDoubleClickTimeout" => $waitForDoubleClickTimeout,
-        "eventMask" => $mask 
-    );
-    $dataChanged = checkAndTraceConfigData($featureInstanceId, $configArray);
-    
-    if ($dataChanged || $nocache == 1)
-    {
-      echo "<nobr>$tasterName: hold = $holdTimeout, doubleClick = $waitForDoubleClickTimeout, mask = $mask <br>";
-      flushIt();
-      callInstanceMethodByName($featureInstanceId, "setConfiguration", $configArray);
-    }
-    //else liveOut("<i>Ungeändert: $tasterName: hold = $holdTimeout, doubleClick = $waitForDoubleClickTimeout, mask = $mask</i>");
   }
   
   echo "</td></tr></table></div>";

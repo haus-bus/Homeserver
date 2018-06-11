@@ -30,7 +30,7 @@ echo "Opening UDP Socket on port $UDP_PORT and sourceIp ";
 $sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 if (!socket_set_option($sock, SOL_SOCKET, SO_REUSEADDR, 1)) echo 'Could not set option SO_REUSEADDR to socket: '. socket_strerror(socket_last_error()) . PHP_EOL;
 $sourceIp = getNetworkIp();
-if( $sourceIp == '255.255.255.255' ) $sourceIp = 0;
+if( $sourceIp == '255.255.255.255' ) $sourceIp = "0";
 echo $sourceIp . $lb;
 socket_bind($sock, $sourceIp, $UDP_PORT) or die('Could not bind to address');
 
@@ -43,10 +43,7 @@ if ($output==0) echo "in SILENT MODE !";
 else echo "in VERBOSE MODE !";
 echo $lb;
 
-
-
-
-
+$myMessageCounter=0;
 while(true)
 {
   $data = socket_read($sock, 10000);
@@ -186,7 +183,8 @@ while(true)
     }
     
     // DEBUG Ausgabe
-    if ($output==1) echo "Nachrichtenzähler: $messageCounter".$lb;
+    $myMessageCounter++;
+    if ($output==1) echo "Nachrichtenzähler: $messageCounter  [".$myMessageCounter."]".$lb;
     if ($output==1) echo "Nachrichtentyp: $messageType".$lb;
     if ($output==1) echo $lb;
 

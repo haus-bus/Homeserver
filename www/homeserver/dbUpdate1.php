@@ -152,6 +152,11 @@ $paramsId = getOrCreateFunctionParam($functionsId, "IP3", "BYTE",'',"Standard");
 $functionId=200;
 $functionsId = getOrCreateFunction($classesId, "evWhoIsServer", $functionId, "EVENT", "Standard");
 
+
+MYSQL_QUERY("CREATE TABLE IF NOT EXISTS `appmessages` (`id` int(11) NOT NULL,  `time` int(11) NOT NULL,  `title` varchar(100) NOT NULL,  `message` varchar(255) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=latin1");
+MYSQL_QUERY("ALTER TABLE `appmessages` ADD PRIMARY KEY (`id`)");
+MYSQL_QUERY("ALTER TABLE `appmessages` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT");
+
 function getOrCreateClass($classId, $className, $classesId, $view)
 {
 	$erg = MYSQL_QUERY("select id from featureclasses where name='$className' limit 1");
