@@ -1,11 +1,10 @@
 <?php
 
-require_once($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/dbconnect.php");
-
 return [
-    'db.host' => $server,
-    'db.name' => $datenbank,
-    'db.user' => $dbuser,
-    'db.password' => $dbpasswort,
-    'db.schema' => $dbuser,
+    'db.host' => "127.0.0.1",
+    'db.name' => "homeserver",
+    'db.user' => "root",
+    'db.password' => "",
+    'db.schema' => "homeserver",
 ];
+

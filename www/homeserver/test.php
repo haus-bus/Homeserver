@@ -1,5 +1,26 @@
 <?php
 
+
+include("include/all.php");
+$MAX_LOG_ENTRIES=100000;
+cleanUp();
+
+die("5:test");
+
+die("A".getSonoffWatt("192.168.178.117")."A");
+
+function getSonoffWatt($ip)
+{
+  $erg = file_get_contents("http://$ip/ay");
+  $pos = strpos($erg,"Power");
+  $pos = strpos($erg,"}",$pos);
+  $pos2 = strpos($erg," W",$pos);
+  $watt = substr($erg,$pos+1,$pos2-$pos-1);
+  return $watt;
+}
+
+
+
 for ($u=0;$u<20;$u++)
 {
   if ($u%2==0) $val=100;

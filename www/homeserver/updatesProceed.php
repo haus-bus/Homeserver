@@ -233,7 +233,7 @@ if ($proceed == 1)
           $i ++;
           flushIt ();
           
-          // sleepMS(50); //TODO warum hilft das ?
+          sleepMS(10000); //TODO warum hilft das ?
         }
         fclose ( $fd );
         
