@@ -20,9 +20,9 @@ if ($edit!="")
 	{
 		echo "<center><form action='editUserPluginData.php' method='POST'><input type=hidden name=edit value='$edit'><input type=hidden name=submitted value='1'>";
 		$erg = QUERY("select userValue from userData where userKey='$edit' limit 1");
-    $obj=MYSQL_FETCH_OBJECT($erg);
+    $obj=mysqli_fetch_OBJECT($erg);
     $value=$obj->userValue;
-		echo "Wert von Key $edit ändern <hr><br><input type=text name=value size=30 value='$value'><br><input type=submit value='Ändern'><br><br><br><br><br><a href='editUserPluginData.php'>abbrechen</a>";
+		echo "Wert von Key $edit Ã¤ndern <hr><br><input type=text name=value size=30 value='$value'><br><input type=submit value='Ã„ndern'><br><br><br><br><br><a href='editUserPluginData.php'>abbrechen</a>";
 		
 		echo "</form>";
 		exit;
@@ -33,7 +33,7 @@ $html = file_get_contents("templates/editUserPluginData_design.html");
 $elementsTag = getTag("%ELEMENTS%",$html);
 $elements="";
 $erg = QUERY("select * from userData order by userKey");
-while($obj=MYSQL_FETCH_OBJECT($erg))
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	  $actTag = $elementsTag;
 	  $actTag = str_replace("%KEY_ENCODED%",urlencode($obj->userKey),$actTag);

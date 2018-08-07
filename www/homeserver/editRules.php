@@ -32,7 +32,7 @@ if ($action == "readRules")
 else if ($action == "checkRules")
 {
   echo "<br><div style='padding-left:20px'>";
-  echo "<u>Generiere und prüfe Regeln</u><br>";
+  echo "<u>Generiere und prÃ¼fe Regeln</u><br>";
   echo "<div style='width:98%;height:500px;font-face:verdana;font-size:11px' id='updateArea'></div>";
   flushIt();
   
@@ -52,20 +52,20 @@ else if ($action == "addTimeSignal" || $action == "addTimeSignalSunrise" || $act
   else
   {
     $erg = QUERY("select featureInstanceId from groupFeatures where groupId='$groupId' order by id limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg)) $firstAktor = $row[0];
+    if ($row = mysqli_fetch_ROW($erg)) $firstAktor = $row[0];
     else die("Kein Aktor gefunden in Gruppe $groupId");
   
     $erg = QUERY("select controllerId from featureInstances where id='$firstAktor' limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg)) $controllerId = $row[0];
+    if ($row = mysqli_fetch_ROW($erg)) $controllerId = $row[0];
     else die("Controller zu featureId $firstAktor nicht gefunden");
   
     $erg = QUERY("select id from featureInstances where controllerId='$controllerId' and featureClassesId='$CONTROLLER_CLASSES_ID' limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg)) $controllerInstanceId = $row[0];
+    if ($row = mysqli_fetch_ROW($erg)) $controllerInstanceId = $row[0];
     else die("controllerInstanceId zu controllerId $controllerId nicht gefunden");
   
     QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId) 
                         values('$groupId','7','31','255','7','31','255','0','0')");
-    $ruleId = mysql_insert_id();
+    $ruleId = query_insert_id();
   
     if ($action == "addTimeSignalSunrise") $myEvent = getClassesIdFunctionsIdByName($CONTROLLER_CLASSES_ID, "evDay");
     else if ($action == "addTimeSignalSunset") $myEvent = getClassesIdFunctionsIdByName($CONTROLLER_CLASSES_ID, "evNight");
@@ -73,7 +73,7 @@ else if ($action == "addTimeSignal" || $action == "addTimeSignalSunrise" || $act
   
     QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
                               values('$ruleId','$controllerInstanceId','$myEvent')");
-    $ruleSignalId = mysql_insert_id();
+    $ruleSignalId = query_insert_id();
   
     if ($action == "addTimeSignalSunrise" || $action == "addTimeSignalSunset")
     {
@@ -83,7 +83,7 @@ else if ($action == "addTimeSignal" || $action == "addTimeSignalSunrise" || $act
     else
     {
       $erg = QUERY("select id from featureFunctionParams where featureFunctionId='$evTimeFunctionId' and name='weekTime' limit 1");
-      $row = MYSQL_FETCH_ROW($erg);
+      $row = mysqli_fetch_ROW($erg);
       $paramsId = $row[0];
       QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
                                  values('$ruleSignalId','$paramsId','0')");
@@ -96,7 +96,7 @@ else if ($action == "addTimeSignal" || $action == "addTimeSignalSunrise" || $act
 else if ($action == "submitRules")
 {
   echo "<br><div style='padding-left:20px'><table width=98%><tr><td colspan=3 valign=top><font face=verdana size=2>";
-  echo "<u>Generiere und püfe Regeln</u> <br>";
+  echo "<u>Generiere und pÃ¼fe Regeln</u> <br>";
   echo "<div style='width:98%;height:170px;overflow-x:hidden;overflow-y:scroll;font-face:verdana;font-size:11px' id='updateArea'></div></td></tr>";
   echo "<tr><td valign=top width=50%><font face=verdana size=2>";
   
@@ -107,11 +107,11 @@ else if ($action == "submitRules")
   
   // Gruppenstates durchnummerierte Values geben
   $erg = QUERY("select distinct(groupId) from groupstates");
-  while ( $row = MYSQL_FETCH_ROW($erg) )
+  while ( $row = mysqli_fetch_ROW($erg) )
   {
     $i = 0;
     $erg2 = QUERY("select id from groupstates where groupId='$row[0]' order by id");
-    while ( $row2 = MYSQL_FETCH_ROW($erg2) )
+    while ( $row2 = mysqli_fetch_ROW($erg2) )
     {
       QUERY("UPDATE groupstates set value='$i' where id='$row2[0]' limit 1");
       $i++;
@@ -120,7 +120,7 @@ else if ($action == "submitRules")
   
   $pcInstances = "";
   $erg = QUERY("select featureInstances.id from featureInstances join controller on (featureInstances.controllerId=controller.id) where size='999'");
-  while ( $row = MYSQL_FETCH_ROW($erg) )
+  while ( $row = mysqli_fetch_ROW($erg) )
   {
     $pcInstances .= " and featureInstanceId!='" . $row[0] . "'";
   }
@@ -129,34 +129,34 @@ else if ($action == "submitRules")
   $filterDone = "";
   if ($singleControllerId!="") $andSingleController=" and objectId='$singleControllerId'";
   $erg = QUERY("select id,objectId,name,firmwareId,size from controller where bootloader!='1' and online='1' $andSingleController");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
   	//echo "Controller ".$obj->name."<br>";
-    // PC-Server überspringen
+    // PC-Server Ã¼berspringen
     if ($obj->size == "999")
       continue;
       
-      // Position 0 für Anzahl der Gruppen freihalten
+      // Position 0 fÃ¼r Anzahl der Gruppen freihalten
     $dataPos = 1;
     $nrGroups = 0;
     $objectId = $obj->objectId;
     
     $groups = "";
     $erg2 = QUERY("select id,featureClassesId from featureInstances where controllerId='$obj->id'");
-    while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+    while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
     {
       $erg3 = QUERY("select groupId from groupFeatures where featureInstanceId='$obj2->id'");
-      while ( $obj3 = MYSQL_FETCH_OBJECT($erg3) )
+      while ( $obj3 = mysqli_fetch_OBJECT($erg3) )
       {
-        // Prüfen obs das erste bzw einzige Feature in dieser Gruppe ist. Ansonsten ist wer anderes zuständig
+        // PrÃ¼fen obs das erste bzw einzige Feature in dieser Gruppe ist. Ansonsten ist wer anderes zustÃ¤ndig
         $erg4 = QUERY("select featureInstanceId from groupFeatures where groupId='$obj3->groupId' $pcInstances order by id limit 1");
-        $row4 = MYSQL_FETCH_ROW($erg4);
+        $row4 = mysqli_fetch_ROW($erg4);
         if ($row4[0] == $obj2->id)
         {
         	//echo $obj3->groupId;
         	
           $erg5 = QUERY("select subOf,groupType,active from groups where id='$obj3->groupId' limit 1");
-          $row5 = MYSQL_FETCH_ROW($erg5);
+          $row5 = mysqli_fetch_ROW($erg5);
           
           if ($row5[1] != "")
           {
@@ -166,7 +166,7 @@ else if ($action == "submitRules")
           
           if ($row5[2] ==0)
           {
-          	//echo "überspringe inaktive gruppe  $obj3->groupId <br>";
+          	//echo "Ã¼berspringe inaktive gruppe  $obj3->groupId <br>";
             continue; 
           }
           
@@ -186,11 +186,11 @@ else if ($action == "submitRules")
           $filterDone[$obj3->groupId] = 1;
           
           $erg4 = QUERY("select count(*) from rules where groupId='$obj3->groupId'");
-          $row4 = MYSQL_FETCH_ROW($erg4);
+          $row4 = mysqli_fetch_ROW($erg4);
           if ($row4[0] > 0)
           {
             
-            // Prüfen, ob die Regel mindestens einen Trigger und eine Aktion hat
+            // PrÃ¼fen, ob die Regel mindestens einen Trigger und eine Aktion hat
             $ruleIsOk = 1;
             $groupHasValidRules = addGroupRuleData($obj3->groupId);
             if ($groupHasValidRules)
@@ -211,8 +211,8 @@ else if ($action == "submitRules")
     {
       $pcServerDone = 1;
       
-      $erg6 = QUERY("select groups.id from groups join groupFeatures on (groupFeatures.groupId=groups.id) join featureInstances on (featureInstances.id = groupFeatures.featureInstanceId) join controller on (controller.id=featureInstances.controllerId) where controller.size=999 and single='1'");
-      while ($row6 = MYSQL_FETCH_ROW($erg6))
+      $erg6 = QUERY("select groups.id from groups join groupFeatures on (groupFeatures.groupId=groups.id) join featureInstances on (featureInstances.id = groupFeatures.featureInstanceId) join controller on (controller.id=featureInstances.controllerId) where controller.size=999 and single='1' order by groups.id");
+      while ($row6 = mysqli_fetch_ROW($erg6))
       {
         $pcServerGroupId=$row6[0];
         $groupHasValidRules = addGroupRuleData($pcServerGroupId, 1, $obj->objectId);
@@ -240,14 +240,14 @@ else if ($action == "submitRules")
       }
       else
       {
-        //liveOut("<i>Ungeändert $nrGroups Regeln an Controller ".$obj->name."</i>");
+        //liveOut("<i>UngeÃ¤ndert $nrGroups Regeln an Controller ".$obj->name."</i>");
         continue;
       }
       
       $result = callObjectMethodByNameAndRecover($objectId, "getConfiguration","","Configuration",3,5,0);
       if ($result==-1)
       {
-      	echo "<b>Controller antwortet nicht... Überspringe Regeln....!</b><br>";
+      	echo "<b>Controller antwortet nicht... Ãœberspringe Regeln....!</b><br>";
       	continue;
       }
       
@@ -295,7 +295,7 @@ else if ($action == "submitRules")
         $rest = $dataPos - $ready;
         if ($rest < 1)
         {
-          // Am ende noch ein 0 Package schicken, falls der letzte Block genau blockSize groß war
+          // Am ende noch ein 0 Package schicken, falls der letzte Block genau blockSize groÃŸ war
           if ($actBlockSize == $blockSize)
           {
             $data["offset"] = $ready;
@@ -324,7 +324,7 @@ else if ($action == "submitRules")
     $tasterClassesId = getClassesIdByName("Taster");
     
     $erg = QUERY("select name, functionId,id from featureFunctions where type='EVENT' and featureClassesId='$tasterClassesId'");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       $tasterEvents[$obj->functionId] = $obj->name;
       $tasterEventsId[$obj->id] = $obj->name;
@@ -339,7 +339,7 @@ else if ($action == "submitRules")
     
     $bitmask = "";
     $erg = QUERY("SELECT distinct featureInstanceId, functionId, controller.id from rulesignals join featureInstances on (featureInstances.id = rulesignals.featureInstanceId) join featureClasses on (featureClasses.id = featureInstances.featureClassesId) join featureFunctions on (featureFunctions.id=featureFunctionId) join controller on (controller.id = featureInstances.controllerId) where featureClasses.id='$tasterClassesId'  and online='1' and groupAlias='0' order by featureInstanceId");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       if ($bitmask[$obj->featureInstanceId] == "") $bitmask[$obj->featureInstanceId] = 0;
       
@@ -352,7 +352,7 @@ else if ($action == "submitRules")
     }
     
     
-    // Und noch Signale aus den Diagrammen berücksichtigen
+    // Und noch Signale aus den Diagrammen berÃ¼cksichtigen
     $erg = QUERY("SELECT DISTINCT featureInstanceId, graphsignalevents.functionId
   FROM graphsignalevents
   JOIN featureInstances ON ( featureInstances.id = graphsignalevents.featureInstanceId )
@@ -362,7 +362,7 @@ else if ($action == "submitRules")
   WHERE featureClasses.id = '1'
   AND online = '1'
   ORDER BY featureInstanceId");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       if ($bitmask[$obj->featureInstanceId] == "") $bitmask[$obj->featureInstanceId] = 0;
       
@@ -376,8 +376,8 @@ else if ($action == "submitRules")
     
     foreach ( $bitmask as $featureInstanceId => $mask )
     {
-      $erg3 = MYSQL_QUERY("select controller.size as controllerSize,controller.name as controllerName,controller.objectId as controllerObjectId, featureInstances.name as featurInstanceName from featureInstances join controller on (controller.id=featureInstances.controllerId) where featureInstances.id='$featureInstanceId' limit 1") or die(MYSQL_ERROR());
-      $obj3 = MYSQL_FETCH_OBJECT($erg3);
+      $erg3 = QUERY("select controller.size as controllerSize,controller.name as controllerName,controller.objectId as controllerObjectId, featureInstances.name as featurInstanceName from featureInstances join controller on (controller.id=featureInstances.controllerId) where featureInstances.id='$featureInstanceId' limit 1");
+      $obj3 = mysqli_fetch_OBJECT($erg3);
       if ($obj3->controllerSize == "999") continue; // PC rauslassen
       $tasterName = $obj3->controllerName . "-" . $obj3->featurInstanceName;
       
@@ -415,7 +415,7 @@ else if ($action == "submitRules")
         flushIt();
         callInstanceMethodByName($featureInstanceId, "setConfiguration", $configArray);
       }
-      //else liveOut("<i>Ungeändert: $tasterName: hold = $holdTimeout, doubleClick = $waitForDoubleClickTimeout, mask = $mask</i>");
+      //else liveOut("<i>UngeÃ¤ndert: $tasterName: hold = $holdTimeout, doubleClick = $waitForDoubleClickTimeout, mask = $mask</i>");
     }
   }
   
@@ -441,21 +441,21 @@ function addGroupRuleData($groupId, $pcRules = 0, $hostControllerObjectId = 0)
   $startPos = $dataPos;
   
   $erg9 = QUERY("select * from rules where groupId='$groupId' order by id");
-  while ( $obj9 = MYSQL_FETCH_OBJECT($erg9) )
+  while ( $obj9 = mysqli_fetch_OBJECT($erg9) )
   {
     $erg = QUERY("select count(*) from ruleSignals where ruleId='$obj9->id' and groupAlias='0' and featureInstanceId>0");
-    $row = MYSQL_FETCH_ROW($erg);
+    $row = mysqli_fetch_ROW($erg);
     $nrSignals = $row[0];
     if ($nrSignals == 0)
       continue;
     
     $erg = QUERY("select count(*) from ruleActions where ruleId='$obj9->id'");
-    $row = MYSQL_FETCH_ROW($erg);
+    $row = mysqli_fetch_ROW($erg);
     $nrActions = $row[0];
     //if ($nrActions==0) continue;
     /*if ($nrActions>16)
     {
-    	echo "Überspringe Regel mit $nrActions Actions <br>";
+    	echo "Ãœberspringe Regel mit $nrActions Actions <br>";
     	break;
     }*/
     
@@ -466,7 +466,7 @@ function addGroupRuleData($groupId, $pcRules = 0, $hostControllerObjectId = 0)
     else
     {
       $erg = QUERY("select value from groupStates where id='$obj9->activationStateId' limit 1");
-      $row = MYSQL_FETCH_ROW($erg);
+      $row = mysqli_fetch_ROW($erg);
       $rulesData[$dataPos++] = $row[0]; // Aktivierungsstate
     }
     
@@ -474,7 +474,7 @@ function addGroupRuleData($groupId, $pcRules = 0, $hostControllerObjectId = 0)
     else
     {
       $erg = QUERY("select value from groupStates where id='$obj9->resultingStateId' limit 1");
-      $row = MYSQL_FETCH_ROW($erg);
+      $row = mysqli_fetch_ROW($erg);
       $rulesData[$dataPos++] = $row[0]; // ResultingState
     }
     
@@ -514,9 +514,9 @@ function addGroupRuleData($groupId, $pcRules = 0, $hostControllerObjectId = 0)
     $rulesData[$dataPos++] = $obj9->endHour + ($obj9->endDay << 5);
     
     $erg = QUERY("select id, featureInstanceId, featureFunctionId from ruleSignals where ruleId='$obj9->id' and groupAlias='0' and featureInstanceId>0 order by id");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
-    	// Bei EvTime müssen wir noch den Absender auf den Hostenden Controller abändern
+    	// Bei EvTime mÃ¼ssen wir noch den Absender auf den Hostenden Controller abÃ¤ndern
     	if ($pcRules == 1 && $obj->featureFunctionId==129)
     	{
     		$bytes = dWordToBytes($hostControllerObjectId); // Sender
@@ -524,7 +524,7 @@ function addGroupRuleData($groupId, $pcRules = 0, $hostControllerObjectId = 0)
     	else
     	{
         $erg2 = QUERY("select objectId from featureInstances where id='$obj->featureInstanceId' limit 1");
-        if ($obj2 = MYSQL_FETCH_OBJECT($erg2)) $bytes = dWordToBytes($obj2->objectId); // Sender
+        if ($obj2 = mysqli_fetch_OBJECT($erg2)) $bytes = dWordToBytes($obj2->objectId); // Sender
         else
         {
         	showRuleError("Unbekannter Sender in Gruppe $groupId ruleId $obj9->id featureInstanceId = $obj->featureInstanceId", $groupId);
@@ -540,16 +540,16 @@ function addGroupRuleData($groupId, $pcRules = 0, $hostControllerObjectId = 0)
       }
       
       $erg2 = QUERY("select functionId from featureFunctions where id='$obj->featureFunctionId' limit 1");
-      $obj2 = MYSQL_FETCH_OBJECT($erg2);
+      $obj2 = mysqli_fetch_OBJECT($erg2);
       $rulesData[$dataPos++] = $obj2->functionId; // FunctionId
       
 
       $usedParamLength = 0;
       $erg2 = QUERY("select id,type from featureFunctionParams where featureFunctionId='$obj->featureFunctionId' order by id");
-      while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+      while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
       {
         $erg3 = QUERY("select paramValue from ruleSignalParams where ruleSignalId='$obj->id' and featureFunctionParamsId='$obj2->id' limit 1");
-        if ($obj3 = MYSQL_FETCH_OBJECT($erg3))
+        if ($obj3 = mysqli_fetch_OBJECT($erg3))
           $value = $obj3->paramValue;
         else
           $value = 0;
@@ -568,11 +568,11 @@ function addGroupRuleData($groupId, $pcRules = 0, $hostControllerObjectId = 0)
     }
     
     $erg = QUERY("select id, featureInstanceId, featureFunctionId from ruleActions where ruleId='$obj9->id' order by id");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       $erg2 = QUERY("select objectId from featureInstances where id='$obj->featureInstanceId' limit 1");
-      $obj2 = MYSQL_FETCH_OBJECT($erg2);
-      $bytes = dWordToBytes($obj2->objectId); // Empfänger
+      $obj2 = mysqli_fetch_OBJECT($erg2);
+      $bytes = dWordToBytes($obj2->objectId); // EmpfÃ¤nger
       foreach ( (array)$bytes as $value )
       {
         $rulesData[$dataPos++] = $value;
@@ -582,22 +582,22 @@ function addGroupRuleData($groupId, $pcRules = 0, $hostControllerObjectId = 0)
       $dataPos++;
       
       $erg2 = QUERY("select functionId from featureFunctions where id='$obj->featureFunctionId' limit 1");
-      $obj2 = MYSQL_FETCH_OBJECT($erg2);
+      $obj2 = mysqli_fetch_OBJECT($erg2);
       $rulesData[$dataPos++] = $obj2->functionId; // FunctionId
       
 
       $usedParamLength = 1;
       $erg2 = QUERY("select id,type from featureFunctionParams where featureFunctionId='$obj->featureFunctionId' order by id");
-      while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+      while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
       {
         $erg3 = QUERY("select paramValue,id from ruleActionParams where ruleActionId='$obj->id' and featureFunctionParamsId='$obj2->id' limit 1");
-        if ($obj3 = MYSQL_FETCH_OBJECT($erg3))
+        if ($obj3 = mysqli_fetch_OBJECT($erg3))
         {
           if ($pcRules == 1 && $obj->featureFunctionId == "189")
           {
             $myNr = 0;
             $erg4 = QUERY("select ruleActionParams.id from ruleActionParams join ruleActions on (ruleActions.id=ruleActionParams.ruleActionId) join rules on (rules.id = ruleActions.ruleId) where groupId='$groupId' order by ruleActionParams.id");
-            while ( $row4 = MYSQL_FETCH_ROW($erg4) )
+            while ( $row4 = mysqli_fetch_ROW($erg4) )
             {
               if ($row4[0] == $obj3->id) break;
               $myNr++;
@@ -641,7 +641,7 @@ if ($action == "addSignal")
     if ($signalGroupId > 0) // Aufruf aus Signalgruppe
     {
       QUERY("INSERT into basicRuleGroupSignals (ruleId, groupId, eventType) values('-1','$signalGroupId','$signal')");
-      $groupSignalId = mysql_insert_id();
+      $groupSignalId = query_insert_id();
       
       QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                values('$ruleId','-$groupSignalId','0','0')");
@@ -650,8 +650,8 @@ if ($action == "addSignal")
     else if ($graphId > 0) // Aufruf aus Diagramm
     {
       $singleParamName = "";
-      $erg = MYSQL_QUERY("select name from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id limit 2") or die(MYSQL_ERROR());
-      while ( $row = MYSQL_FETCH_ROW($erg) )
+      $erg = QUERY("select name from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id limit 2");
+      while ( $row = mysqli_fetch_ROW($erg) )
       {
         if ($singleParamName != "")
         {
@@ -682,7 +682,7 @@ if ($action == "addSignal")
       else
       {
         QUERY("INSERT into graphSignals (graphId, color ) values('$graphId','red')");
-        $signalId = mysql_insert_id();
+        $signalId = query_insert_id();
         QUERY("INSERT into graphSignalEvents (graphSignalsId, featureInstanceId, functionId,fkt) values('$signalId','$featureInstanceId','$featureFunctionId','$singleParamName')");
       }
       header("Location: editGraphs.php?id=$graphId");
@@ -690,20 +690,20 @@ if ($action == "addSignal")
     else
     {
       $erg = QUERY("select id from ruleSignals where ruleId='$ruleId' and featureInstanceId='$featureInstanceId' and featureFunctionId='$featureFunctionId' limit 1");
-      if ($row = mysql_fetch_row($erg))
+      if ($row = mysqli_fetch_row($erg))
         $ruleSignalId = $row[0];
       else
       {
         QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId) values('$ruleId','$featureInstanceId','$featureFunctionId')");
-        $ruleSignalId = mysql_insert_id();
+        $ruleSignalId = query_insert_id();
       }
       
       $erg = QUERY("select count(*) from featureFunctionParams where featureFunctionId='$featureFunctionId'");
-      $row = mysql_fetch_row($erg);
+      $row = mysqli_fetch_row($erg);
       if ($row[0] > 0)
       {
         $erg = QUERY("select featureClassesId from featureInstances where id='$featureInstanceId' limit 1");
-        $row = MYSQL_FETCH_ROW($erg);
+        $row = mysqli_fetch_ROW($erg);
         $featureClassesId = $row[0];
         
         $irClassesId = getClassesIdByName("IR-Sensor");
@@ -711,7 +711,7 @@ if ($action == "addSignal")
         {
           $i = 0;
           $erg = QUERY("select id from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
-          while ( $row = MYSQL_FETCH_ROW($erg) )
+          while ( $row = mysqli_fetch_ROW($erg) )
           {
             $i++;
             $value = "param" . $i . "Value";
@@ -758,8 +758,8 @@ if ($action == "addSignal")
       $closeTreeFolder = "</ul></li> \n";
       
       $treeElements = "";
-      if ($graphId > 0) $treeElements .= addToTree("<a href='editGraph.php?id=$graphId'>Neues Trigger-Signal für diese Regel auswählen</a>", 1);
-      else $treeElements .= addToTree("<a href='editRules.php?groupId=$groupId&logicalGroupMode=$logicalGroupMode'>Neues Trigger-Signal für diese Regel auswählen</a>", 1);
+      if ($graphId > 0) $treeElements .= addToTree("<a href='editGraph.php?id=$graphId'>Neues Trigger-Signal fÃ¼r diese Regel auswÃ¤hlen</a>", 1);
+      else $treeElements .= addToTree("<a href='editRules.php?groupId=$groupId&logicalGroupMode=$logicalGroupMode'>Neues Trigger-Signal fÃ¼r diese Regel auswÃ¤hlen</a>", 1);
       $html = str_replace("%INITIAL_ELEMENT2%", "expandToItem('tree2','$treeElementCount');", $html);
       
       $allMyRuleSignals = readMyRuleSignals($ruleId);
@@ -784,7 +784,7 @@ if ($action == "addSignal")
                                  
                                  where (featureFunctions.type='EVENT' $or) and featureInstances.featureClassesId!='$logicalButtonClass'
                                  order by roomName,featureClassName,featureInstanceName,featureFunctionName"); //and parentInstanceId='0' 
-      while ( $obj = mysql_fetch_object($erg) )
+      while ( $obj = mysqli_fetch_object($erg) )
       {
         $ready[$obj->featureInstanceId] = 1;
         
@@ -852,7 +852,7 @@ if ($action == "addSignal")
                                  
                                  where (featureFunctions.type='EVENT' $or) and featureInstances.featureClassesId!='$logicalButtonClass'
                                  order by controllerName, featureClassName,featureInstanceName,featureFunctionName"); // and parentInstanceId='0' 
-      while ( $obj = mysql_fetch_object($erg) )
+      while ( $obj = mysqli_fetch_object($erg) )
       {
         if ($ready[$obj->featureInstanceId] == 1)
           continue;
@@ -916,7 +916,7 @@ if ($action == "addSignal")
 
       $foundGroups = 0;
       $erg = QUERY("select id,name,groupType from groups where single!='1' and subOf='0' and groupType!='' order by name");
-      while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+      while ( $obj = mysqli_fetch_OBJECT($erg) )
       {
         if ($foundGroups == 0)
         {
@@ -931,7 +931,7 @@ if ($action == "addSignal")
             $groupType = "ODER";
           else
             $groupType = "UNBEKANNTER TYP";
-          $treeElements .= addToTree($obj->name . " (Logische " . $groupType . " Verknüpfung)", 1);
+          $treeElements .= addToTree($obj->name . " (Logische " . $groupType . " VerknÃ¼pfung)", 1);
           $treeElements .= addToTree("<a href='editRules.php?action=$action&submitted=1&groupId=$groupId&ruleId=$ruleId&groupSignal=1&signalGroupId=$obj->id&signal=ACTIVE'>Beim Erreichen vom logischen $groupType Zustand</a>", 0);
           $treeElements .= addToTree("<a href='editRules.php?action=$action&submitted=1&groupId=$groupId&ruleId=$ruleId&groupSignal=1&signalGroupId=$obj->id&signal=DEACTIVE'>Beim Verlassen vom logischen $groupType Zustand</a>", 0);
           $treeElements .= $closeTreeFolder;
@@ -953,16 +953,16 @@ else if ($action == "addAction")
   if ($submitted == 1)
   {
     $erg = QUERY("select id from ruleActions where ruleId='$ruleId' and featureInstanceId='$featureInstanceId' and featureFunctionId='$featureFunctionId' limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = mysqli_fetch_ROW($erg))
       $ruleActionId = $row[0];
     else
     {
       QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId) values('$ruleId','$featureInstanceId','$featureFunctionId')");
-      $ruleActionId = mysql_insert_id();
+      $ruleActionId = query_insert_id();
     }
     
     $erg = QUERY("select count(*) from featureFunctionParams where featureFunctionId='$featureFunctionId'");
-    $row = mysql_fetch_row($erg);
+    $row = mysqli_fetch_row($erg);
     if ($row[0] > 0)
       header("Location: editRules.php?groupId=$groupId&action=editActionParams&ruleActionId=$ruleActionId&featureFunctionId=$featureFunctionId");
     else
@@ -978,9 +978,9 @@ else if ($action == "addAction")
       {
         $isPc = 1;
         $erg = QUERY("select controllerId from featureInstances where id='$featureInstanceId' limit 1");
-        $row = MYSQL_FETCH_ROW($erg);
+        $row = mysqli_fetch_ROW($erg);
         $erg = QUERY("select id from featureInstances where controllerId='$row[0]' and featureClassesId='12' limit 1");
-        $row = MYSQL_FETCH_ROW($erg);
+        $row = mysqli_fetch_ROW($erg);
         $myGroupFeatures[$row[0]] = 1;
         break;
       }
@@ -1004,7 +1004,7 @@ else if ($action == "addAction")
     $closeTreeFolder = "</ul></li> \n";
     
     $treeElements = "";
-    $treeElements .= addToTree("<a href='editRules.php?groupId=$groupId'>Neue Aktion für diese Regel auswählen</a>", 1);
+    $treeElements .= addToTree("<a href='editRules.php?groupId=$groupId'>Neue Aktion fÃ¼r diese Regel auswÃ¤hlen</a>", 1);
     //$html=str_replace("%INITIAL_ELEMENT2%","expandToItem('tree2','$treeElementCount');",$html);
     $html = str_replace("%INITIAL_ELEMENT2%", "expandTree('tree2');", $html);
     
@@ -1027,7 +1027,7 @@ else if ($action == "addAction")
                                  
                                  where featureFunctions.type='ACTION' $orFunction
                                  order by roomName,featureClassName,featureInstanceName,featureFunctionName");
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       if ($myGroupFeatures[$obj->featureInstanceId] == "" && $withFunctions!=1)
         continue;
@@ -1097,7 +1097,7 @@ else if ($action == "addAction")
                                  
                                  where featureFunctions.type='ACTION' $orFunction
                                  order by controllerName, featureClassName,featureInstanceName,featureFunctionName");
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       if ($myGroupFeatures[$obj->featureInstanceId] == "" && $withFunctions!=1)
         continue;
@@ -1174,7 +1174,7 @@ else if ($action == "addAction")
   $closeTreeFolder = "</ul></li> \n";
   
   $treeElements = "";
-  $treeElements .= addToTree("<a href='showSensorRules.php?id=$id'>Sensoralias wählen, dessen Regeln übernommen werden sollen</a>", 1);
+  $treeElements .= addToTree("<a href='showSensorRules.php?id=$id'>Sensoralias wÃ¤hlen, dessen Regeln Ã¼bernommen werden sollen</a>", 1);
   $html = str_replace("%INITIAL_ELEMENT2%", "expandToItem('tree2','$treeElementCount');", $html);
   
   $logicalButtonClass = getClassesIdByName("LogicalButton");
@@ -1191,7 +1191,7 @@ else if ($action == "addAction")
                                  join featureClasses on (featureClasses.id = featureInstances.featureClassesId)
                                  where (featureInstances.featureClassesId='$tasterClassesId' or featureInstances.featureClassesId='$irClassesId')
                                  order by roomName,featureClassName,featureInstanceName");
-  while ( $obj = mysql_fetch_object($erg) )
+  while ( $obj = mysqli_fetch_object($erg) )
   {
     if ($ready[$obj->featureInstanceId] == 1)
       continue;
@@ -1224,7 +1224,7 @@ else if ($action == "addAction")
                                  join controller on (featureInstances.controllerId = controller.id)
                                  where (featureInstances.featureClassesId='$tasterClassesId'  or featureInstances.featureClassesId='$irClassesId')
                                  order by controllerName, featureClassName,featureInstanceName");
-  while ( $obj = mysql_fetch_object($erg) )
+  while ( $obj = mysqli_fetch_object($erg) )
   {
     if ($ready[$obj->featureInstanceId] == 1)
       continue;
@@ -1273,7 +1273,7 @@ else if ($action == "editButton")
   $closeTreeFolder = "</ul></li> \n";
   
   $treeElements = "";
-  $treeElements .= addToTree("<a href='editButtonPage.php?pageId=$pageId'>Signal für den Button auswählen</a>", 1);
+  $treeElements .= addToTree("<a href='editButtonPage.php?pageId=$pageId'>Signal fÃ¼r den Button auswÃ¤hlen</a>", 1);
   $html = str_replace("%INITIAL_ELEMENT2%", "expandToItem('tree2','$treeElementCount');", $html);
   
   $logicalButtonClass = getClassesIdByName("LogicalButton");
@@ -1290,7 +1290,7 @@ else if ($action == "editButton")
                                  join featureClasses on (featureClasses.id = featureInstances.featureClassesId)
                                  where (featureInstances.featureClassesId='$tasterClassesId' or featureInstances.featureClassesId='$irClassesId')
                                  order by roomName,featureClassName,featureInstanceName");
-  while ( $obj = mysql_fetch_object($erg) )
+  while ( $obj = mysqli_fetch_object($erg) )
   {
     if ($ready[$obj->featureInstanceId] == 1)
       continue;
@@ -1323,7 +1323,7 @@ else if ($action == "editButton")
                                  join controller on (featureInstances.controllerId = controller.id)
                                  where (featureInstances.featureClassesId='$tasterClassesId'  or featureInstances.featureClassesId='$irClassesId')
                                  order by controllerName, featureClassName,featureInstanceName");
-  while ( $obj = mysql_fetch_object($erg) )
+  while ( $obj = mysqli_fetch_object($erg) )
   {
     if ($ready[$obj->featureInstanceId] == 1)
       continue;
@@ -1407,10 +1407,10 @@ else if ($action == "editActionParams")
   if ($submitted == 1)
   {
     QUERY("delete from ruleActionParams where ruleActionId='$ruleActionId'");
-    trace("ruleActionParam mit ruleActionId $ruleActionId glöscht");
+    trace("ruleActionParam mit ruleActionId $ruleActionId glÃ¶scht");
     
     $erg = QUERY("select id from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
-    while ( $row = MYSQL_FETCH_ROW($erg) )
+    while ( $row = mysqli_fetch_ROW($erg) )
     {
       $value = "param" . $row[0];
       $value = $$value;
@@ -1426,7 +1426,7 @@ else if ($action == "editActionParams")
     setupTreeAndContent("editRuleActionParams_design.html");
     
     $erg = QUERY("select featureFunctionParamsId,paramValue,id from ruleActionParams where ruleActionId='$ruleActionId'");
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       $myValues[$obj->featureFunctionParamsId] = $obj->paramValue;
       $ruleActionIds[$obj->featureFunctionParamsId] = $obj->id;
@@ -1439,14 +1439,14 @@ else if ($action == "editActionParams")
     $ansicht = $_SESSION["ansicht"];
     
     $erg = QUERY("select featureFunctionId from ruleActions where id='$ruleActionId' limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = mysqli_fetch_ROW($erg))
     {
       $featureFunctionId = $row[0];
       
       $paramTag = getTag("%PARAM%", $html);
       $params = "";
       $erg2 = QUERY("select id,name,type,comment,view from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
-      while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+      while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
       {
         if ($ansicht == "Experte" && $obj2->view == "Entwickler") continue;
         if ($ansicht == "Standard" && ($obj2->view == "Experte" || $obj2->view == "Entwickler")) continue;
@@ -1460,7 +1460,7 @@ else if ($action == "editActionParams")
         {
           $type = "<select name='param" . $obj2->id . "'>";
           $erg3 = QUERY("select id,name,value from featureFunctionEnums where featureFunctionId='$featureFunctionId' and paramId='$obj2->id' order by id");
-          while ( $obj3 = MYSQL_FETCH_OBJECT($erg3) )
+          while ( $obj3 = mysqli_fetch_OBJECT($erg3) )
           {
             if ($myValue == $obj3->value) $selected = "selected";
             else $selected = "";
@@ -1501,10 +1501,10 @@ else if ($action == "editSignalParams")
   if ($submitted == 1)
   {
     QUERY("delete from ruleSignalParams where ruleSignalId='$ruleSignalId'");
-    trace("ruleSignalParam mit ruleSignalId $ruleSignalId glöscht");
+    trace("ruleSignalParam mit ruleSignalId $ruleSignalId glÃ¶scht");
     
     $erg = QUERY("select id,type from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
-    while ( $row = MYSQL_FETCH_ROW($erg) )
+    while ( $row = mysqli_fetch_ROW($erg) )
     {
       if ($row[1] == "WEEKTIME")
       {
@@ -1535,7 +1535,7 @@ else if ($action == "editSignalParams")
     setupTreeAndContent("editRuleSignalParams_design.html");
     
     $erg = QUERY("select featureFunctionParamsId,paramValue from ruleSignalParams where ruleSignalId='$ruleSignalId'");
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       $myValues[$obj->featureFunctionParamsId] = $obj->paramValue;
     }
@@ -1544,7 +1544,7 @@ else if ($action == "editSignalParams")
     $html = str_replace("%LOGICAL_GROUP_MODE%", $logicalGroupMode, $html);
     
     $erg = QUERY("select featureFunctionId from ruleSignals where id='$ruleSignalId' limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = mysqli_fetch_ROW($erg))
     {
       $featureFunctionId = $row[0];
       
@@ -1552,7 +1552,7 @@ else if ($action == "editSignalParams")
       {
       	$paramsId = getClassesIdFunctionParamIdByName(getClassesIdByName("controller"),"evTime","weektime");
       	$erg = query("select featureFunctionId from featureFunctionParams where id='$paramsId' limit 1");
-      	$row = MYSQL_FETCH_ROW($erg);
+      	$row = mysqli_fetch_ROW($erg);
       	$featureFunctionId = $row[0];
       }*/
       
@@ -1560,7 +1560,7 @@ else if ($action == "editSignalParams")
       $paramTag = getTag("%PARAM%", $html);
       $params = "";
       $erg2 = QUERY("select id,name,type,comment,view from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
-      while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+      while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
       {
         if ($ansicht == "Experte" && $obj2->view == "Entwickler")
           continue;
@@ -1576,7 +1576,7 @@ else if ($action == "editSignalParams")
         {
           $type = "<select name='param" . $obj2->id . "'>";
           $erg3 = QUERY("select id,name,value from featureFunctionEnums where featureFunctionId='$featureFunctionId' and paramId='$obj2->id' order by id");
-          while ( $obj3 = MYSQL_FETCH_OBJECT($erg3) )
+          while ( $obj3 = mysqli_fetch_OBJECT($erg3) )
           {
             if ($myValue == $obj3->value)
               $selected = "selected";
@@ -1622,19 +1622,19 @@ else if ($action == "editSignalParams")
 else if ($action == "addSignalCopy")
 {
   $erg = QUERY("select id from rules where groupId='$groupId' and id<'$ruleId' and generated!=1 order by id desc limit 1");
-  if ($obj = MYSQL_FETCH_OBJECT($erg))
+  if ($obj = mysqli_fetch_OBJECT($erg))
   {
     $parentId = $obj->id;
     
     $erg2 = QUERY("select id,featureInstanceId,featureFunctionId from ruleSignals where ruleId='$parentId' order by id");
-    while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+    while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
     {
       QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
   		                               values('$ruleId','$obj2->featureInstanceId','$obj2->featureFunctionId')");
-      $newRuleSignalId = mysql_insert_id();
+      $newRuleSignalId = query_insert_id();
       
       $erg3 = QUERY("select featureFunctionParamsId,paramValue from ruleSignalParams where ruleSignalId='$obj2->id'");
-      while ( $obj3 = MYSQL_FETCH_OBJECT($erg3) )
+      while ( $obj3 = mysqli_fetch_OBJECT($erg3) )
       {
         QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
      		                                    values('$newRuleSignalId','$obj3->featureFunctionParamsId','$obj3->paramValue')");
@@ -1645,19 +1645,19 @@ else if ($action == "addSignalCopy")
 else if ($action == "addActionCopy")
 {
   $erg = QUERY("select id from rules where groupId='$groupId' and id<'$ruleId' and generated!=1 order by id desc limit 1");
-  if ($obj = MYSQL_FETCH_OBJECT($erg))
+  if ($obj = mysqli_fetch_OBJECT($erg))
   {
     $parentId = $obj->id;
     
     $erg2 = QUERY("select id,featureInstanceId,featureFunctionId from ruleActions where ruleId='$parentId' order by id");
-    while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+    while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
     {
       QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
   		                               values('$ruleId','$obj2->featureInstanceId','$obj2->featureFunctionId')");
-      $newRuleActionId = mysql_insert_id();
+      $newRuleActionId = query_insert_id();
       
       $erg3 = QUERY("select featureFunctionParamsId,paramValue from ruleActionParams where ruleActionId='$obj2->id'");
-      while ( $obj3 = MYSQL_FETCH_OBJECT($erg3) )
+      while ( $obj3 = mysqli_fetch_OBJECT($erg3) )
       {
         QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                    values('$newRuleActionId','$obj3->featureFunctionParamsId','$obj3->paramValue')");
@@ -1675,20 +1675,20 @@ else if ($action == "insertFromClipboard")
 	$myDebug=0;
 	
   if (! isset($_SESSION["copyRules"]))
-    $message = "Keine Regeln zum Einfügen vorhanden";
+    $message = "Keine Regeln zum EinfÃ¼gen vorhanden";
   else
   {
     $copyGroupId = $_SESSION["copyRules"];
     
     // States nach Name anlegen, falls nicht vorhanden
     $erg = QUERY("select * from rules where groupId='$copyGroupId' and generated=0 order by id");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       if ($obj->activationStateId == "0") $myActivationStateId = 0;
       else
       {
         $erg2 = QUERY("select name,basics from groupStates where id='$obj->activationStateId' limit 1");
-        if ($row2 = MYSQL_FETCH_ROW($erg2))
+        if ($row2 = mysqli_fetch_ROW($erg2))
         {
           $activationStateName = $row2[0];
           $activationBasics = $row2[1];
@@ -1697,7 +1697,7 @@ else if ($action == "insertFromClipboard")
           
           $myActivationStateId = - 1;
           $erg2 = QUERY("select id from groupStates where groupId='$groupId' and name='$activationStateName' limit 1");
-          if ($row2 = MYSQL_FETCH_ROW($erg2))
+          if ($row2 = mysqli_fetch_ROW($erg2))
           {
           	$myActivationStateId = $row2[0];
           	if ($myDebug==1) echo "gefunden mit id ".$myActivationStateId."<br>";
@@ -1706,13 +1706,13 @@ else if ($action == "insertFromClipboard")
           {
           	if ($myDebug==1) echo "nicht gefunden <br>";
             $erg2 = QUERY("Select max(value) from groupStates where groupId='$groupId'");
-            if ($row2 = MYSQL_FETCH_ROW($erg2)) $nextValue = $row2[0] + 1;
+            if ($row2 = mysqli_fetch_ROW($erg2)) $nextValue = $row2[0] + 1;
             else $nextValue = 0;
             
-            $sql = "INSERT into groupStates (groupId, name, value,basics) values('$groupId','" . mysql_real_escape_string($activationStateName) . "','$nextValue','$activationBasics')";
+            $sql = "INSERT into groupStates (groupId, name, value,basics) values('$groupId','" . query_real_escape_string($activationStateName) . "','$nextValue','$activationBasics')";
             if ($myDebug==1) echo $sql."<br>";
             else QUERY($sql);
-            $myActivationStateId = mysql_insert_id();
+            $myActivationStateId = query_insert_id();
           }
         }
       }
@@ -1721,7 +1721,7 @@ else if ($action == "insertFromClipboard")
       else
       {
         $erg2 = QUERY("select name,basics from groupStates where id='$obj->resultingStateId' limit 1");
-        if ($row2 = MYSQL_FETCH_ROW($erg2))
+        if ($row2 = mysqli_fetch_ROW($erg2))
         {
           $resultingStateName = $row2[0];
           $resultingBasics = $row2[1];
@@ -1730,7 +1730,7 @@ else if ($action == "insertFromClipboard")
           
           $myResultingStateId = - 1;
           $erg2 = QUERY("select id from groupStates where groupId='$groupId' and name='$resultingStateName' limit 1");
-          if ($row2 = MYSQL_FETCH_ROW($erg2))
+          if ($row2 = mysqli_fetch_ROW($erg2))
           {
           	$myResultingStateId = $row2[0];
           	if ($myDebug==1) echo "gefunden mit id ".$myResultingStateId."<br>";
@@ -1740,13 +1740,13 @@ else if ($action == "insertFromClipboard")
           	if ($myDebug==1) echo "nicht gefunden <br>";
           	
             $erg2 = QUERY("Select max(value) from groupStates where groupId='$groupId'");
-            if ($row2 = MYSQL_FETCH_ROW($erg2)) $nextValue = $row2[0] + 1;
+            if ($row2 = mysqli_fetch_ROW($erg2)) $nextValue = $row2[0] + 1;
             else $nextValue = 0;
             
-            $sql = "INSERT into groupStates (groupId, name, value,basics) values('$groupId','" . mysql_real_escape_string($resultingStateName) . "','$nextValue','$resultingBasics')"; 
+            $sql = "INSERT into groupStates (groupId, name, value,basics) values('$groupId','" . query_real_escape_string($resultingStateName) . "','$nextValue','$resultingBasics')"; 
             if ($myDebug==1) echo $sql."<br>";
             else QUERY($sql);
-            $myResultingStateId = mysql_insert_id();
+            $myResultingStateId = query_insert_id();
           }
         }
       }
@@ -1755,19 +1755,19 @@ else if ($action == "insertFromClipboard")
 
       if ($myDebug==1) echo $sql."<br>";                                  
       else QUERY($sql);
-      $ruleId = mysql_insert_id();
+      $ruleId = query_insert_id();
       
       // Signale Kopieren
       $erg2 = QUERY("select id,featureInstanceId,featureFunctionId from ruleSignals where ruleId='$obj->id' order by id desc");
-      while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+      while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
       {
       	$sql = "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId) values('$ruleId','$obj2->featureInstanceId','$obj2->featureFunctionId')";
       	if ($myDebug==1) echo $sql."<br>"; 
         else QUERY($sql);
-        $newRuleSignalId = mysql_insert_id();
+        $newRuleSignalId = query_insert_id();
         
         $erg3 = QUERY("select featureFunctionParamsId,paramValue from ruleSignalParams where ruleSignalId='$obj2->id'");
-        while ( $obj3 = MYSQL_FETCH_OBJECT($erg3) )
+        while ( $obj3 = mysqli_fetch_OBJECT($erg3) )
         {
         	$sql="INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) values('$newRuleSignalId','$obj3->featureFunctionParamsId','$obj3->paramValue')";
         	if ($myDebug==1) echo $sql."<br>"; 
@@ -1778,19 +1778,19 @@ else if ($action == "insertFromClipboard")
       unset($done);
       // Actions kopieren und umbauen
       $erg2 = QUERY("select id,featureInstanceId,featureFunctionId from ruleActions where ruleId='$obj->id' order by id desc");
-      while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+      while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
       {
-        // Wenn es die gleiche Funktion in der neuen Gruppen gibt, übernehmen wir wie und tauschen die InstanzID aus
+        // Wenn es die gleiche Funktion in der neuen Gruppen gibt, Ã¼bernehmen wir wie und tauschen die InstanzID aus
         $erg3 = QUERY("select featureClassesId from featureInstances where id='$obj2->featureInstanceId' limit 1");
-        $row3 = MYSQL_FETCH_ROW($erg3);
+        $row3 = mysqli_fetch_ROW($erg3);
         $actClassesId = $row3[0];
         
         $foundInstanceId = - 1;
         $erg3 = QUERY("select featureInstanceId from groupFeatures where groupId='$groupId'");
-        while ( $row3 = MYSQL_FETCH_ROW($erg3) )
+        while ( $row3 = mysqli_fetch_ROW($erg3) )
         {
           $erg4 = QUERY("select featureClassesId from featureInstances where id='$row3[0]' limit 1");
-          if ($row4 = MYSQL_FETCH_ROW($erg4))
+          if ($row4 = mysqli_fetch_ROW($erg4))
           {
             if ($row4[0] == $actClassesId && $done[$row3[0]] != 1)
             {
@@ -1807,10 +1807,10 @@ else if ($action == "insertFromClipboard")
         	if ($myDebug==1) echo $sql."<br>"; 
           else QUERY($sql);
           
-          $newRuleActionId = mysql_insert_id();
+          $newRuleActionId = query_insert_id();
           
           $erg3 = QUERY("select featureFunctionParamsId,paramValue from ruleActionParams where ruleActionId='$obj2->id'");
-          while ( $obj3 = MYSQL_FETCH_OBJECT($erg3) )
+          while ( $obj3 = mysqli_fetch_OBJECT($erg3) )
           {
           	$sql="INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) values('$newRuleActionId','$obj3->featureFunctionParamsId','$obj3->paramValue')";
           	if ($myDebug==1) echo $sql."<br>"; 
@@ -1824,22 +1824,22 @@ else if ($action == "insertFromClipboard")
 else if ($action == "doubleActions")
 {
   $erg = QUERY("select * from rules where groupId='$groupId' order by id");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
     QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,intraDay) 
                         values('$groupId','$obj->startDay','$obj->startHour','$obj->startMinute','$obj->endDay','$obj->endHour','$obj->endMinute','$obj->activationStateId','$obj->resultingStateId','$obj->intraDay')");
-    $ruleId = mysql_insert_id();
+    $ruleId = query_insert_id();
     
     // Actions kopieren
     $erg2 = QUERY("select id,featureInstanceId,featureFunctionId from ruleActions where ruleId='$obj->id' order by id");
-    while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+    while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
     {
       QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
 	                              values('$ruleId','$obj2->featureInstanceId','$obj2->featureFunctionId')");
-      $newRuleActionId = mysql_insert_id();
+      $newRuleActionId = query_insert_id();
       
       $erg3 = QUERY("select featureFunctionParamsId,paramValue from ruleActionParams where ruleActionId='$obj2->id'");
-      while ( $obj3 = MYSQL_FETCH_OBJECT($erg3) )
+      while ( $obj3 = mysqli_fetch_OBJECT($erg3) )
       {
         QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
  		                                   values('$newRuleActionId','$obj3->featureFunctionParamsId','$obj3->paramValue')");
@@ -1854,27 +1854,27 @@ else if ($action == "addNewRules")
   $schalterClassesId = getClassesIdByName("Schalter");
   
   // Standardstates anlegen
-  $erg = MYSQL_QUERY("select id from groupStates where groupId='$groupId' and name='1' limit 1") or die(MYSQL_ERROR());
-  $row = MYSQL_FETCH_ROW($erg);
+  $erg = QUERY("select id from groupStates where groupId='$groupId' and name='1' limit 1");
+  $row = mysqli_fetch_ROW($erg);
   $firstState = $row[0];
-  $erg = MYSQL_QUERY("select id from groupStates where groupId='$groupId' and name='2' limit 1") or die(MYSQL_ERROR());
-  $row = MYSQL_FETCH_ROW($erg);
+  $erg = QUERY("select id from groupStates where groupId='$groupId' and name='2' limit 1");
+  $row = mysqli_fetch_ROW($erg);
   $secondState = $row[0];
   
   // evOn
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','$firstState','$secondState','evOn')");
-  $myRuleIds[0] = mysql_insert_id();
+  $myRuleIds[0] = query_insert_id();
   // evOff
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','$secondState','$firstState','evOff')");
-  $myRuleIds[1] = mysql_insert_id();
+  $myRuleIds[1] = query_insert_id();
   
   $erg = QUERY("select featureInstanceId,featureClassesId
 	                    from groupFeatures 
 	                    join featureInstances on (featureInstances.id=featureInstanceId) 
 	                    where groupId='$groupId'");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
     $featureInstanceId = $obj->featureInstanceId;
     
@@ -1895,7 +1895,7 @@ else if ($action == "addNewRules")
       $evStopFunctionId = getClassesIdFunctionsIdByName($rolloClassesId, "evOpen");
       QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
                                   values('$ruleId','$featureInstanceId','$evStopFunctionId')");
-      /*$signalId=mysql_insert_id();
+      /*$signalId=query_insert_id();
   
          $rolloParamPositionId = getClassesIdFunctionParamIdByName($rolloClassesId,"evStop","position");
          QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
@@ -1911,7 +1911,7 @@ else if ($action == "addNewRules")
       
       QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
                                   values('$ruleId','$featureInstanceId','$evStopFunctionId')");
-      /*$signalId=mysql_insert_id();
+      /*$signalId=query_insert_id();
 
          $rolloParamPositionId = getClassesIdFunctionParamIdByName($rolloClassesId,"evStop","position");
  		     QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
@@ -1921,7 +1921,7 @@ else if ($action == "addNewRules")
     // Dimmer
     else if ($obj->featureClassesId == $dimmerClassesId)
     {
-      // Dummy für evOn                              
+      // Dummy fÃ¼r evOn                              
       $ruleId = $myRuleIds[0];
       //QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId) values('$ruleId','$featureInstanceId','-1')");
       
@@ -1929,13 +1929,13 @@ else if ($action == "addNewRules")
       $evOnFunctionId = getClassesIdFunctionsIdByName($dimmerClassesId, "evOn");
       QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
                                   values('$ruleId','$featureInstanceId','$evOnFunctionId')");
-      $signalId = mysql_insert_id();
+      $signalId = query_insert_id();
       
       $dimmerParamBrightnessId = getClassesIdFunctionParamIdByName($dimmerClassesId, "evOn", "brightness");
       QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
                                        values('$signalId','$dimmerParamBrightnessId','$signalParamWildcard')");
       
-      // DUMMY für evOff
+      // DUMMY fÃ¼r evOff
       $ruleId = $myRuleIds[1];
       //QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId) values('$ruleId','$featureInstanceId','-1')");
       
@@ -1977,24 +1977,24 @@ else if ($action == "defaultActions")
 
   if ($confirm != 1)
   {
-    $message = "Achtung!<br><br>Wenn Sie die Standardaktionen wiederherstellen, werden alle aktuellen Regeln zu diesem Aktor gelöscht und dann der Standard erstellt.<br><br><a href='editRules.php?groupId=$groupId&confirm=1&action=defaultActions&template=$template'>Ja, Standardregeln herstellen</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='editRules.php?groupId=$groupId'>Nein, zurück</a>";
+    $message = "Achtung!<br><br>Wenn Sie die Standardaktionen wiederherstellen, werden alle aktuellen Regeln zu diesem Aktor gelÃ¶scht und dann der Standard erstellt.<br><br><a href='editRules.php?groupId=$groupId&confirm=1&action=defaultActions&template=$template'>Ja, Standardregeln herstellen</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='editRules.php?groupId=$groupId'>Nein, zurÃ¼ck</a>";
     setupTreeAndContent("", $message);
     show();
   }
   
-  // Alles löschen  		 	   
+  // Alles lÃ¶schen  		 	   
   QUERY("delete from groupStates where groupId='$groupId'");
   $erg = QUERY("select id from rules where groupId='$groupId'");
-  while ( $row = MYSQL_FETCH_ROW($erg) )
+  while ( $row = mysqli_fetch_ROW($erg) )
   {
     deleteRule($row[0]);
   }
   
   // Standardstates anlegen
   QUERY("INSERT into groupStates (groupId, name) values('$groupId','1')");
-  $firstState = mysql_insert_id();
+  $firstState = query_insert_id();
   QUERY("INSERT into groupStates (groupId, name) values('$groupId','2')");
-  $secondState = mysql_insert_id();
+  $secondState = query_insert_id();
   
   $rolloClassesId = getClassesIdByName("Rollladen");
   $dimmerClassesId = getClassesIdByName("Dimmer");
@@ -2004,44 +2004,44 @@ else if ($action == "defaultActions")
       // click
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','$firstState','$secondState','click')");
-  $myRuleIds[0] = mysql_insert_id();
+  $myRuleIds[0] = query_insert_id();
   // click
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','$secondState','$firstState','click')");
-  $myRuleIds[1] = mysql_insert_id();
+  $myRuleIds[1] = query_insert_id();
   
   // hold start
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','0','0','holdStart')");
-  $myRuleIds[2] = mysql_insert_id();
+  $myRuleIds[2] = query_insert_id();
   
   // hold end
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','0','0','holdEnd')");
-  $myRuleIds[3] = mysql_insert_id();
+  $myRuleIds[3] = query_insert_id();
   
   // doubleClick
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','0','0','doubleClick')");
-  $myRuleIds[4] = mysql_insert_id();
+  $myRuleIds[4] = query_insert_id();
   
   // covered
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','$firstState','$secondState','covered')");
-  $myRuleIds[5] = mysql_insert_id();
+  $myRuleIds[5] = query_insert_id();
   // covered
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','$secondState','$firstState','covered')");
-  $myRuleIds[6] = mysql_insert_id();
+  $myRuleIds[6] = query_insert_id();
   
   // evOn
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','$firstState','$secondState','evOn')");
-  $myRuleIds[7] = mysql_insert_id();
+  $myRuleIds[7] = query_insert_id();
   // evOff
   QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType) 
                      values('$groupId','7','31','255','7','31','255','$secondState','$firstState','evOff')");
-  $myRuleIds[8] = mysql_insert_id();
+  $myRuleIds[8] = query_insert_id();
   
   $isHomogenous = 1;
   //$mySingleClassesId=-1;
@@ -2050,7 +2050,7 @@ else if ($action == "defaultActions")
 	                    from groupFeatures 
 	                    join featureInstances on (featureInstances.id=featureInstanceId) 
 	                    where groupId='$groupId'");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
     //if($mySingleClassesId!=-1) $mySingleClassesId=-2;
       //else $mySingleClassesId=$obj->featureClassesId;
@@ -2069,7 +2069,7 @@ else if ($action == "defaultActions")
 	                    from groupFeatures 
 	                    join featureInstances on (featureInstances.id=featureInstanceId) 
 	                    where groupId='$groupId'");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
     $featureInstanceId = $obj->featureInstanceId;
     
@@ -2088,7 +2088,7 @@ else if ($action == "defaultActions")
         $ruleId = $myRuleIds[0];
         QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
      		                                  values('$ruleId','$featureInstanceId','$startFunctionId')");
-        $newRuleActionId = mysql_insert_id();
+        $newRuleActionId = query_insert_id();
         QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                       values('$newRuleActionId','142','$paramToOpen')");
         
@@ -2096,7 +2096,7 @@ else if ($action == "defaultActions")
         $ruleId = $myRuleIds[1];
         QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
      		                                  values('$ruleId','$featureInstanceId','$startFunctionId')");
-        $newRuleActionId = mysql_insert_id();
+        $newRuleActionId = query_insert_id();
         QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                       values('$newRuleActionId','142','$paramToOpen')");
         
@@ -2104,7 +2104,7 @@ else if ($action == "defaultActions")
         $ruleId = $myRuleIds[2];
         QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
       		                               values('$ruleId','$featureInstanceId','$startFunctionId')");
-        $newRuleActionId = mysql_insert_id();
+        $newRuleActionId = query_insert_id();
         QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                       values('$newRuleActionId','142','$paramToClose')");
         
@@ -2122,7 +2122,7 @@ else if ($action == "defaultActions")
         $ruleId = $myRuleIds[0];
         QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
      		                                  values('$ruleId','$featureInstanceId','$startFunctionId')");
-        $newRuleActionId = mysql_insert_id();
+        $newRuleActionId = query_insert_id();
         QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                       values('$newRuleActionId','142','$paramToOpen')");
         
@@ -2130,7 +2130,7 @@ else if ($action == "defaultActions")
         $ruleId = $myRuleIds[1];
         QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
      		                                  values('$ruleId','$featureInstanceId','$startFunctionId')");
-        $newRuleActionId = mysql_insert_id();
+        $newRuleActionId = query_insert_id();
         QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                       values('$newRuleActionId','142','$paramToOpen')");
         
@@ -2138,7 +2138,7 @@ else if ($action == "defaultActions")
         $ruleId = $myRuleIds[2];
         QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
      		                                  values('$ruleId','$featureInstanceId','$startFunctionId')");
-        $newRuleActionId = mysql_insert_id();
+        $newRuleActionId = query_insert_id();
         QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                       values('$newRuleActionId','142','$paramToToggle')");
         
@@ -2151,7 +2151,7 @@ else if ($action == "defaultActions")
         $ruleId = $myRuleIds[4];
         QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
       		                               values('$ruleId','$featureInstanceId','$startFunctionId')");
-        $newRuleActionId = mysql_insert_id();
+        $newRuleActionId = query_insert_id();
         QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                       values('$newRuleActionId','142','$paramToClose')");
       }
@@ -2166,7 +2166,7 @@ else if ($action == "defaultActions")
       $evStopFunctionId = getClassesIdFunctionsIdByName($rolloClassesId, "evOpen");
       QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
                                  values('$ruleId','$featureInstanceId','$evStopFunctionId')");
-      /*$signalId=mysql_insert_id();
+      /*$signalId=query_insert_id();
   
         $rolloParamPositionId = getClassesIdFunctionParamIdByName($rolloClassesId,"evStop","position");
         QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
@@ -2182,7 +2182,7 @@ else if ($action == "defaultActions")
       
       QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
                                  values('$ruleId','$featureInstanceId','$evStopFunctionId')");
-      /*$signalId=mysql_insert_id();
+      /*$signalId=query_insert_id();
 
         $rolloParamPositionId = getClassesIdFunctionParamIdByName($rolloClassesId,"evStop","position");
  		    QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
@@ -2197,7 +2197,7 @@ else if ($action == "defaultActions")
       
       QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
       		                               values('$ruleId','$featureInstanceId','25')");
-      $newRuleActionId = mysql_insert_id();
+      $newRuleActionId = query_insert_id();
       
       QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                    values('$newRuleActionId','90','100')");
@@ -2208,7 +2208,7 @@ else if ($action == "defaultActions")
       $ruleId = $myRuleIds[1];
       QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
      		                               values('$ruleId','$featureInstanceId','25')");
-      $newRuleActionId = mysql_insert_id();
+      $newRuleActionId = query_insert_id();
       QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                    values('$newRuleActionId','90','0')");
       QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
@@ -2218,7 +2218,7 @@ else if ($action == "defaultActions")
       $ruleId = $myRuleIds[2];
       QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
      		                          values('$ruleId','$featureInstanceId','64')");
-      $newRuleActionId = mysql_insert_id();
+      $newRuleActionId = query_insert_id();
       QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                                    values('$newRuleActionId','115','0')");
       
@@ -2231,13 +2231,13 @@ else if ($action == "defaultActions")
       $ruleId = $myRuleIds[4];
       QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId)
       	                          values('$ruleId','$featureInstanceId','25')");
-      $newRuleActionId = mysql_insert_id();
+      $newRuleActionId = query_insert_id();
       QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                               values('$newRuleActionId','90','50')");
       QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue) 
      		                               values('$newRuleActionId','91','0')");
       
-      // Dummy für evOn                              
+      // Dummy fÃ¼r evOn                              
       $ruleId = $myRuleIds[7];
       //QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId) values('$ruleId','$featureInstanceId','-1')");
       
@@ -2245,13 +2245,13 @@ else if ($action == "defaultActions")
       $evOnFunctionId = getClassesIdFunctionsIdByName($dimmerClassesId, "evOn");
       QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
                                   values('$ruleId','$featureInstanceId','$evOnFunctionId')");
-      $signalId = mysql_insert_id();
+      $signalId = query_insert_id();
       
       $dimmerParamBrightnessId = getClassesIdFunctionParamIdByName($dimmerClassesId, "evOn", "brightness");
       QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
                                        values('$signalId','$dimmerParamBrightnessId','$signalParamWildcard')");
       
-      // DUMMY für evOff
+      // DUMMY fÃ¼r evOff
       $ruleId = $myRuleIds[8];
       //QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId) values('$ruleId','$featureInstanceId','-1')");
       
@@ -2321,7 +2321,7 @@ else if ($action == "defaultActions")
          
  	  QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
                              values('$ruleId','$featureInstanceId','$evOnFunctionId')");
-    $signalId=mysql_insert_id();
+    $signalId=query_insert_id();
 
     $dimmerParamBrightnessId = getClassesIdFunctionParamIdByName($dimmerClassesId,"evOn","brightness");
     QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
@@ -2340,7 +2340,7 @@ else if ($action == "defaultActions")
        
  	 QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
                             values('$ruleId','$featureInstanceId','$evStopFunctionId')");
-   $signalId=mysql_insert_id();
+   $signalId=query_insert_id();
   
    $rolloParamPositionId = getClassesIdFunctionParamIdByName($rolloClassesId,"evStop","position");
    QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
@@ -2371,7 +2371,7 @@ else if ($action == "defaultActions")
          
    	 QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId)
                                values('$ruleId','$featureInstanceId','$evStopFunctionId')");
-     $signalId=mysql_insert_id();
+     $signalId=query_insert_id();
 
      $rolloParamPositionId = getClassesIdFunctionParamIdByName($rolloClassesId,"evStop","position");
  		 QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
@@ -2380,23 +2380,23 @@ else if ($action == "defaultActions")
   }
   */
   
-  // Regeln löschen, die keine Aktions bekommen haben
+  // Regeln lÃ¶schen, die keine Aktions bekommen haben
   for($i = 0; $i < count($myRuleIds); $i++)
   {
     $ruleId = $myRuleIds[$i];
     $erg = QUERY("select count(*) from ruleActions where ruleId='$ruleId'");
-    while ( $row = MYSQL_FETCH_ROW($erg) )
+    while ( $row = mysqli_fetch_ROW($erg) )
     {
       if ($row[0] == 0)
         deleteRule($ruleId);
     }
   }
   
-  // Optimierung für clicked regeln
+  // Optimierung fÃ¼r clicked regeln
   unset($firstActions);
   $i = 0;
   $erg = QUERY("select featureInstanceId, featureFunctionId,paramValue from ruleActions left join ruleActionParams on(ruleActionParams.ruleActionId=ruleActions.id) where ruleId='$myRuleIds[0]'");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
     $firstActions[$i++] = $obj;
   }
@@ -2407,7 +2407,7 @@ else if ($action == "defaultActions")
   $isEqual = 1;
   $i = 0;
   $erg = QUERY("select featureInstanceId, featureFunctionId,paramValue from ruleActions left join ruleActionParams on(ruleActionParams.ruleActionId=ruleActions.id) where ruleId='$myRuleIds[1]'");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
     if ($firstActions[$i]->featureInstanceId != $obj->featureInstanceId)
       $isEqual = 0;
@@ -2432,7 +2432,7 @@ else if ($action == "defaultActions")
     // States bei Regel 0 auf all stellen
     QUERY("UPDATE rules set activationStateId='0', resultingStateId='0' where id='$myRuleIds[0]' limit 1");
     
-    // Regel 1 löschen
+    // Regel 1 lÃ¶schen
     deleteRule($myRuleIds[1]);
   }
 }
@@ -2460,7 +2460,7 @@ $erg = QUERY("select featureInstanceId,
  	                    from groupFeatures 
 	                    join featureInstances on (featureInstances.id=featureInstanceId) 
 	                    where groupId='$groupId'");
-while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+while ( $obj = mysqli_fetch_OBJECT($erg) )
 {
   if ($obj->featureClassesId == $rolloClassesId)
     $hasRollo = 1;
@@ -2501,7 +2501,7 @@ $evNightFunctionId = getClassesIdFunctionsIdByName($CONTROLLER_CLASSES_ID, "evNi
 $rules = "";
 $first = 1;
 $erg99 = QUERY("select * from rules where groupId='$groupId' order by baseRule,id");
-while ( $obj99 = MYSQL_FETCH_OBJECT($erg99) )
+while ( $obj99 = mysqli_fetch_OBJECT($erg99) )
 {
   $actTag = $rulesTag;
   
@@ -2580,7 +2580,7 @@ while ( $obj99 = MYSQL_FETCH_OBJECT($erg99) )
         $signalGroupId = $obj->featureInstanceId * - 1;
         
         $erg34 = QUERY("select eventType,name,groupType from  basicRuleGroupSignals join groups on (groups.id=basicRuleGroupSignals.groupId) where basicRuleGroupSignals.id='$signalGroupId' limit 1");
-        $obj34 = MYSQL_FETCH_OBJECT($erg34);
+        $obj34 = mysqli_fetch_OBJECT($erg34);
         
         if ($obj34->groupType == "SIGNALS-AND")
           $groupType = "UND";
@@ -2607,7 +2607,7 @@ while ( $obj99 = MYSQL_FETCH_OBJECT($erg99) )
         $actSignalTag = str_replace("%SIGNAL_ROOM%", "", $actSignalTag);
         
         $erg = QUERY("select paramValue from ruleSignalParams where ruleSignalId='$obj->id' limit 1");
-        if ($row = MYSQL_FETCH_ROW($erg))
+        if ($row = mysqli_fetch_ROW($erg))
           $weekTime = parseWeekTimeToObject($row[0]);
         
         $actSignalTag = str_replace("%SIGNAL_CLASS%", "", $actSignalTag);
@@ -2807,12 +2807,12 @@ function parseAction($rulesBytes, &$myPos, $rulesBytesPos, &$result)
 {
   if ($myPos > $rulesBytesPos - 4) return FALSE;
   $receiver = bytesToDword($rulesBytes, $myPos);
-  $result .= "Empfänger = " . dechex($receiver) . " <br>";
+  $result .= "EmpfÃ¤nger = " . dechex($receiver) . " <br>";
   //$myPos+=4;
   if ($myPos >= $rulesBytesPos) return FALSE;
   $length = $rulesBytes[$myPos++];
   
-  $result .= "Parameterlänge = $length <br>";
+  $result .= "ParameterlÃ¤nge = $length <br>";
   if ($myPos >= $rulesBytesPos) return FALSE;
   $functionId = $rulesBytes[$myPos++];
   
@@ -2880,7 +2880,7 @@ function checkAndTraceDataDifferences($groups, $controllerId, $rulesData, $dataP
   
   $result = TRUE;
   $erg = QUERY("select data from ruleCache where controllerId='$controllerId' limit 1");
-  if ($row = MYSQL_FETCH_ROW($erg))
+  if ($row = mysqli_fetch_ROW($erg))
   {
     if ($row[0] == $wurst)
       $result = FALSE;
@@ -2897,8 +2897,9 @@ function checkAndTraceDataDifferences($groups, $controllerId, $rulesData, $dataP
       $pos = strspn($string1 ^ $string2, "\0");
       printf('First difference at position %d: "%s" vs "%s"',$pos, $string1[$pos], $string2[$pos]);
   	  echo "Vorher:<br>$row[0]<br>Nachher:<br>$wurst <br>";
-  	  //exit;
-  	  */
+  	  echo substr($string1,0,$pos)."<br>";
+  	  echo substr($string2,0,$pos)."<br>";
+  	  exit;*/
   }
   
   QUERY("DELETE from ruleCache where controllerId='$controllerId' limit 1");
@@ -2916,7 +2917,7 @@ function checkAndTraceConfigData($featureInstanceId, $configArray)
   }
   
   $erg = QUERY("select configData from configCache where featureInstanceId='$featureInstanceId' limit 1");
-  if ($row = MYSQL_FETCH_ROW($erg))
+  if ($row = mysqli_fetch_ROW($erg))
   {
     if ($row[0] == $wurst)
       return FALSE;
@@ -2931,7 +2932,7 @@ function checkAndTraceConfigData($featureInstanceId, $configArray)
 function getTimeOptionsHour($myValue)
 {
 	$myOptions = "<option value='31'>Immer";
-	$myOptions .= "<option value='25'>Tagsüber";
+	$myOptions .= "<option value='25'>TagsÃ¼ber";
  	$myOptions .= "<option value='26'>Nachts";
 
   for($hour = 0; $hour < 24; $hour++)

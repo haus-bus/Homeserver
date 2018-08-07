@@ -6,6 +6,7 @@ if (strpos($check,"0")!==FALSE) die("Runlevel 0 (shutdown) erkannt");
 if (strpos($check,"6")!==FALSE) die("Runlevel 6 (reboot) erkannt");
 
 if ($_SERVER["DOCUMENT_ROOT"]=="") $_SERVER["DOCUMENT_ROOT"]="../";
+$waitForDb=1;
 require($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 require($_SERVER["DOCUMENT_ROOT"]."/homeserver/userPlugin.php");
 
@@ -73,7 +74,7 @@ while(true)
     // Kontroll-Byte
     $dataPos++;
 
-    // Nachrichtenzähler
+    // NachrichtenzÃ¤hler
     $messageCounter = $datagramm[$dataPos++];
 
     // Sender-ID
@@ -82,14 +83,14 @@ while(true)
     if ($output==1) echo "Sender: $sender, ClassId Sender: ".getClassId($sender).$lb;
     $senderSubscriberData = getBusSubscriberData($sender);
 
-    // Empfänger-ID
+    // EmpfÃ¤nger-ID
     $receiver = bytesToDword($datagramm,$dataPos);
     if ($output==1) echo "Receiver: $receiver, ClassId Receiver: ".getClassId($receiver).$lb;
     $receiverSubscriberData = getBusSubscriberData($receiver);
 
     // Nutzdaten
     $length = bytesToWord($datagramm, $dataPos);
-    if ($output==1) echo "Datenlänge: ".$length.$lb;
+    if ($output==1) echo "DatenlÃ¤nge: ".$length.$lb;
     
     $functionId = $datagramm[$dataPos++];
     if ($output==1) echo "Function ID: ".$functionId.$lb;
@@ -113,14 +114,14 @@ while(true)
     $messageType = $functionData->type;
 
     // DEBUG Ausgabe
-    if ($output==1) echo "Nachrichtenzähler: $messageCounter".$lb;
+    if ($output==1) echo "NachrichtenzÃ¤hler: $messageCounter".$lb;
     if ($output==1) echo "Nachrichtentyp: $messageType".$lb;
     if ($output==1) echo $lb;
 
     if ($output==1) echo "Sender: ".$senderSubscriberData->debugStr.$lb;
-    if ($output==1) echo "Empfänger: ".$receiverSubscriberData->debugStr.$lb;
+    if ($output==1) echo "EmpfÃ¤nger: ".$receiverSubscriberData->debugStr.$lb;
     if ($output==1) echo $lb;
-    if ($output==1) echo "Datenlänge: ".$length.$lb;
+    if ($output==1) echo "DatenlÃ¤nge: ".$length.$lb;
     if ($output==1) echo "Funktion: ".$functionData->functionDebugStr.$lb;
     if ($output==1) echo "Parameter: ".$functionData->paramsDebugStr.$lb;
 

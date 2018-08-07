@@ -1,0 +1,44 @@
+<table cellspacing=0 cellpadding=0 border=0 width=100%>
+<tr>
+<td>Neues Plugin registrieren</td>
+<td align=right></td>
+</tr></table>
+<hr>
+<br>
+<table cellspacing=0 cellpadding=0 border=0 width="100%">
+ <tr>
+  <td valign=top width=300>
+    Hier kann ein neues Plugin registriert werden.<br>
+    Bitte beachten, dass dadurch nur der Eintrag links im Baum erfolgt. Die Installation des eigentlichen Plugins muss gemäß Pluginanleitung erfolgen.<br><br>
+    
+	  <form action="editPlugin.php" method="POST"><input type=hidden name=action value=new>
+	  	<table>
+	  		<tr><td>Title</td><td width=20></td><td><input type=text size=50 name=title></td></tr>
+	  		<tr><td>URL</td><td width=20></td><td><input type=text size=50 name=url> (Absolute oder relative URL. z.b. /homeserver/plugins/radio/index.php)</td></tr>
+	  		<tr><td></td><td width=20></td><td><input type=submit value="Speichern"></td></tr>
+	  	</table>
+	  </form>
+  </td>
+ </tr>
+</table>
+<br>
+
+<table cellspacing=0 cellpadding=0 border=0 width=100%>
+<tr>
+<td>Vorhandene Plugins bearbeiten</td>
+<td align=right></td>
+</tr></table>
+<hr>
+<br>
+<table cellspacing=0 cellpadding=0 border=0 width="100%">
+ <tr>
+  <td valign=top width=300>
+  	<table>
+  	<%PLUGIN%>
+  	<tr><td><a href="editPlugin.php?action=delete&id=%ID%"><img src="/homeserver/img/remove.gif" title="löschen"></a></td><td><b>%TITLE%</td><td>%URL%</td></td>
+    </%PLUGIN%>
+    </table>
+  </td>
+ </tr>
+</table>
+

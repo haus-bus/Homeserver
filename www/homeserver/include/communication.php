@@ -7,7 +7,7 @@ function getClassesIdFunctionsIdByName($classesId, $functionName)
 {
     global $CONTROLLER_CLASSES_ID;
     $erg = QUERY("select featureFunctions.id from featureFunctions join featureInstances on (featureInstances.featureClassesId = featureFunctions.featureClassesId) where featureInstances.featureClassesId='$classesId' and featureFunctions.name='$functionName' limit 1");
-    $row = MYSQL_FETCH_ROW($erg);
+    $row = MYSQLi_FETCH_ROW($erg);
     return $row[0];
 }
 
@@ -18,7 +18,7 @@ function getClassesIdFunctionParamIdByName($classesId, $functionName, $paramName
 {
     global $CONTROLLER_CLASSES_ID;
     $erg = QUERY("select featureFunctionParams.id from featureFunctionParams join featurefunctions on (featureFunctionParams.featurefunctionId=featurefunctions.id) where featureFunctions.featureClassesId='$classesId' and featureFunctions.name='$functionName' and featureFunctionParams.name='$paramName' limit 1");
-    $row = MYSQL_FETCH_ROW($erg);
+    $row = MYSQLi_FETCH_ROW($erg);
     return $row[0];
 }
 
@@ -35,7 +35,7 @@ function getObjectFunctionsIdByName($objectId, $functionName)
         $erg = QUERY("select SQL_CACHE id from featureFunctions where featureFunctions.featureClassesId='$CONTROLLER_CLASSES_ID' and featureFunctions.name='$functionName' limit 1");
     else
         $erg = QUERY("select SQL_CACHE featureFunctions.id from featureFunctions join featureInstances on (featureInstances.featureClassesId = featureFunctions.featureClassesId) where featureInstances.objectId='$objectId' and featureFunctions.name='$functionName' limit 1");
-    $row = MYSQL_FETCH_ROW($erg);
+    $row = MYSQLi_FETCH_ROW($erg);
     return $row[0];
 }
 
@@ -52,7 +52,7 @@ function getObjectFunctionIdByName($objectId, $functionName)
         $erg = QUERY("select SQL_CACHE functionId from featureFunctions where featureFunctions.featureClassesId='$CONTROLLER_CLASSES_ID' and featureFunctions.name='$functionName' limit 1");
     else
         $erg = QUERY("select SQL_CACHE functionId from featureFunctions join featureInstances on (featureInstances.featureClassesId = featureFunctions.featureClassesId) where featureInstances.objectId='$objectId' and featureFunctions.name='$functionName' limit 1");
-    $row = MYSQL_FETCH_ROW($erg);
+    $row = MYSQLi_FETCH_ROW($erg);
     return $row[0];
 }
 
@@ -82,7 +82,7 @@ function getFunctionParamEnumValueByName($objectId, $functionName, $paramName, $
     }
     
     $erg = QUERY($sql);
-    if ($row = MYSQL_FETCH_ROW($erg)) return $row[0];
+    if ($row = MYSQLi_FETCH_ROW($erg)) return $row[0];
     else die("getFunctionParamEnumValueByName: $sql");
 }
 
@@ -98,7 +98,7 @@ function getFunctionParamEnumValueForClassesIdByName($featureClassesId, $functio
                   where featureFunctions.featureClassesId='$featureClassesId' and featureFunctions.name='$functionName' and featureFunctionParams.name = '$paramName' and featureFunctionEnums.name='$enumName' limit 1";
     
     $erg = QUERY($sql);
-    if ($row = MYSQL_FETCH_ROW($erg)) return $row[0];
+    if ($row = MYSQLi_FETCH_ROW($erg)) return $row[0];
     else die("getFunctionParamEnumValueForClassesIdByName: $sql");
 }
 
@@ -114,12 +114,12 @@ function getFunctionParamBitValueByNameForClassesId($classesId, $functionName, $
              where featureFunctions.featureClassesId='$classesId' and featureFunctions.name='$functionName' and featureFunctionParams.name = '$paramName' and featurefunctionbitmasks.name='$bitName' limit 1";
 
     $erg = QUERY($sql);
-    if ($row = MYSQL_FETCH_ROW($erg)) return $row[0];
+    if ($row = MYSQLi_FETCH_ROW($erg)) return $row[0];
     else die("getFunctionParamBitValueByNameForClassesId: $sql");
 }
 
 /**
- * Wartet auf einen Sender-Index für die angegebende Dauer auf das angegebene Ergebnis (RESULT) 
+ * Wartet auf einen Sender-Index fï¿½ angegebende Dauer auf das angegebene Ergebnis (RESULT) 
  */
 function waitForInstanceResultByName($senderInstanceId, $waitSeconds, $functionName, $lastLogId, $resultType = "funtionDataParams", $fail = 1)
 {
@@ -128,7 +128,7 @@ function waitForInstanceResultByName($senderInstanceId, $waitSeconds, $functionN
                                            join featureFunctions on (featureFunctions.featureClassesId = featureInstances.featureClassesId)
                                            where featureInstances.id='$senderInstanceId' and featureFunctions.name='$functionName' limit 1";
     $erg = QUERY($sql);
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = MYSQLi_FETCH_ROW($erg))
     {
         $senderObjectId = $row[0];
         $functionId = $row[1];
@@ -139,7 +139,7 @@ function waitForInstanceResultByName($senderInstanceId, $waitSeconds, $functionN
 }
 
 /**
- * Wartet auf eine Sender-Object-ID für die angegebende Dauer auf das angegebene Ergebnis (RESULT) 
+ * Wartet auf eine Sender-Object-ID fï¿½ angegebende Dauer auf das angegebene Ergebnis (RESULT) 
  */
 function waitForObjectResultByName($senderObjectId, $waitSeconds, $functionName, $lastLogId, $resultType = "funtionDataParams", $fail = 1, $wait=1)
 {
@@ -160,7 +160,7 @@ function waitForObjectResultByName($senderObjectId, $waitSeconds, $functionName,
     }
     
     $erg = QUERY($sql);
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = MYSQLi_FETCH_ROW($erg))
     {
         $functionId = $row[0];
     } 
@@ -170,7 +170,7 @@ function waitForObjectResultByName($senderObjectId, $waitSeconds, $functionName,
 }
 
 /**
- * Wartet auf einen Sender-Index für die angegebende Dauer auf das angegebene Event
+ * Wartet auf einen Sender-Index fï¿½ angegebende Dauer auf das angegebene Event
  */
 function waitForInstanceEventByName($senderInstanceId, $waitSeconds, $functionName, $lastLogId, $resultType = "funtionDataParams", $fail = 1)
 {
@@ -179,7 +179,7 @@ function waitForInstanceEventByName($senderInstanceId, $waitSeconds, $functionNa
                                            join featureFunctions on (featureFunctions.featureClassesId = featureInstances.featureClassesId)
                                            where featureInstances.id='$senderInstanceId' and featureFunctions.name='$functionName' limit 1";
     $erg = QUERY($sql);
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = MYSQLi_FETCH_ROW($erg))
     {
         $senderObjectId = $row[0];
         $functionId = $row[1];
@@ -190,7 +190,7 @@ function waitForInstanceEventByName($senderInstanceId, $waitSeconds, $functionNa
 }
 
 /**
- * Wartet auf eine Sender-Object-ID für die angegebende Dauer auf das angegebene Ergebnis (EVENT)
+ * Wartet auf eine Sender-Object-ID fï¿½ angegebende Dauer auf das angegebene Ergebnis (EVENT)
  */
 function waitForObjectEventByName($senderObjectId, $waitSeconds, $functionName, $lastLogId, $resultType = "funtionDataParams", $fail = 1)
 {
@@ -211,7 +211,7 @@ function waitForObjectEventByName($senderObjectId, $waitSeconds, $functionName, 
               where featureInstances.objectId='$senderObjectId' and featureFunctions.name='$functionName' limit 1";
     }
     $erg = QUERY($sql);
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = MYSQLi_FETCH_ROW($erg))
     {
         $functionId = $row[0];
     } else
@@ -231,7 +231,7 @@ function _waitForObjectResult($senderObjectId, $waitSeconds, $type, $functionId,
         if ($type!="") $andType=" and type='$type'";
         $sql = "select functionData,senderSubscriberData from udpcommandlog where id>'$lastLogId' and senderObj='$senderObjectId' and fktId='$functionId' $andType limit 1";
         $erg = QUERY($sql);
-        while ($obj = mysql_fetch_object($erg))
+        while ($obj = MYSQLi_FETCH_object($erg))
         {
             if ($resultType == "funtionDataParams")
             {
@@ -306,7 +306,7 @@ function waitForCommandResultByName($senderObjectId, $resultName, $lastLogId)
   }
     
   $erg = QUERY($sql);
-  if ($row = MYSQL_FETCH_ROW($erg)) $functionId = $row[0];
+  if ($row = MYSQLi_FETCH_ROW($erg)) $functionId = $row[0];
   else die("waitForCommandResultByName: $sql");
 
   return _waitForObjectResult($senderObjectId, 3, "", $functionId, $lastLogId, "funtionDataParams", 0, 1);
@@ -363,8 +363,8 @@ function waitForCommandId($commandId, $timeout=1000)
     {
     	  sleepMS(40);
 
-        $erg = MYSQL_QUERY("select max(id) from udpCommandLog") or die(MYSQL_ERROR());
-        $row=MYSQL_FETCH_ROW($erg);
+        $erg = QUERY("select max(id) from udpCommandLog");
+        $row=MYSQLi_FETCH_ROW($erg);
         if ($row[0]>=$commandId) return;
     }
 }
@@ -386,7 +386,7 @@ function getResultDataValueByName($paramName, $result)
 }
 
 // Ruft eine durch functionName angegebene Funktion auf einer Objektinstanz auf
-// Enumnamen werden dabei durch den zugehörigen Enumwert ersetzt
+// Enumnamen werden dabei durch den zugehï¿½en Enumwert ersetzt
 function callInstanceMethodByName($featureInstanceId, $functionName, $paramData = "", $senderObjectId = "")
 {
     $limit = "limit 1";
@@ -402,7 +402,7 @@ function callInstanceMethodByName($featureInstanceId, $functionName, $paramData 
                                                      LEFT join featureFunctionParams on (featureFunctionParams.featureFunctionId=featureFunctions.id)
                                                      LEFT join featureFunctionEnums on (featureFunctionEnums.featureFunctionId=featureFunctions.id)
                                                      where featureInstances.id='$featureInstanceId' and featureFunctions.name='$functionName' $limit");
-    while ($obj = MYSQL_FETCH_OBJECT($erg))
+    while ($obj = MYSQLi_FETCH_OBJECT($erg))
     {
         $featureFunctionId = $obj->featureFunctionsId;
         $receiverObjectId = $obj->objectId;
@@ -421,7 +421,7 @@ function callInstanceMethodByName($featureInstanceId, $functionName, $paramData 
 }
 
 // Ruft eine durch functionName angegebene Funktion auf einer Objektinstanz auf
-// Enumnamen werden dabei durch den zugehörigen Enumwert ersetzt
+// Enumnamen werden dabei durch den zugehï¿½en Enumwert ersetzt
 function callObjectMethodByName($receiverObjectId, $functionName, $paramData = "", $senderObjectId = "")
 {
     global $CONTROLLER_CLASSES_ID;
@@ -452,7 +452,7 @@ function callObjectMethodByName($receiverObjectId, $functionName, $paramData = "
                            LEFT join featureFunctionEnums on (featureFunctionEnums.featureFunctionId=featureFunctions.id)
                            where featureInstances.objectId='$receiverObjectId' and featureFunctions.name='$functionName' $limit");
     }
-    while ($obj = MYSQL_FETCH_OBJECT($erg))
+    while ($obj = MYSQLi_FETCH_OBJECT($erg))
     {
         $featureFunctionId = $obj->featureFunctionsId;
 
@@ -473,10 +473,10 @@ function callObjectMethodByName($receiverObjectId, $functionName, $paramData = "
 function callInstanceMethod($featureInstanceId, $featureFunctionId, $paramData = "", $senderObjectId = "")
 {
     $erg = QUERY("select SQL_CACHE objectId from featureInstances where id='$featureInstanceId' limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = MYSQLi_FETCH_ROW($erg))
         $receiverObjectId = $row[0];
     else
-        die("Ungültige featureInstanceId: " . $featureInstanceId);
+        die("Ungï¿½ featureInstanceId: " . $featureInstanceId);
 
     callInstanceMethodForObjectId($receiverObjectId, $featureFunctionId, $paramData, $senderObjectId);
 }
@@ -490,7 +490,7 @@ function callInstanceMethodForObjectId($receiverObjectId, $featureFunctionId, $p
     $debugStr = "";
     $dataPos = 0;
     $erg = QUERY("select type,name,functionId from featureFunctions where id='$featureFunctionId' limit 1");
-    if ($obj = MYSQL_FETCH_OBJECT($erg))
+    if ($obj = MYSQLi_FETCH_OBJECT($erg))
     {
       $debugStr .= i18n($obj->name). "(" . $obj->functionId . ")";
 
@@ -511,7 +511,7 @@ function callInstanceMethodForObjectId($receiverObjectId, $featureFunctionId, $p
       $binaryStartPos = 0;
 
       $erg2 = QUERY("select SQL_CACHE id,name,type from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
-      while ($obj2 = MYSQL_FETCH_OBJECT($erg2))
+      while ($obj2 = MYSQLi_FETCH_OBJECT($erg2))
       {
         $param = $paramData[trim($obj2->name)];
         if ($param == "")
@@ -551,7 +551,7 @@ function callInstanceMethodForObjectId($receiverObjectId, $featureFunctionId, $p
         else $debugStr .= ", " . i18n($obj2->name) . "(" . $obj2->type . ", " . $param . ")";
       }
     } 
-    else die("Ungültige methodId b -> $featureFunctionId");
+    else die("Ungï¿½ methodId b -> $featureFunctionId");
 
     sendCommand($receiverObjectId, $data, $senderObjectId, $binaryStartPos);
 
@@ -581,9 +581,9 @@ function sendCommand($receiverObjectId, $data, $senderObjectId = "", $binaryStar
     //Kontroll-Byte
     $datagramm[$datagrammPos++] = 0x00;
 
-    // Nachrichtenzähler
+    // Nachrichtenzã§¬er
     QUERY("INSERT into udpHelper (dummy) values('1')");
-    $id = mysql_insert_id() % 255;
+    $id = query_insert_id() % 255;
     $datagramm[$datagrammPos++] = $id;
 
     // Sender-ID
@@ -593,14 +593,14 @@ function sendCommand($receiverObjectId, $data, $senderObjectId = "", $binaryStar
         $datagramm[$datagrammPos++] = $value;
     }
 
-    // Empfänger-ID
+    // Empfã­§er-ID
     $receiverIdBytes = dWordToBytes($receiverObjectId);
     foreach ($receiverIdBytes as $value)
     {
         $datagramm[$datagrammPos++] = $value;
     }
 
-    // Datenlänge
+    // Datenlã­§e
     $dataLength = count($data);
     $dataLengthBytes = wordToBytes($dataLength);
     foreach ($dataLengthBytes as $value)
@@ -717,7 +717,7 @@ function updateControllerStatus($short=0)
         $oldOnline=$newOnline;
         sleepMS(1000);
         $erg = QUERY("select count(*) from controller where bootloader='0' and online='1'");
-        $row=MYSQL_FETCH_ROW($erg);
+        $row=MYSQLi_FETCH_ROW($erg);
         $newOnline=$row[0];
   
         treeStatusOut("Online Controller: ".$newOnline);
@@ -727,7 +727,7 @@ function updateControllerStatus($short=0)
            if ($pinged!=1 && $pingActive==1)
            {
              $erg = QUERY("select objectId from controller where bootloader='0' and online='0'");
-             while ($row = MYSQL_FETCH_ROW($erg))
+             while ($row = MYSQLi_FETCH_ROW($erg))
              {
                callObjectMethodByName($row[0], "ping");
                $pinged=1;
@@ -748,8 +748,8 @@ function updateControllerStatus($short=0)
     for ($i=0;$i<10;$i++)
     {
     	$minDist = time()-2;
-    	$erg = MYSQL_QUERY("select id from lastreceived where time>'$minDist' limit 1") or die(MYSQL_ERROR());
-    	if ($obj=MYSQL_FETCH_OBJECT($erg))
+    	$erg = QUERY("select id from lastreceived where time>'$minDist' limit 1");
+    	if ($obj=MYSQLi_FETCH_OBJECT($erg))
     	{
     		treeStatusOut("Fertigstellung $i ...");
     		sleep(1);
@@ -758,16 +758,16 @@ function updateControllerStatus($short=0)
     }
     
     // Gibts es Controller mit unbekannten Features, die mittlerweile bekannt sind ?
-    $erg = MYSQL_QUERY("select id, objectId from featureInstances where featureClassesId='-1' or name like 'Unbekanntes Feature%'") or die(MYSQL_ERROR());
-    while($obj=MYSQL_FETCH_OBJECT($erg))
+    $erg = QUERY("select id, objectId from featureInstances where featureClassesId='-1' or name like 'Unbekanntes Feature%'");
+    while($obj=MYSQLi_FETCH_OBJECT($erg))
     {
     	  $actClassId = getClassId($obj->objectId);
     	  
-        $erg2 = MYSQL_QUERY("select id,name from featureClasses where classId='$actClassId' limit 1") or die(MYSQL_ERROR());
-        if ($obj2=MYSQL_FETCH_OBJECT($erg2))
+        $erg2 = QUERY("select id,name from featureClasses where classId='$actClassId' limit 1");
+        if ($obj2=MYSQLi_FETCH_OBJECT($erg2))
         {
         	 treeStatusOut("Aktualisiere ".$obj->id);
-        	 MYSQL_QUERY("UPDATE featureInstances set featureClassesId='$obj2->id',name='$obj2->name' where id='$obj->id' limit 1") or die(MYSQL_ERROR());
+        	 QUERY("UPDATE featureInstances set featureClassesId='$obj2->id',name='$obj2->name' where id='$obj->id' limit 1");
         }
     }
     
@@ -787,9 +787,9 @@ function cleanUp()
 	
 	$start = time();
 	
-	// Journale aufräumen
-  $erg = MYSQL_QUERY("select count(*) from udpcommandlog") or die(MYSQL_ERROR());
-  $row=MYSQL_FETCH_ROW($erg);
+	// Journale aufrã´­en
+  $erg = QUERY("select count(*) from udpcommandlog");
+  $row=MYSQLi_FETCH_ROW($erg);
   $diff = $row[0]-$MAX_LOG_ENTRIES;
   if ($diff>0)
   {
@@ -798,8 +798,8 @@ function cleanUp()
   	 QUERY($sql);
   }
 
-  $erg = MYSQL_QUERY("select count(*) from udpdatalog") or die(MYSQL_ERROR());
-  $row=MYSQL_FETCH_ROW($erg);
+  $erg = QUERY("select count(*) from udpdatalog");
+  $row=MYSQLi_FETCH_ROW($erg);
   $diff = $row[0]-$MAX_LOG_ENTRIES;
   if ($diff>0)
   {
@@ -808,8 +808,8 @@ function cleanUp()
   	 QUERY($sql);
   }
 
-  $erg = MYSQL_QUERY("select count(*) from udphelper") or die(MYSQL_ERROR());
-  $row=MYSQL_FETCH_ROW($erg);
+  $erg = QUERY("select count(*) from udphelper");
+  $row=MYSQLi_FETCH_ROW($erg);
   $diff = $row[0]-$MAX_LOG_ENTRIES;
   if ($diff>0)
   {
@@ -818,9 +818,9 @@ function cleanUp()
   	 QUERY($sql);
   }
 
-  // Trace aufräumen
-  $erg = MYSQL_QUERY("select count(*) from trace") or die(MYSQL_ERROR());
-  $row=MYSQL_FETCH_ROW($erg);
+  // Trace aufrã´­en
+  $erg = QUERY("select count(*) from trace");
+  $row=MYSQLi_FETCH_ROW($erg);
   $diff = $row[0]-$MAX_TRACE_ENTRIES;
   if ($diff>0)
   {
@@ -874,15 +874,15 @@ function cleanUp()
 
   /*trace("repair and optimize tables",1);
 
-  $alltables = mysql_query("SHOW TABLES") or die(MYSQL_ERROR());
-  while ($table = mysql_fetch_assoc($alltables))
+  $alltables = QUERY("SHOW TABLES");
+  while ($table = MYSQLi_FETCH_assoc($alltables))
   {
      foreach ($table as $db => $tablename)
      {
      	   trace("repair table $tablename",1);  
-         mysql_query("REPAIR TABLE $tablename QUICK") or die(mysql_error());
+         QUERY("REPAIR TABLE $tablename QUICK");
      	   trace("optimize table $tablename",1);  
-         mysql_query("OPTIMIZE TABLE $tablename") or die(mysql_error());
+         QUERY("OPTIMIZE TABLE $tablename");
      }
   }*/
 
@@ -1036,7 +1036,7 @@ function getBusSubscriberDataOld($objectId)
             if (getClassId($objectId) == $CONTROLLER_CLASS_ID)
             {
                 $erg = QUERY("select SQL_CACHE name from controller where objectId='$objectId' limit 1");
-                if ($obj = MYSQL_FETCH_OBJECT($erg))
+                if ($obj = MYSQLi_FETCH_OBJECT($erg))
                 {
                     $result->featureClassName = "Controller";
                     $result->featureInstanceName = $obj->name;
@@ -1050,13 +1050,13 @@ function getBusSubscriberDataOld($objectId)
             } else
             {
                 $erg = QUERY("select SQL_CACHE * from featureInstances where objectId='$objectId' limit 1");
-                if ($obj = MYSQL_FETCH_OBJECT($erg))
+                if ($obj = MYSQLi_FETCH_OBJECT($erg))
                 {
                     $result->featureInstanceObject = $obj;
                     $featureInstanceName = $obj->name;
 
                     $erg2 = QUERY("select SQL_CACHE * from featureClasses where id='$obj->featureClassesId' limit 1");
-                    if ($obj2 = MYSQL_FETCH_OBJECT($erg2))
+                    if ($obj2 = MYSQLi_FETCH_OBJECT($erg2))
                     {
                         $result->featureObj = $obj2;
                         $featureClassName = $obj2->name;
@@ -1064,7 +1064,7 @@ function getBusSubscriberDataOld($objectId)
                         $featureClassName = "Unbekannte FeatureClass classesId =  " . $obj->featureClassesId;
 
                     $erg2 = QUERY("select SQL_CACHE * from controller where id='$obj->controllerId' limit 1");
-                    if ($obj2 = MYSQL_FETCH_OBJECT($erg2))
+                    if ($obj2 = MYSQLi_FETCH_OBJECT($erg2))
                     {
                         $result->controllerObj = $obj2;
                         $controllerName = $obj2->name;
@@ -1072,10 +1072,10 @@ function getBusSubscriberDataOld($objectId)
                         $controllerName = "Unbekannter Controller. controllerId = " . $obj->controllerId;
 
                     $erg2 = QUERY("select SQL_CACHE * from roomFeatures where featureInstanceId='$obj->id' limit 1");
-                    if ($obj2 = MYSQL_FETCH_OBJECT($erg2))
+                    if ($obj2 = MYSQLi_FETCH_OBJECT($erg2))
                     {
                         $erg3 = QUERY("select SQL_CACHE id, name from rooms where id='$obj2->roomId' limit 1");
-                        if ($obj3 = MYSQL_FETCH_OBJECT($erg3))
+                        if ($obj3 = MYSQLi_FETCH_OBJECT($erg3))
                         {
                             $result->roomObj = $obj3;
                             $roomName = $obj3->name;
@@ -1115,7 +1115,7 @@ function getBusSubscriberData($objectId)
     else if (getClassId($objectId) == $CONTROLLER_CLASS_ID)
     {
       $erg = QUERY("select SQL_CACHE name from controller where objectId='$objectId' limit 1");
-      if ($obj = MYSQL_FETCH_OBJECT($erg))
+      if ($obj = MYSQLi_FETCH_OBJECT($erg))
       {
         $result->featureClassName = "Controller";
         $result->featureInstanceName = $obj->name;
@@ -1141,7 +1141,7 @@ function getBusSubscriberData($objectId)
        left join roomFeatures on (roomFeatures.featureInstanceId = featureInstances.id)
        left join rooms on (rooms.id = roomFeatures.roomId)
        where featureInstances.objectId='$objectId' limit 1");
-       if ($obj = MYSQL_FETCH_OBJECT($erg))
+       if ($obj = MYSQLi_FETCH_OBJECT($erg))
        {
          $featureInstanceObject = new stdClass();
          $featureInstanceObject->id=$obj->featureInstanceId;
@@ -1197,13 +1197,13 @@ function getFunctionData($featureClassesId, $functionId, $datagramm, $dataPos, $
                   from featureFunctions 
                   join featureClasses on(featureClasses.id = featureFunctions.featureClassesId) 
                   where featureClassesId='$featureClassesId' and functionId='$functionId' limit 1");
-    if ($obj = MYSQL_FETCH_OBJECT($erg))
+    if ($obj = MYSQLi_FETCH_OBJECT($erg))
     {
         $obj->functionDebugStr = $obj->name;
 
         $paramCount = 0;
         $erg2 = QUERY("select id,name,type from featureFunctionParams where featureFunctionId='$obj->id' order by id");
-        while ($obj2 = MYSQL_FETCH_OBJECT($erg2))
+        while ($obj2 = MYSQLi_FETCH_OBJECT($erg2))
         {
             if ($paramsStr != "") $paramsStr .= ", ";
             $paramsStr .= $obj2->name . " = ";
@@ -1222,7 +1222,7 @@ function getFunctionData($featureClassesId, $functionId, $datagramm, $dataPos, $
             {
               $dataValue = $datagramm[$dataPos++];
               $erg3 = QUERY("select id,paramId,name,value from featureFunctionEnums where featureFunctionId='$obj->id' and value='$dataValue' limit 1");
-              if ($obj3 = MYSQL_FETCH_OBJECT($erg3))
+              if ($obj3 = MYSQLi_FETCH_OBJECT($erg3))
               {
                 //$obj2->featureFunctionEnumObj = $obj3;
                 $paramsStr .= $obj3->name . " / ";
@@ -1249,7 +1249,7 @@ function getFeatureClassesId($objectId)
     $classId = getClassId($objectId);
 
     $erg = QUERY("select SQL_CACHE id from featureClasses where classId='$classId' limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = MYSQLi_FETCH_ROW($erg))
         return $row[0];
     
     echo "getFeatureClassesId: Unbekannte classId von objectId $objectId. ClassId = " . $classId." <br>";
@@ -1259,7 +1259,7 @@ function getFeatureClassesId($objectId)
 function getControllerId($objectId)
 {
     $erg = QUERY("select SQL_CACHE id from controller where objectId='$objectId' limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = MYSQLi_FETCH_ROW($erg))
         return $row[0];
         
     echo "getControllerId: Unbekannte objectId $objectId! <br>";
@@ -1293,7 +1293,7 @@ function getBootloaderObjectId($objectId)
 function getObjectIdForInstanceId($instanceId)
 {
   $erg = QUERY("select id from featureInstances where id='$instanceId' limit 1");
-  if ($row=MYSQL_FETCH_ROW($erg)) return $row[0];
+  if ($row=MYSQLi_FETCH_ROW($erg)) return $row[0];
 }
 
 function getClassId($objectId)
@@ -1328,7 +1328,7 @@ function bytesToByteList($dataArray, $startPos, $dataLength)
 
 function setUserData($key, $value)
 {
-	$value=mysql_real_escape_string($value);
+	$value=query_real_escape_string($value);
 	QUERY("REPLACE into userData (userKey,userValue) values('$key','$value')");
 }
 
@@ -1336,18 +1336,18 @@ function setUserData($key, $value)
 function getUserData($key)
 {
 	$erg = QUERY("select userValue from userData where userKey='$key' limit 1");
-	if ($row=MYSQL_FETCH_ROW($erg)) return $row[0];
+	if ($row=MYSQLi_FETCH_ROW($erg)) return $row[0];
 	return NULL;
 }
 
 function userJournal($function, $parameter="")
 {
   $time=time();
-  $function=mysql_real_escape_string($function);
-  $parameter=mysql_real_escape_string($parameter);
+  $function=query_real_escape_string($function);
+  $parameter=query_real_escape_string($parameter);
 
-  MYSQL_QUERY("INSERT into udpCommandLog (time,  sender,  function,  params)
-         values('$time','UserPlugin','$function','$parameter')") or die(MYSQL_ERROR());
+  QUERY("INSERT into udpCommandLog (time,  sender,  function,  params)
+         values('$time','UserPlugin','$function','$parameter')");
 }
 
 function sendEmail($receiver, $subject, $message, $from="reply@domain.com")
@@ -1365,7 +1365,7 @@ function getLastReceivedData($objectId, $functionName)
 {
 	// Zuletzt empfangene Daten von diesem Sender
   $erg = QUERY("select functionData from lastReceived  where senderObj='$objectId' and function='$functionName' order by id desc limit 1");
-  if ($obj=MYSQL_FETCH_OBJECT($erg))
+  if ($obj=MYSQLi_FETCH_OBJECT($erg))
   {
   	$result=unserialize($obj->functionData)->paramData;
   	$elCount = count((array)$result);
@@ -1393,7 +1393,7 @@ function whichIsLastReceivedEvent($objectId, $eventNames)
 	
 	// Zuletzt empfangene Daten von diesem Sender
   $erg = QUERY("select function from lastReceived  where senderObj='$objectId' and ($or) order by id desc limit 1");
-  if ($obj=MYSQL_FETCH_OBJECT($erg)) return $obj->function;
+  if ($obj=MYSQLi_FETCH_OBJECT($erg)) return $obj->function;
   return "";
 }
 ?>

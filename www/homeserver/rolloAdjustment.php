@@ -21,7 +21,7 @@ if ($step==1)
    
    sleepMS($rolloWait);
    
-   // Rollo schlieﬂen
+   // Rollo schlie√üen
    unset($paramData);
    callInstanceMethodByName($featureInstanceId, "start", array("direction"=>"TO_CLOSE"));
 }
@@ -38,7 +38,7 @@ else if ($step==2)
    
    sleepMS($rolloWait);
    
-   // Rollo ˆffnen
+   // Rollo √∂ffnen
    callInstanceMethodByName($featureInstanceId, "start", array("direction"=>"TO_OPEN"));
    
    // Zeit starten
@@ -61,7 +61,7 @@ else if ($step==3)
 
    sleepMS($rolloWait);
    
-   // Rollo schlieﬂen
+   // Rollo schlie√üen
    unset($paramData);
    callInstanceMethodByName($featureInstanceId, "start", array("direction"=>"TO_CLOSE"));
    
@@ -92,27 +92,27 @@ if ($step=="") $step=0;
 
 if ($step==0)
 {
-	$message="Zum Start der Kalibrierung wird das Rollo ganz geschlossen.<br>Bitte jeweils die Anweisungen unterhalb best‰tigen:";
-	$stepMessage="Rolloschlieﬂen starten";
+	$message="Zum Start der Kalibrierung wird das Rollo ganz geschlossen.<br>Bitte jeweils die Anweisungen unterhalb best√§tigen:";
+	$stepMessage="Rolloschlie√üen starten";
 }
 else if ($step==1)
 {
-	$message="Bitte best‰tigen, wenn das Rollo unten angekommen ist und nicht mehr f‰hrt:";
+	$message="Bitte best√§tigen, wenn das Rollo unten angekommen ist und nicht mehr f√§hrt:";
 	$stepMessage="Rollo ist unten angekommen";
 }
 else if ($step==2)
 {
-	$message="Nun bitte sofort best‰tigen, sobald das Rollo oben ist und nicht mehr f‰hrt:";
+	$message="Nun bitte sofort best√§tigen, sobald das Rollo oben ist und nicht mehr f√§hrt:";
 	$stepMessage="Rollo ist oben angekommen";
 }
 else if ($step==3)
 {
-	$message="<b>OK!</b><br>Nun bitte sofort best‰tigen, sobald das Rollo unten ist und nicht mehr f‰hrt:";
+	$message="<b>OK!</b><br>Nun bitte sofort best√§tigen, sobald das Rollo unten ist und nicht mehr f√§hrt:";
 	$stepMessage="Rollo ist unten angekommen";
 }
 else if ($step==4)
 {
-	$message="<b>OK!</b><br>Die Kalibrierung ist abgeschlossen.<br><br>Eingestellte Werte:<br>÷ffnungszeit: ".$_SESSION["rolloOpenTime"]." Sekunden<br>Schlieﬂzeit: $zeit Sekunden";
+	$message="<b>OK!</b><br>Die Kalibrierung ist abgeschlossen.<br><br>Eingestellte Werte:<br>√ñffnungszeit: ".$_SESSION["rolloOpenTime"]." Sekunden<br>Schlie√üzeit: $zeit Sekunden";
 	$stepMessage="";
 }
 

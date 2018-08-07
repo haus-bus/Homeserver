@@ -15,18 +15,18 @@ if ($submitted!="")
     }
     else
     {
-      $erg = MYSQL_QUERY("select id from groupStates where id='$actId' limit 1") or die(MYSQL_ERROR());
-      if ($row=MYSQL_FETCH_ROW($erg))
+      $erg = QUERY("select id from groupStates where id='$actId' limit 1");
+      if ($row=mysqli_fetch_ROW($erg))
       {
-        MYSQL_QUERY("UPDATE groupStates set name='$name' where id='$actId' limit 1") or die(MYSQL_ERROR());
+        QUERY("UPDATE groupStates set name='$name' where id='$actId' limit 1");
       }
       else
       {
-        MYSQL_QUERY("INSERT into groupStates (groupId, name) values('$groupId','$name')") or die(MYSQL_ERROR());
+        QUERY("INSERT into groupStates (groupId, name) values('$groupId','$name')");
       }
     }
   }
-  header("Location: editGroupStates.php?groupId=$groupId&message=".urlencode("Die Änderungen wurden gespeichert"));
+  header("Location: editGroupStates.php?groupId=$groupId&message=".urlencode("Die Ã„nderungen wurden gespeichert"));
   exit;
 
 }
@@ -39,8 +39,8 @@ $entriesTag = getTag("%ENTRIES%",$html);
 $paramIds="";
 $entries="";
 $i=0;
-$erg = MYSQL_QUERY("select id, name from groupStates where groupId='$groupId' and basics='0' order by id") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id, name from groupStates where groupId='$groupId' and basics='0' order by id");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
   $i++;
   $actTag = $entriesTag;
@@ -53,8 +53,8 @@ while($obj=MYSQL_FETCH_OBJECT($erg))
   $paramIds.=$obj->id;
 }
 
-$erg = MYSQL_QUERY("select max(id) from groupStates") or die(MYSQL_ERROR());
-if ($row=MYSQL_FETCH_ROW($erg)) $nextId=$row[0]+1;
+$erg = QUERY("select max(id) from groupStates");
+if ($row=mysqli_fetch_ROW($erg)) $nextId=$row[0]+1;
 else $nextId=1;
 
 if ($paramIds!="") $paramIds.=",";

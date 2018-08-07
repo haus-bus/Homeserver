@@ -4,12 +4,12 @@ error_reporting(E_ERROR);
 
 
 $erg = QUERY("select featureClassesId,objectId from featureInstances where id='$featureInstanceId' limit 1");
-if ($obj=MYSQL_FETCH_OBJECT($erg))
+if ($obj=mysqli_fetch_OBJECT($erg))
 {
   $featureClassesId = $obj->featureClassesId;
   $objectId=$obj->objectId;
 }
-else die("FEHLER! Ungültige featureInstanceId $featureInstanceId");
+else die("FEHLER! UngÃ¼ltige featureInstanceId $featureInstanceId");
 
 if ($action=="switch") callInstanceMethodByName($featureInstanceId, "toggle",array("offTime"=>"0", "onTime"=>"0", "quantity"=>"1"));
 else if ($action=="status")
@@ -57,7 +57,7 @@ function getLastStatus($lastStatusId)
   $evOffId = getObjectFunctionIdByName($objectId, "evOff");
   $evOnId = getObjectFunctionIdByName($objectId, "evOn");
   $erg3 = QUERY("select functionData from udpCommandLog where senderObj='$objectId' and (fktId='$statusId'||fktId='$evOffId'||fktId='$evOnId') and id>'$lastStatusId' order by id desc limit 1");
-  if ($row3=MYSQL_FETCH_ROW($erg3))
+  if ($row3=mysqli_fetch_ROW($erg3))
   {
     $actFunctionData = unserialize($row3[0]);
     if ($actFunctionData->functionId==$evOffId) return 0;

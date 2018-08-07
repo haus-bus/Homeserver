@@ -5,7 +5,7 @@ if ($action == "submitGraph")
 {
   if ($delete == 1)
   {
-    MYSQL_QUERY("DELETE from graphs where id='$id' limit 1") or die(MYSQL_ERROR());
+    QUERY("DELETE from graphs where id='$id' limit 1");
     triggerTreeUpdate();
     header("Location: editGraphs.php");
     exit;
@@ -20,14 +20,14 @@ if ($action == "submitGraph")
     
     if ($id == "")
     {
-      MYSQL_QUERY("INSERT into graphs (title,timeMode,timeParam1,timeParam2,width,height,distValue,distType,theme,heightMode)
-                             values('$name','$timeType','$timeParam1','$timeParam2','$width','$height','$distValue','$distType','$theme','$heightMode')") or die(MYSQL_ERROR());
-      $id = mysql_insert_id();
+      QUERY("INSERT into graphs (title,timeMode,timeParam1,timeParam2,width,height,distValue,distType,theme,heightMode)
+                             values('$name','$timeType','$timeParam1','$timeParam2','$width','$height','$distValue','$distType','$theme','$heightMode')");
+      $id = query_insert_id();
       triggerTreeUpdate();
     }
     else
     {
-      MYSQL_QUERY("update graphs set theme='$theme',title='$name',timeMode='$timeType',timeParam1='$timeParam1',timeParam2='$timeParam2',width='$width',height='$height',distValue='$distValue',distType='$distType',heightMode='$heightMode' where id='$id' limit 1") or die(MYSQL_ERROR());
+      QUERY("update graphs set theme='$theme',title='$name',timeMode='$timeType',timeParam1='$timeParam1',timeParam2='$timeParam2',width='$width',height='$height',distValue='$distValue',distType='$distType',heightMode='$heightMode' where id='$id' limit 1");
     }
   }
 }
@@ -36,21 +36,21 @@ else if ($action == "changeSignalType")
 
 if ($deleteSignal!="") 
 {
-	MYSQL_QUERY("delete from graphSignals where id='$deleteSignal' and graphId='$id' limit 1") or die(MYSQL_ERROR());
-	MYSQL_QUERY("delete from graphSignalEvents where graphSignalsId='$deleteSignal'") or die(MYSQL_ERROR());	
+	QUERY("delete from graphSignals where id='$deleteSignal' and graphId='$id' limit 1");
+	QUERY("delete from graphSignalEvents where graphSignalsId='$deleteSignal'");	
 }
-else if( $deleteEvent!="" ) MYSQL_QUERY("delete from graphSignalEvents  where id='$deleteEvent' limit 1") or die(MYSQL_ERROR());	
-else if ($setColor!="") MYSQL_QUERY("update graphSignals set color='$setColor' where id='$signalId' limit 1") or die(MYSQL_ERROR());
+else if( $deleteEvent!="" ) QUERY("delete from graphSignalEvents  where id='$deleteEvent' limit 1");	
+else if ($setColor!="") QUERY("update graphSignals set color='$setColor' where id='$signalId' limit 1");
 else if ($nameSignal!="")
 {
-    if ($submitted==1) MYSQL_QUERY("update graphSignals set title='$name' where id='$signalId' and graphId='$id' limit 1") or die(MYSQL_ERROR());
+    if ($submitted==1) QUERY("update graphSignals set title='$name' where id='$signalId' and graphId='$id' limit 1");
     else 
     {
        setupTreeAndContent("editGraphSignalName_design.html");
        $html = str_replace("%ID%", $id, $html);
        $html = str_replace("%SIGNAL_ID%", $nameSignal, $html);
-       $erg = MYSQL_QUERY("select title from graphSignals where id='$nameSignal' and graphId='$id' limit 1") or die(MYSQL_ERROR());
-       $row=MYSQL_FETCH_ROW($erg);
+       $erg = QUERY("select title from graphSignals where id='$nameSignal' and graphId='$id' limit 1");
+       $row=mysqli_fetch_ROW($erg);
        $html = str_replace("%NAME%", $row[0], $html);
         
        show();
@@ -60,7 +60,7 @@ else if ($action=="editFkt")
 {
   if ($submitted==1) 
   {
-  	MYSQL_QUERY("update graphSignalEvents set fkt='$fkt' where graphSignalsId='$signalId' and id='$signalEventId' limit 1") or die(MYSQL_ERROR());
+  	QUERY("update graphSignalEvents set fkt='$fkt' where graphSignalsId='$signalId' and id='$signalEventId' limit 1");
   	QUERY("TRUNCATE graphData");
   }
   else
@@ -70,15 +70,15 @@ else if ($action=="editFkt")
     $html = str_replace("%SIGNAL_ID%", $signalId, $html);
     $html = str_replace("%SIGNAL_EVENT_ID%", $signalEventId, $html);
     
-    $erg = MYSQL_QUERY("select functionId,fkt from graphSignalEvents where graphSignalsId='$signalId' and id='$signalEventId' limit 1") or die(MYSQL_ERROR());
-    $row=MYSQL_FETCH_ROW($erg);
+    $erg = QUERY("select functionId,fkt from graphSignalEvents where graphSignalsId='$signalId' and id='$signalEventId' limit 1");
+    $row=mysqli_fetch_ROW($erg);
     $functionId = $row[0];
     $fkt = $row[1];
     $html = str_replace("%FKT%", $fkt, $html);
     
     $params="";
-    $erg = MYSQL_QUERY("select name from featureFunctionParams where featureFunctionId='$functionId' order by id") or die(MYSQL_ERROR());
-    while($row=MYSQL_FETCH_ROW($erg))
+    $erg = QUERY("select name from featureFunctionParams where featureFunctionId='$functionId' order by id");
+    while($row=mysqli_fetch_ROW($erg))
     {
        $params.="<li>".$row[0]."<br>";
     }
@@ -93,7 +93,7 @@ else if ($action=="editFkt")
 else if($action=="deleteCache")
 {
 	if ($confirm==1) QUERY("TRUNCATE graphdata");
-	else showMessage("Der Diagramcache speichert alle empfangenen Busdaten zwischen, so dass die Diagramme schneller angezeigt werden können.<br>Der Cache wird automatisch einmal pro Minute aktualisiert.", "Soll der Diagramcache gelöscht werden?", "editGraphs.php?action=deleteCache&id=$id&confirm=1", "Ja, Cache löschen","editGraphs.php?id=$id", "Nein, zurück");
+	else showMessage("Der Diagramcache speichert alle empfangenen Busdaten zwischen, so dass die Diagramme schneller angezeigt werden kÃ¶nnen.<br>Der Cache wird automatisch einmal pro Minute aktualisiert.", "Soll der Diagramcache gelÃ¶scht werden?", "editGraphs.php?action=deleteCache&id=$id&confirm=1", "Ja, Cache lÃ¶schen","editGraphs.php?id=$id", "Nein, zurÃ¼ck");
 }
 
 setupTreeAndContent("editGraphs_design.html");
@@ -101,17 +101,17 @@ if ($id != "")
 {
   $html = str_replace("%MODE%", "bearbeiten", $html);
   
-  $erg = MYSQL_QUERY("select * from graphs where id='$id' limit 1") or die(MYSQL_ERROR());
-  $obj = MYSQL_FETCH_OBJECT($erg);
+  $erg = QUERY("select * from graphs where id='$id' limit 1");
+  $obj = mysqli_fetch_OBJECT($erg);
   
   $html = str_replace("%NAME%", $obj->title, $html);
   $html = str_replace("%WIDTH%", $obj->width, $html);
   $html = str_replace("%HEIGHT%", $obj->height, $html);
   
   //$html = str_replace("%THEME_OPTIONS%", getSelect($obj->theme, "default,dark-unica,sand-signika,grid-light", "Standard,Dunkel,Sand,Gitter"), $html);
-  $html = str_replace("%HEIGHT_TYPE_OPTIONS%", getSelect($obj->heightMode, ",percent,fixed", "Automatisch,Prozent der Fensterhöhe:,Feste Höhe in Pixel:"), $html);
+  $html = str_replace("%HEIGHT_TYPE_OPTIONS%", getSelect($obj->heightMode, ",percent,fixed", "Automatisch,Prozent der FensterhÃ¶he:,Feste HÃ¶he in Pixel:"), $html);
   
-  $html = str_replace("%TIME_TYPE_OPTIONS%", getSelect($obj->timeMode, ",fixed,seconds,minutes,hours,days", "-- wählen --,Fester Zeitraum,Die letzten X Sekunden,Die letzten X Minuten,Die letzten X Stunden,Die letzten X Tage"), $html);
+  $html = str_replace("%TIME_TYPE_OPTIONS%", getSelect($obj->timeMode, ",fixed,seconds,minutes,hours,days", "-- wÃ¤hlen --,Fester Zeitraum,Die letzten X Sekunden,Die letzten X Minuten,Die letzten X Stunden,Die letzten X Tage"), $html);
   
   $html = str_replace("%IMAGE%", "img/empty.gif", $html);
   
@@ -127,10 +127,10 @@ if ($id != "")
   $html = str_replace("%DIST_VALUE%", $obj->distValue, $html);
   $html = str_replace("%DIST_TYPE_OPTIONS%", getSelect($obj->distType, ",s,m,h,d", "-- keiner --,Sekunden,Minuten,Stunden,Tage"), $html);
   
-  $html = str_replace("%SUBMIT_TITLE%", "Änderungen speichern", $html);
+  $html = str_replace("%SUBMIT_TITLE%", "Ã„nderungen speichern", $html);
   
   $html = str_replace("%GRAPH_TYPE%", $obj->type, $html);
-  $html = str_replace("%HEIGHT_TYPE_OPTIONS%", getSelect("", ",percent,fixed", "Automatisch,Prozent der Fensterhöhe:,Feste Höhe in Pixel:"), $html);
+  $html = str_replace("%HEIGHT_TYPE_OPTIONS%", getSelect("", ",percent,fixed", "Automatisch,Prozent der FensterhÃ¶he:,Feste HÃ¶he in Pixel:"), $html);
   $html = str_replace("%TIME_TYPE%", $obj->timeMode, $html);
   
   chooseTag("%OPT_DELETE%", $html);
@@ -145,15 +145,15 @@ if ($id != "")
   $signalEventsTag = getTag("%SIGNAL_EVENTS%",$signalTag);
   $signalFktTag = getTag("%SIGNAL_FKTS%",$signalTag);
     
-  $erg = MYSQL_QUERY("select id,type,color,title,featureInstanceId,functionId,fkt from graphSignals where graphId='$id' order by id") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select id,type,color,title,featureInstanceId,functionId,fkt from graphSignals where graphId='$id' order by id");
+  while($obj=mysqli_fetch_OBJECT($erg))
   {
   	$actTag = $signalTag;
   	
     $signalEvents="";  
 	  $signalFkts="";  
-    $erg2 = MYSQL_QUERY("select id,featureInstanceId,functionId,fkt from graphSignalEvents where graphSignalsId='$obj->id' order by id") or die(MYSQL_ERROR());
-    while($obj2=MYSQL_FETCH_OBJECT($erg2))    
+    $erg2 = QUERY("select id,featureInstanceId,functionId,fkt from graphSignalEvents where graphSignalsId='$obj->id' order by id");
+    while($obj2=mysqli_fetch_OBJECT($erg2))    
     {
     	$actSignalFktTag = $signalFktTag;
     	if ($obj2->fkt=="") $obj2->fkt="[anlegen]";
@@ -165,7 +165,7 @@ if ($id != "")
 	    $actFeatureInstanceName = $allFeatureInstances[$obj2->featureInstanceId]->name;
 	    //  $actClassName = $allFeatureClasses[$actFeatureInstance->featureClassesId]->name;
 	    $functionName = $allFeatureFunctions[$obj2->functionId]->name;
-	    $signalEvent=$roomName." » ".$actFeatureInstanceName." » ".$functionName;
+	    $signalEvent=$roomName." Â» ".$actFeatureInstanceName." Â» ".$functionName;
 	    $actEventTag = str_replace("%SIGNAL_EVENT%",$signalEvent,$actEventTag);
         $actEventTag = str_replace("%EVENT_ID%",$obj2->id,$actEventTag);
         $actSignalFktTag = str_replace("%EVENT_ID%",$obj2->id,$actSignalFktTag);
@@ -200,7 +200,7 @@ else
     $html = str_replace("%THEME_OPTIONS%", getSelect("default", "default,dark-unica,sand-signika,grid-light", "Standard,Dunkel,Sand,Gitter"), $html);
 
   $html = str_replace("%GRAPH_TYPE_OPTIONS%", getSelect("", "line,spline,scatter", "Line,Spline,Events"), $html);
-  $html = str_replace("%TIME_TYPE_OPTIONS%", getSelect("", ",fixed,seconds,minutes,hours,days", "-- wählen --,Fester Zeitraum,Die letzten X Sekunden,Die letzten X Minuten,Die letzten X Stunden,Die letzten X Tage"), $html);
+  $html = str_replace("%TIME_TYPE_OPTIONS%", getSelect("", ",fixed,seconds,minutes,hours,days", "-- wÃ¤hlen --,Fester Zeitraum,Die letzten X Sekunden,Die letzten X Minuten,Die letzten X Stunden,Die letzten X Tage"), $html);
   $html = str_replace("%IMAGE%", "img/empty.gif", $html);
   $html = str_replace("%TIME_PARAM_1%", "", $html);
   $html = str_replace("%TIME_PARAM_2%", "", $html);

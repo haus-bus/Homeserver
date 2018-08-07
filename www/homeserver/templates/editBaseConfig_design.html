@@ -35,7 +35,7 @@ Basiskonfiguration / Aktorverhalten
 <tr>
  <td align="center" valign="center"><%OPT_DELETE%><nobr><a href="editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeActive&active=%ACTIVE_STATUS%"><img src='%ACTIVITY_IMAGE%' title='%ACTIVE_TITLE%'></a><br><a href="editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=deleteRule"><img src="img/remove.gif" border=0 title="L&ouml;schen"></a> <a href="editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=copyRule"><img style="padding-top:5px" src="img/addBlue.gif" border=0 title="Kopieren"></a></%OPT_DELETE%></td>
  <td valign="top">
-  <%SIGNALS%><nobr><a href="editBaseConfig.php?action=removeSignal&groupId=%GROUP_ID%&ruleId=%RULE_ID%&signalId=%SIGNAL_ID%"><img src="img/removeSmall.gif" border="0"></a> <%OPT_EDIT_SIGNAL%><a href="editBaseConfig.php?action=editSignalParams&groupId=%GROUP_ID%&ruleId=%RULE_ID%&ruleSignalId=%SIGNAL_ID%&featureFunctionId=%FEATURE_FUNCTION_ID%"></%OPT_EDIT_SIGNAL%>%SIGNAL_ROOM% » %SIGNAL_NAME%</a><br></%SIGNALS%>
+  <%SIGNALS%><nobr><a href="editBaseConfig.php?action=removeSignal&groupId=%GROUP_ID%&ruleId=%RULE_ID%&signalId=%SIGNAL_ID%"><img src="img/removeSmall.gif" border="0"></a> <%OPT_EDIT_SIGNAL%><a href="editBaseConfig.php?action=editSignalParams&groupId=%GROUP_ID%&ruleId=%RULE_ID%&ruleSignalId=%SIGNAL_ID%&featureFunctionId=%FEATURE_FUNCTION_ID%"></%OPT_EDIT_SIGNAL%>%SIGNAL_ROOM% Â» %SIGNAL_NAME%</a><br></%SIGNALS%>
   <div align=center><%OPT_ADD_SIGNAL%><a href="editBaseConfig.php?action=addSignal&groupId=%GROUP_ID%&ruleId=%RULE_ID%"><img src="img/add.gif" title="Signal hinzuf&uuml;gen" border=0></a></%OPT_ADD_SIGNAL%> <%OPT_COPY_SIGNAL%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="editBaseConfig.php?action=addSignalCopy&groupId=%GROUP_ID%&ruleId=%RULE_ID%"><font size=1>kopieren</a></%OPT_COPY_SIGNAL%></div>
  </td>
  <td valign="top" align="center">%FIRST%</td>
@@ -46,7 +46,7 @@ Basiskonfiguration / Aktorverhalten
  <%OPT_TIMES%>
  <td valign="top">
  	<nobr>
- 		<select style="width:60px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartDay&startDay='+this.options[this.selectedIndex].value);">%TIME_START_DAY_OPTIONS%</select> <select style="width:80px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartTime&startTime='+this.options[this.selectedIndex].value);">%TIME_START_TIME_OPTIONS%</select> <select style="width:70px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartTimeMinute&startTimeMinute='+this.options[this.selectedIndex].value);">%TIME_START_TIME_MINUTE_OPTIONS%</select> <font style="font-size:9px">täglich</font><br>
+ 		<select style="width:60px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartDay&startDay='+this.options[this.selectedIndex].value);">%TIME_START_DAY_OPTIONS%</select> <select style="width:80px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartTime&startTime='+this.options[this.selectedIndex].value);">%TIME_START_TIME_OPTIONS%</select> <select style="width:70px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeStartTimeMinute&startTimeMinute='+this.options[this.selectedIndex].value);">%TIME_START_TIME_MINUTE_OPTIONS%</select> <font style="font-size:9px">tÃ¤glich</font><br>
  		<select style="width:60px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndDay&endDay='+this.options[this.selectedIndex].value);">%TIME_END_DAY_OPTIONS%</select> <select style="width:80px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndTime&endTime='+this.options[this.selectedIndex].value);">%TIME_END_TIME_OPTIONS%</select> <select style="width:70px" onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeEndTimeMinute&endTimeMinute='+this.options[this.selectedIndex].value);">%TIME_END_TIME_MINUTE_OPTIONS%</select> &nbsp;<input type=checkbox %INTRADAY_CHECKED% name='intrayday%RULE_ID%' onChange="sendAjax('editBaseConfig.php?groupId=%GROUP_ID%&ruleId=%RULE_ID%&action=changeIntraday&intradayState='+this.checked);">
  	</nobr>
  </td>
@@ -93,10 +93,10 @@ In den einzelnen Spalten der Funktionstype wird die gew&uuml;nschte Reaktion kon
 - TEILGRUPPE: Wann immer ein Aktor der Gruppe an ist, leuchtet die Led<br>
 
 <br><br>
-<u>Bedeutung des Gültigkeitzeitraums:</u><br><br>
-Hier kann die Gültigkeit der Regel auf den angebenen Start- und Endezeitpunkt beschränkt werden.<br>
-Wird als Stunde Tagsüber oder Nachts gewählt, dann ist die Regel aktiv, wenn der Sonnenaufgang bzw. Sonnenuntergang gemeldet wurde.<br>
-Wird das "täglich" Häkchen gewählt, dann gilt der Zeitraum auf Tagesbasis, d.h. Beispiel MO 08:00 Uhr bis FR 20:00 Uhr bedeutet dann nicht<br>
-"Von Montag 8:00 Uhr durchgängig bis Freitag 20 Uhr, sondern von Montag bis Freitag jeweils von 8 bis 20 Uhr"
+<u>Bedeutung des GÃ¼ltigkeitzeitraums:</u><br><br>
+Hier kann die GÃ¼ltigkeit der Regel auf den angebenen Start- und Endezeitpunkt beschrÃ¤nkt werden.<br>
+Wird als Stunde TagsÃ¼ber oder Nachts gewÃ¤hlt, dann ist die Regel aktiv, wenn der Sonnenaufgang bzw. Sonnenuntergang gemeldet wurde.<br>
+Wird das "tÃ¤glich" HÃ¤kchen gewÃ¤hlt, dann gilt der Zeitraum auf Tagesbasis, d.h. Beispiel MO 08:00 Uhr bis FR 20:00 Uhr bedeutet dann nicht<br>
+"Von Montag 8:00 Uhr durchgÃ¤ngig bis Freitag 20 Uhr, sondern von Montag bis Freitag jeweils von 8 bis 20 Uhr"
 
 <br><br>

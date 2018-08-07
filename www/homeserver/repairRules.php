@@ -8,8 +8,8 @@ require("include/all.php");
   $evDoubleClickFunctionId = getClassesIdFunctionsIdByName($featureClassesId, "evDoubleClick");
   $evCoveredFunctionId = getClassesIdFunctionsIdByName($featureClassesId, "evCovered");
 
-$erg = MYSQL_QUERY("select rules.id,featureFunctionId from rules join ruleSignals on(ruleSignals.ruleId = rules.id) where signalType='0' order by id") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select rules.id,featureFunctionId from rules join ruleSignals on(ruleSignals.ruleId = rules.id) where signalType='0' order by id");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	$type="other";
 	
@@ -20,7 +20,7 @@ while($obj=MYSQL_FETCH_OBJECT($erg))
 	else if ($obj->featureFunctionId==$evCoveredFunctionId) $type="covered";
 	
 	echo $obj->id." -  ".$obj->featureFunctionId." - $type <br>";
-	MYSQL_QUERY("UPDATE rules set signalType='$type' where id='$obj->id' limit 1") or die(MYSQL_ERROR());
+	QUERY("UPDATE rules set signalType='$type' where id='$obj->id' limit 1");
 }
 
 ?>

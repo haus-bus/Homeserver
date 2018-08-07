@@ -2,10 +2,10 @@
 
 /**
 * Falls sich jemand fragt, was das hier soll:
-* Da wir MyIsam Tabellen verwenden und keine InnoDb, können keine Foreign-Index verknüpft werden.
-* Das automatische Löschen aller Referenzen in fremden Tabellen wird also nicht möglich.
+* Da wir MyIsam Tabellen verwenden und keine InnoDb, kÃ¶nnen keine Foreign-Index verknÃ¼pft werden.
+* Das automatische LÃ¶schen aller Referenzen in fremden Tabellen wird also nicht mÃ¶glich.
 * Wir verwenden MyIsam anstatt InnoDb, weil diese automatisch beim Start der Datenbank repariert werden, falls es einen Stromausfall gab
-* Das ist keine Kenntnis nach mit InnoDb nicht möglich. Falls da jemand andere Informationen hat, bitte an Herm melden
+* Das ist keine Kenntnis nach mit InnoDb nicht mÃ¶glich. Falls da jemand andere Informationen hat, bitte an Herm melden
 */
 function checkReferenceIntegrity($dry)
 {
@@ -13,7 +13,7 @@ function checkReferenceIntegrity($dry)
 	global $foundErrors;
 	global $wasDry;
 	$start=time();
-	if ($dry==1) echo "Prüfe referenzielle Integrität der Datenbank.... <br>";
+	if ($dry==1) echo "PrÃ¼fe referenzielle IntegritÃ¤t der Datenbank.... <br>";
 
   checkSingleGroups($dry);
 	
@@ -82,36 +82,36 @@ function checkReferenceIntegrity($dry)
   
   // Sonderlocken
   // Wenn featureInstance in basicRuleSignals oder ruleSignals <0 dann ist damit die id in basicrulegroupsignals gemeint
-  $erg = MYSQL_QUERY("select * from basicRuleSignals where featureInstanceId<0") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select * from basicRuleSignals where featureInstanceId<0");
+  while($obj=MYSQLi_FETCH_OBJECT($erg))
   {
   	 $obj->featureInstanceId=abs($obj->featureInstanceId);
   	 $sql = "select id from basicrulegroupsignals where id='$obj->featureInstanceId' limit 1";
-  	 $erg2 = MYSQL_QUERY($sql) or die(MYSQL_ERROR());
-  	 if ($obj2=MYSQL_FETCH_OBJECT($erg2)){}
-  	 else MYSQL_QUERY("delete from basicRuleSignals where id='$obj->id' limit 1") or die(MYSQL_ERROR());
+  	 $erg2 = QUERY($sql);
+  	 if ($obj2=MYSQLi_FETCH_OBJECT($erg2)){}
+  	 else QUERY("delete from basicRuleSignals where id='$obj->id' limit 1");
   }
 
-  $erg = MYSQL_QUERY("select * from ruleSignals where featureInstanceId<0") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select * from ruleSignals where featureInstanceId<0");
+  while($obj=MYSQLi_FETCH_OBJECT($erg))
   {
   	 $obj->featureInstanceId=abs($obj->featureInstanceId);
   	 $sql = "select id from basicrulegroupsignals where id='$obj->featureInstanceId' limit 1";
-  	 $erg2 = MYSQL_QUERY($sql) or die(MYSQL_ERROR());
-  	 if ($obj2=MYSQL_FETCH_OBJECT($erg2)){}
-  	 else MYSQL_QUERY("delete from ruleSignals where id='$obj->id' limit 1") or die(MYSQL_ERROR()); 
+  	 $erg2 = QUERY($sql);
+  	 if ($obj2=MYSQLi_FETCH_OBJECT($erg2)){}
+  	 else QUERY("delete from ruleSignals where id='$obj->id' limit 1"); 
   }
   
-  // Controllerleichen ohne Features löschen
-  $erg = MYSQL_QUERY("SELECT controller.id from controller left join featureInstances on (featureInstances.controllerId = controller.id) where bootloader!=1 and featureInstances.id is null") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  // Controllerleichen ohne Features lÃ¶schen
+  $erg = QUERY("SELECT controller.id from controller left join featureInstances on (featureInstances.controllerId = controller.id) where bootloader!=1 and featureInstances.id is null");
+  while($obj=MYSQLi_FETCH_OBJECT($erg))
   {
-  	 MYSQL_QUERY("delete from controller where id='$obj->id' limit 1") or die(MYSQL_ERROR()); 
+  	 QUERY("delete from controller where id='$obj->id' limit 1"); 
   }
   
   if ($dry==1)
   {
-  	 if ($foundErrors==1) die("Bitte angzeigte Fehler sorgfältig prüfen und zum Reparieren <a href='cleanUpDb.php?dry=0&wasDry=1'>HIER KLICKEN</A>");
+  	 if ($foundErrors==1) die("Bitte angzeigte Fehler sorgfÃ¤ltig prÃ¼fen und zum Reparieren <a href='cleanUpDb.php?dry=0&wasDry=1'>HIER KLICKEN</A>");
   	 else echo "Keine Fehler gefunden ".(time()-$start)." s<br>";
   }
   	
@@ -120,12 +120,12 @@ function checkReferenceIntegrity($dry)
 
 function checkSingleGroups($dry)
 {
-	if ($dry==1) echo "Prüfe Instanzgruppenzuordnung ...<br>";
-	$erg = MYSQL_QUERY("select 
+	if ($dry==1) echo "PrÃ¼fe Instanzgruppenzuordnung ...<br>";
+	$erg = QUERY("select 
 	featureinstances.*, groups.single from featureinstances
 	left join groupfeatures on (groupfeatures.featureInstanceId = featureInstances.id) 
-	left join groups on (groupfeatures.groupId = groups.id)") or die(MYSQL_ERROR());
-	while($obj=MYSQL_FETCH_OBJECT($erg))
+	left join groups on (groupfeatures.groupId = groups.id)");
+	while($obj=MYSQLi_FETCH_OBJECT($erg))
 	{
 		 if ($obj->single==null)
 		 {
@@ -133,17 +133,17 @@ function checkSingleGroups($dry)
 		 	  
 		 	  if ($dry==1) echo "Instanz $obj->id hat keine Gruppe <br>";
 
- 	  	  $erg2 = MYSQL_QUERY("select name from featureClasses where id='$obj->featureClassesId' limit 1") or die(MYSQL_ERROR());
-	  	  $obj2=MYSQL_FETCH_OBJECT($erg2);
+ 	  	  $erg2 = QUERY("select name from featureClasses where id='$obj->featureClassesId' limit 1");
+	  	  $obj2=MYSQLi_FETCH_OBJECT($erg2);
         $featureName = $obj2->name." ".getInstanceId($obj->objectId);
 
         $sql = "INSERT into groups (single) values ('1')";
         if ($dry==1) echo $sql."<br>";
-        else MYSQL_QUERY($sql) or die(MYSQL_ERROR());
-        $groupId = mysql_insert_id();
+        else QUERY($sql);
+        $groupId = query_insert_id();
         $sql = "INSERT into groupFeatures (groupId, featureInstanceId) values ('$groupId','$obj->id')";
         if ($dry==1) echo $sql."<br>";
-        else MYSQL_QUERY($sql) or die(MYSQL_ERROR());
+        else QUERY($sql);
         
      		$basicStateNames = getBasicStateNames($obj->featureClassesId);
 		    $offName=$basicStateNames->offName;
@@ -151,43 +151,43 @@ function checkSingleGroups($dry)
 
         $sql = "INSERT into groupStates (groupId,name, value,basics) values ('$groupId','$offName','1','1')";
         if ($dry==1) echo $sql."<br>";
-        else MYSQL_QUERY($sql) or die(MYSQL_ERROR());
+        else QUERY($sql);
 
         $sql = "INSERT into groupStates (groupId,name, value,basics) values ('$groupId','$onName','2','2')";
         if ($dry==1) echo $sql."<br>";
-        else MYSQL_QUERY($sql) or die(MYSQL_ERROR());
+        else QUERY($sql);
 		 }
 	}
 	
 	// zu einer Instanz darf es nur eine SINGLE Group geben
 	$lastId=-1;
   $lastGroup=-1;
-  $erg = MYSQL_QUERY("select groups.id as groupId, featureInstances.id as featureInstanceId from featureInstances join groupFeatures on (groupFeatures.featureInstanceId = featureInstances.id) join groups on (groups.id = groupFeatures.groupId) where groups.single='1' order by featureInstanceId" ) or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select groups.id as groupId, featureInstances.id as featureInstanceId from featureInstances join groupFeatures on (groupFeatures.featureInstanceId = featureInstances.id) join groups on (groups.id = groupFeatures.groupId) where groups.single='1' order by featureInstanceId" );
+  while($obj=MYSQLi_FETCH_OBJECT($erg))
   {
 	   if ($obj->featureInstanceId==$lastId)
 	   {
 	   	 $sql = "DELETE from groups where id = '$obj->groupId' limit 1";
 	   	 if ($dry==1) echo $sql."<br>";
-	   	 else MYSQL_QUERY($sql);
+	   	 else QUERY($sql);
 	   }
 	   $lastGroup = $obj->groupId;
 	   $lastId = $obj->featureInstanceId;
   }
   
   // eine Singlegruppe muss auch instanzen haben
-  $erg = MYSQL_QUERY("select groups.id,groupFeatures.groupId from groups left join groupFeatures on (groupFeatures.groupId=groups.id) where single=1") or die(MYSQL_ERROR());
-	while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select groups.id,groupFeatures.groupId from groups left join groupFeatures on (groupFeatures.groupId=groups.id) where single=1");
+	while($obj=MYSQLi_FETCH_OBJECT($erg))
 	{
 		 if ($obj->groupId==null)
 		 {
 		 	  $sql = "DELETE from groups where id='$obj->id' limit 1";
 		 	  if ($dry==1) echo $sql."<br>";
-		 	  else MYSQL_QUERY($sql);
+		 	  else QUERY($sql);
 
 		 	  $sql = "DELETE from groupStates where groupId='$obj->id'";
 		 	  if ($dry==1) echo $sql."<br>";
-		 	  else MYSQL_QUERY($sql);
+		 	  else QUERY($sql);
 		 }
 	}
 }
@@ -206,8 +206,8 @@ function checkReference($dry, $srcTable, $srcColumn, $destTable, $destColumn)
   $ok=0;
   $errors=0;
   $output="";
-	$erg = MYSQL_QUERY($sql) or die(MYSQL_ERROR());
-	while($obj=MYSQL_FETCH_OBJECT($erg))
+	$erg = QUERY($sql);
+	while($obj=MYSQLi_FETCH_OBJECT($erg))
   {
   	$srcSearch="src$srcColumn";
   	$destSearch="dest$destColumn";
@@ -222,7 +222,7 @@ function checkReference($dry, $srcTable, $srcColumn, $destTable, $destColumn)
 	  	$output.="<li> Id ".$obj->srcId.": $srcColumn ".$obj->$srcSearch." nicht vorhanden - ";
 	  	$sqlDelete="DELETE from $srcTable where id='$obj->srcId' limit 1";
 	 	  if ($dry==1) $output.=$sqlDelete;
-	 	  else MYSQL_QUERY($sqlDelete) or die(MYSQL_ERROR());
+	 	  else QUERY($sqlDelete);
 	 	  $output.="<br>";
 	  }
 	  else $ok++;
@@ -230,7 +230,7 @@ function checkReference($dry, $srcTable, $srcColumn, $destTable, $destColumn)
   if ($errors>0 && $dry==1)
   {
   	echo "<hr>$errors Fehler in Tabelle $srcTable gefunden <br>";
-  	echo "$ok Einträge sind ok <br>";
+  	echo "$ok EintrÃ¤ge sind ok <br>";
   	echo "Fehler: <br> ";
   	echo $output;
   }

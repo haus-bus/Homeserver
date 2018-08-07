@@ -1,4 +1,6 @@
 <?php
+//die("30#-#");
+
 // Register Globals FIX
 foreach (array('_GET', '_POST', '_COOKIE', '_SERVER') as $_SG) 
 {
@@ -17,13 +19,13 @@ $lastId="-";
 if ($id=="")
 {
 	$erg = QUERY("select id from appMessages order by id desc limit 1");
-	if ($row=MYSQL_FETCH_ROW($erg)) $lastId=$row[0];
+	if ($row=mysqli_fetch_ROW($erg)) $lastId=$row[0];
 	else $lastId="0";
 }
 else
 {
   $erg = QUERY("select id,title,message from appMessages where id>'$id' limit 1");
-  if ($row=MYSQL_FETCH_ROW($erg))
+  if ($row=mysqli_fetch_ROW($erg))
   {
 	   $lastId=$row[0];
 	   $message=utf8_encode($row[2]);

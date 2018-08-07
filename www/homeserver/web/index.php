@@ -4,8 +4,8 @@ include("../include/all.php");
 $html = file_get_contents("index_design.html");
 
 $rolloTag = getTag("%OPT_ROLLO%",$html);
-$erg = MYSQL_QUERY("select paramKey,paramValue from basicConfig where paramKey='webRollo1' or paramKey='webRollo2' or paramKey='webRollo3' or paramKey='webRollo4' limit 4") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select paramKey,paramValue from basicConfig where paramKey='webRollo1' or paramKey='webRollo2' or paramKey='webRollo3' or paramKey='webRollo4' limit 4");
+while($obj=MYSQLi_FETCH_OBJECT($erg))
 {
 	if ($obj->paramValue<10) $obj->paramValue="&nbsp;&nbsp;".$obj->paramValue;
 	if ($obj->paramKey=="webRollo1") $rolloTag = str_replace("%BUTTON1%", $obj->paramValue, $rolloTag);
@@ -16,8 +16,8 @@ while($obj=MYSQL_FETCH_OBJECT($erg))
 $html = str_replace("%OPT_ROLLO%","",$html);
 
 $dimmerTag = getTag("%OPT_DIMMER%",$html);
-$erg = MYSQL_QUERY("select paramKey,paramValue from basicConfig where paramKey='webDimmer1' or paramKey='webDimmer2' or paramKey='webDimmer3' or paramKey='webDimmer4' limit 4") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select paramKey,paramValue from basicConfig where paramKey='webDimmer1' or paramKey='webDimmer2' or paramKey='webDimmer3' or paramKey='webDimmer4' limit 4");
+while($obj=MYSQLi_FETCH_OBJECT($erg))
 {
 	if ($obj->paramValue<10) $obj->paramValue="&nbsp;&nbsp;".$obj->paramValue;
 	if ($obj->paramKey=="webDimmer1") $dimmerTag = str_replace("%BUTTON1%", $obj->paramValue, $dimmerTag);
@@ -48,8 +48,8 @@ $html = str_replace("%OPT_TASTER%","",$html);
 $multiRowTag = getTag("%MULTITASTER_ROW%",$html);
 $multiTasterPanelTag = getTag("%MULTITASTER_PANELS%",$html);
 
-$erg = MYSQL_QUERY("select paramKey,paramValue from basicConfig where paramKey='webRoomTemp' or paramKey='webRoomHumidity' limit 2") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select paramKey,paramValue from basicConfig where paramKey='webRoomTemp' or paramKey='webRoomHumidity' limit 2");
+while($obj=MYSQLi_FETCH_OBJECT($erg))
 {
 	if ($obj->paramKey=="webRoomTemp") $webRoomTemp=$obj->paramValue;
 	else if ($obj->paramKey=="webRoomHumidity") $webRoomHumidity=$obj->paramValue;
@@ -58,8 +58,8 @@ while($obj=MYSQL_FETCH_OBJECT($erg))
 $menuTag=getTag("%MENU%",$html);
 $menus="";
 $i=0;
-$erg = MYSQL_QUERY("select id,name from rooms order by name") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id,name from rooms order by name");
+while($obj=MYSQLi_FETCH_OBJECT($erg))
 {
 	$actTag = $menuTag;
 	$anzeige=$obj->name;
@@ -82,15 +82,15 @@ $feuchteClassesId=getClassesIdByName("Feuchtesensor");
 */
 
 $where="1=2 ";
-$erg = MYSQL_QUERY("SELECT count( id ) AS childs, group_concat(objectId) AS members, parentInstanceId FROM featureinstances WHERE parentInstanceId >0 and featureClassesId=1 GROUP BY parentInstanceId") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("SELECT count( id ) AS childs, group_concat(objectId) AS members, parentInstanceId FROM featureinstances WHERE parentInstanceId >0 and featureClassesId=1 GROUP BY parentInstanceId");
+while($obj=MYSQLi_FETCH_OBJECT($erg))
 {
 	$multitaster[$obj->parentInstanceId]=$obj->members;
 	if ($obj->childs>1) $where.="or featureInstances.id='$obj->parentInstanceId' ";
 }
 
-$erg = MYSQL_QUERY("select functionData,featureInstances.id from lastreceived join featureInstances on (featureInstances.objectId=lastreceived.senderObj) where $where") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select functionData,featureInstances.id from lastreceived join featureInstances on (featureInstances.objectId=lastreceived.senderObj) where $where");
+while($obj=MYSQLi_FETCH_OBJECT($erg))
 {
 	$data=unserialize($obj->functionData)->paramData;
 	
@@ -125,7 +125,7 @@ $erg = QUERY("select rooms.id as roomId, rooms.name as roomName,
                      where (parentInstanceId=0 or parentInstanceId is null) and (featureClassesId!='$CONTROLLER_CLASSES_ID' or featureClassesId is null)
                      and (featureClasses.name='Dimmer' or featureClasses.name='Schalter' or featureClasses.name='CurrentReader' or featureClasses.name='Rollladen' or featureClasses.name='Temperatursensor' or featureClasses.name='Feuchtesensor' or featureClasses.name='LogicalButton' or featureClasses.name='Taster')
                                order by roomName,FIND_IN_SET(featureClasses.name,'Dimmer,Schalter,Rollladen,LogicalButton,Taster,Temperatursensor,Feuchtesensor'), featureInstances.name");
-while ( $obj = MYSQL_FETCH_OBJECT($erg))
+while ( $obj = MYSQLi_FETCH_OBJECT($erg))
 {
 	//if ($obj->classesName!="Temperatursensor" && $obj->classesName!="Feuchtesensor") continue;
 	$elements[$obj->roomName][$obj->classesName][$obj->featureInstanceName]=$obj;
@@ -182,8 +182,8 @@ foreach($elements as $room=>$arr)
        }
 
  	  	 $actClassTag = $currentReaderTag;
-       $erg = MYSQL_QUERY("select paramKey,paramValue from basicConfig where paramKey='current1d' or paramKey='current7d' or paramKey='current30d' limit 3") or die(MYSQL_ERROR());
-       while($obj=MYSQL_FETCH_OBJECT($erg))
+       $erg = QUERY("select paramKey,paramValue from basicConfig where paramKey='current1d' or paramKey='current7d' or paramKey='current30d' limit 3");
+       while($obj=MYSQLi_FETCH_OBJECT($erg))
        {
        	 if ($obj->paramKey=="current1d") $actClassTag = str_replace("%CURRENT_1D%",$obj->paramValue." kWh",$actClassTag);
        	 else if ($obj->paramKey=="current7d") $actClassTag = str_replace("%CURRENT_7D%",$obj->paramValue." kWh",$actClassTag);

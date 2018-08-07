@@ -13,12 +13,12 @@ if ($action=="status")
   exit;
 }
 
-$erg = MYSQL_QUERY("select featureClassesId from featureInstances where id='$featureInstanceId' limit 1") or die(MYSQL_ERROR());
-if ($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select featureClassesId from featureInstances where id='$featureInstanceId' limit 1");
+if ($obj=mysqli_fetch_OBJECT($erg))
 {
   $featureClassesId = $obj->featureClassesId;
 }
-else die("FEHLER! Ungültige featureInstanceId $featureInstanceId");
+else die("FEHLER! UngÃ¼ltige featureInstanceId $featureInstanceId");
 
 $html = loadTemplate("tempControl_design.html");
 $html = str_replace("%FEATURE_INSTANCE_ID%",$featureInstanceId,$html);

@@ -1,18 +1,18 @@
 <?php
 
-// Offizielle Parameter - Bei Bedarf ändern
+// Offizielle Parameter - Bei Bedarf Ã¤ndern
 $SERVER_ACTIVE = 1;        // PC-Serverinstanz aktiv
 
-/*$SERVER_WEATHER = 1;      // Wetterfunktionen auf dem Server aktivieren (Benötigt Internetzugriff)
-$COUNTRY = "Deutschland"; // Land für automatische Tag/Nacht Steuerung nach Dämmerungszeiten
-$ZIP_CODE = "33102";      // PLZ für automatische Tag/Nacht Steuerung nach Dämmerungszeiten
+/*$SERVER_WEATHER = 1;      // Wetterfunktionen auf dem Server aktivieren (BenÃ¶tigt Internetzugriff)
+$COUNTRY = "Deutschland"; // Land fÃ¼r automatische Tag/Nacht Steuerung nach DÃ¤mmerungszeiten
+$ZIP_CODE = "33102";      // PLZ fÃ¼r automatische Tag/Nacht Steuerung nach DÃ¤mmerungszeiten
 */
 
-$MAX_LOG_ENTRIES = 1000000; // Wie viele Datenbankeinträge maximal im Journal gehalten werden
-$MAX_TRACE_ENTRIES = 10000; // Wie viele Datenbankeinträge maximal im Trace gehalten werden
+$MAX_LOG_ENTRIES = 1000000; // Wie viele DatenbankeintrÃ¤ge maximal im Journal gehalten werden
+$MAX_TRACE_ENTRIES = 10000; // Wie viele DatenbankeintrÃ¤ge maximal im Trace gehalten werden
 
 
-// INTERNE PARAMETER -- HIER NICHTS ÄNDERN !
+// INTERNE PARAMETER -- HIER NICHTS Ã„NDERN !
 $UDP_PORT = 9;
 $UDP_BCAST_IP = "255.255.255.255";
 $MY_OBJECT_ID = (9999<<16)+1;

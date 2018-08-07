@@ -13,18 +13,18 @@ if ($action=="Aktuelle Konfiguration speichern" || $action=="save")
 	 	 $actTime = time();
 
      $erg = QUERY("select id from featureFunctions where featureClassesId='$CONTROLLER_CLASSES_ID' and name='getConfiguration' limit 1");
-     $row=MYSQL_FETCH_ROW($erg);
+     $row=mysqli_fetch_ROW($erg);
      $controllerConfigFktId = $row[0];
 	 	 
      $erg = QUERY("select controller.name as ControllerName, objectId from controller where online='1' and size!='999'");
-     while($obj=MYSQL_FETCH_OBJECT($erg))
+     while($obj=mysqli_fetch_OBJECT($erg))
      {
         callObjectMethodByName($obj->objectId, "getConfiguration");
         $result = waitForObjectResultByName($obj->objectId,5, "Configuration", $lastLogId,"funtionDataParams",0);
         if ($result==-1) $message.="Fehler bei $obj->ControllerName <br>";
         else
         {
-          $config = mysql_real_escape_string(serialize($result));
+          $config = query_real_escape_string(serialize($result));
           $sql = "INSERT into recovery (objectId, configuration, lastTime) values('$obj->objectId','$config','$actTime')";
           QUERY($sql);
           echo ". ";
@@ -44,14 +44,14 @@ if ($action=="Aktuelle Konfiguration speichern" || $action=="save")
                           join featureClasses on (featureClasses.id = featureInstances.featureClassesId)
                           join featureFunctions on (featureInstances.featureClassesId=featureFunctions.featureClassesId) 
                           where featureFunctions.name='setConfiguration' and checked='1' and controller.size!='999'");
-     while($obj=MYSQL_FETCH_OBJECT($erg))
+     while($obj=mysqli_fetch_OBJECT($erg))
      {
         callObjectMethodByName($obj->objectId, "getConfiguration");
         $result = waitForObjectResultByName($obj->objectId,5, "Configuration", $lastLogId,"funtionDataParams",0);
         if ($result==-1) $message.="Fehler bei $obj->featureClassName - $obj->featureInstanceName <br>";
         else
         {
-          $config = mysql_real_escape_string(serialize($result));
+          $config = query_real_escape_string(serialize($result));
           $sql = "INSERT into recovery (objectId, configuration, lastTime) values('$obj->objectId','$config','$actTime')";
           QUERY($sql);
           echo ". ";
@@ -59,29 +59,29 @@ if ($action=="Aktuelle Konfiguration speichern" || $action=="save")
         }
      } 
 	 }
-	 else showMessage("Soll die aktuelle Konfiguration nun gespeichert werden?", "Konfiguration speichern", "recovery.php?action=save&confirm=1", "Ja, Speichern","recovery.php", "Nein, zurück");
+	 else showMessage("Soll die aktuelle Konfiguration nun gespeichert werden?", "Konfiguration speichern", "recovery.php?action=save&confirm=1", "Ja, Speichern","recovery.php", "Nein, zurÃ¼ck");
 }
 else if ($action=="Konfiguration wiederherstellen" || $action=="recover")
 {
 	if ($confirm==1)
 	{
 		 if ($lastId=="") $lastId="-1";
-		 $erg = MYSQL_QUERY("select id,name,objectId from controller where online='1' and bootloader!='1' and id>'$lastId' and size!='999' order by id");
-		 while($obj=MYSQL_FETCH_OBJECT($erg))
+		 $erg = QUERY("select id,name,objectId from controller where online='1' and bootloader!='1' and id>'$lastId' and size!='999' order by id");
+		 while($obj=mysqli_fetch_OBJECT($erg))
 		 {
-		 	 echo "Wiederherstellung läuft: ".$obj->name."<br>";
+		 	 echo "Wiederherstellung lÃ¤uft: ".$obj->name."<br>";
 		 	 echo "<iframe src='editController.php?id=$obj->id&action=recover&callback=1' width=400 height=800 scrolling=0 border=0 frameborder=0></iframe>";
 		 	 exit;
 		 }
 		 $message="Wiederherstellung beendet";
 	}
-	else showMessage("Soll die aktuelle Konfiguration nun wiederhergestellt werden?", "Konfiguration wiederherstellen", "recovery.php?action=recover&confirm=1", "Ja, Wiederherstellen","recovery.php", "Nein, zurück");
+	else showMessage("Soll die aktuelle Konfiguration nun wiederhergestellt werden?", "Konfiguration wiederherstellen", "recovery.php?action=recover&confirm=1", "Ja, Wiederherstellen","recovery.php", "Nein, zurÃ¼ck");
 }
 
 setupTreeAndContent("recovery_design.html", $message);
 
 $erg = QUERY("select lastTime from recovery limit 1");
-if ($row=MYSQL_FETCH_ROW($erg)) $html = str_replace("%LAST_TIME%",date("d.m.Y H:i", $row[0])." Uhr",$html);
+if ($row=mysqli_fetch_ROW($erg)) $html = str_replace("%LAST_TIME%",date("d.m.Y H:i", $row[0])." Uhr",$html);
 else $html = str_replace("%LAST_TIME%"," - ",$html);
 
 show();

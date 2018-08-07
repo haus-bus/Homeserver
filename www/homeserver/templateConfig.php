@@ -32,8 +32,8 @@ if ($submitted==1)
 if ($delete!="" && $id!="")
 {
 	 $erg = QUERY("select name from functionTemplates where id='$delete' limit 1");
-	 $row=MYSQL_FETCH_ROW($erg);
-	 $deleteName=mysql_real_escape_string($row[0]);
+	 $row=mysqli_fetch_ROW($erg);
+	 $deleteName=query_real_escape_string($row[0]);
 	 if ($deleteName!="") QUERY("DELETE from functionTemplates where classesId='$id' and name='$deleteName'");
 }
 
@@ -41,14 +41,14 @@ if ($delete!="" && $id!="")
 setupTreeAndContent("templateConfig_design.html", $message);
 
 $erg = QUERY("select name from featureClasses where id='$id' limit 1");
-if ($row=MYSQL_FETCH_ROW($erg))
+if ($row=mysqli_fetch_ROW($erg))
 {
 	 $html = str_replace("%CLASS_NAME%",$row[0],$html);
 }
 else die("Unbekannte classId $id");
 
 $erg = QUERY("select * from functionTemplates where classesId='$id' and name=''");
-while($obj=MYSQL_FETCH_OBJECT($erg))
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	$fkt[$obj->function]=$obj->signal;	
 }
@@ -68,12 +68,12 @@ if ($id==$dimmerClassesId)
 {
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","AN",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","AUS",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 
   $actTag = $templatesTag;
@@ -83,19 +83,19 @@ if ($id==$dimmerClassesId)
 
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","PRESET",$actTag); 
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt4 style='width:130px'>".getSelect($fkt[4], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt4 style='width:130px'>".getSelect($fkt[4], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 }
 else if ($id==$rolloClassesId)
 {
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","HOCH",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","RUNTER",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 
   $actTag = $templatesTag;
@@ -105,70 +105,70 @@ else if ($id==$rolloClassesId)
 
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","PRESET",$actTag); 
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt4 style='width:130px'>".getSelect($fkt[4], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt4 style='width:130px'>".getSelect($fkt[4], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","STOP",$actTag); 
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt5 style='width:130px'>".getSelect($fkt[5], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt5 style='width:130px'>".getSelect($fkt[5], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 }
 else if ($id==$ledClassesId || $id==$logicalButtonClassesId)
 {
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","AN",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","AUS",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
   
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","PRESET",$actTag); 
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt4 style='width:130px'>".getSelect($fkt[4], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt4 style='width:130px'>".getSelect($fkt[4], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 }
 else if ($id==$schalterClassesId)
 {
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","AN",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","AUS",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
   
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","PRESET",$actTag); 
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt4 style='width:130px'>".getSelect($fkt[4], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt4 style='width:130px'>".getSelect($fkt[4], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 }
 else if ($id==$tasterClassesId)
 {
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","Signale Aus",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","Signale An",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 }
 else if ($id==-1)
 {
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","AN/HOCH",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt1 style='width:130px'>".getSelect($fkt[1], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","AUS/RUNTER",$actTag);
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt2 style='width:130px'>".getSelect($fkt[2], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 
   $actTag = $templatesTag;
@@ -178,12 +178,12 @@ else if ($id==-1)
 
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","PRESET",$actTag); 
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt4 style='width:130px'>".getSelect($fkt[4], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt4 style='width:130px'>".getSelect($fkt[4], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
   
   $actTag = $templatesTag;
   $actTag = str_replace("%FKT%","STOP",$actTag); 
-  $actTag = str_replace("%TEMPLATE%","<select name=fkt5 style='width:130px'>".getSelect($fkt[5], "-,covered,click,doubleClick,hold,free", "Kein,Gedrückt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
+  $actTag = str_replace("%TEMPLATE%","<select name=fkt5 style='width:130px'>".getSelect($fkt[5], "-,covered,click,doubleClick,hold,free", "Kein,GedrÃ¼ckt,Klick,Doppelklick,Gehalten,Losgelassen")."</select>",$actTag);
   $templates.=$actTag;
 }
 
@@ -197,7 +197,7 @@ $html = str_replace("%ID%", $id, $html);
 
 
 $erg = QUERY("select * from functionTemplates where classesId='$id' and name!=''");
-while($obj=MYSQL_FETCH_OBJECT($erg))
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	 $save[$obj->name][$obj->function]=$obj;
 }

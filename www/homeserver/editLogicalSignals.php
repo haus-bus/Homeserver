@@ -6,14 +6,14 @@ if ($action == "removeState")
   $activationState = ($nr - 1) * 10;
   $deactivationState = ($nr - 1) * 10 + 1;
   $erg = QUERY("select id from rules where groupId='$groupId' and activationStateId='$activationState' or activationStateId='$deactivationState' limit 2");
-  while ( $row = MYSQL_FETCH_ROW($erg) )
+  while ( $row = mysqli_fetch_ROW($erg) )
   {
     deleteRule($row[0]);
   }
   
   $nr = 0;
   $erg = QUERY("select id,activationStateId from rules where groupId='$groupId' order by activationStateId");
-  while ( $row = MYSQL_FETCH_ROW($erg) )
+  while ( $row = mysqli_fetch_ROW($erg) )
   {
     $activationStateId = $row[1];
     
@@ -44,7 +44,7 @@ $activeTag = getTag("%ACTIVE%", $statesTag);
 
 $theStates = "";
 $erg = QUERY("select rules.id as ruleId, ruleSignals.id as signalId, activationStateId,featureInstanceId,featureFunctionId from rules left join ruleSignals on (ruleSignals.ruleId=rules.id) where groupId='$groupId'");
-while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+while ( $obj = mysqli_fetch_OBJECT($erg) )
 {
   $nr = (int)($obj->activationStateId / 10);
   
@@ -111,10 +111,10 @@ if ($foundEmpty == 0)
   $last++;
   $activationState = $last * 10;
   QUERY("INSERT into rules (groupId, activationStateId,startDay,startHour,startMinute,endDay,endHour,endMinute) values('$groupId','$activationState','7','31','255','7','31','255')");
-  $acticationRuleId = mysql_insert_id();
+  $acticationRuleId = query_insert_id();
   $deactivationState = ($last * 10) + 1;
   QUERY("INSERT into rules (groupId, activationStateId,startDay,startHour,startMinute,endDay,endHour,endMinute) values('$groupId','$deactivationState','7','31','255','7','31','255')");
-  $deacticationRuleId = mysql_insert_id();
+  $deacticationRuleId = query_insert_id();
   
   $actTag = $statesTag;
   removeTag("%OPT_DELETE%", $actTag);

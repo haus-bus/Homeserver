@@ -3,21 +3,21 @@ include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 
 if ($submitted!="")
 {
-   MYSQL_QUERY("DELETE from roomFeatures where roomId='$id'") or die(MYSQL_ERROR());
-  trace("roomFeatures von room mit id $id glöscht");
+   QUERY("DELETE from roomFeatures where roomId='$id'");
+  trace("roomFeatures von room mit id $id glÃ¶scht");
    
-   $erg = MYSQL_QUERY("select id from featureInstances") or die(MYSQL_ERROR());
-   while($obj=MYSQL_FETCH_OBJECT($erg))
+   $erg = QUERY("select id from featureInstances");
+   while($obj=mysqli_fetch_OBJECT($erg))
    {
       $act="id".$obj->id;
       $act=$$act;
       if ($act==1)
       {
-      	MYSQL_QUERY("INSERT into roomFeatures (roomId, featureInstanceId) values('$id','$obj->id')")  or die(MYSQL_ERROR());
-      	/*$erg2 = MYSQL_QUERY("select id from featureInstances where parentInstanceId='$obj->id'") or die(MYSQL_ERROR());
-      	while($row2=mysql_fetch_row($erg2))
+      	QUERY("INSERT into roomFeatures (roomId, featureInstanceId) values('$id','$obj->id')") ;
+      	/*$erg2 = QUERY("select id from featureInstances where parentInstanceId='$obj->id'");
+      	while($row2=mysqli_fetch_row($erg2))
       	{
-      		MYSQL_QUERY("INSERT into roomFeatures (roomId, featureInstanceId) values('$id','$row2[0]')")  or die(MYSQL_ERROR());
+      		QUERY("INSERT into roomFeatures (roomId, featureInstanceId) values('$id','$row2[0]')") ;
       	}*/
       }
    }
@@ -30,15 +30,15 @@ setupTreeAndContent("editRoomFeatures_design.html");
 
 $html = str_replace("%ID%",$id, $html);
 
-$erg = MYSQL_QUERY("select name from rooms where id='$id' limit 1") or die(MYSQL_ERROR());
-if ($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select name from rooms where id='$id' limit 1");
+if ($obj=mysqli_fetch_OBJECT($erg))
 {
    $html = str_replace("%ROOM_NAME%",$obj->name, $html); 
 }
-else die("Fehler! Ungültige ID $id");
+else die("Fehler! UngÃ¼ltige ID $id");
 
-$erg = MYSQL_QUERY("select featureInstanceId,roomId from roomFeatures") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select featureInstanceId,roomId from roomFeatures");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	if ($obj->roomId==$id) $roomFeatures[$obj->featureInstanceId]=1;
 	$allRoomFeatures[$obj->featureInstanceId]=1;
@@ -48,18 +48,18 @@ while($obj=MYSQL_FETCH_OBJECT($erg))
 $closeTreeFolder="</ul></li> \n";
       
 $treeElements="";
-$treeElements.=addToTree("<a href='editRoom.php?id=$id&isFolder=$isFolder'>Feature zum Raum hinzufügen</a>",1);
+$treeElements.=addToTree("<a href='editRoom.php?id=$id&isFolder=$isFolder'>Feature zum Raum hinzufÃ¼gen</a>",1);
 $html=str_replace("%INITIAL_ELEMENT2%","expandToItem('tree2','$treeElementCount');",$html);
 
 $lastController="";
-$erg = MYSQL_QUERY("select controller.id as controllerId, controller.name as controllerName, online,
+$erg = QUERY("select controller.id as controllerId, controller.name as controllerName, online,
                            featureInstances.id as featureInstanceId, featureInstances.name as featureInstanceName,
                            featureClasses.name as featureClassName
                            from controller
                            join featureInstances on (featureInstances.controllerId = controller.id)
                            join featureClasses on (featureClasses.id = featureInstances.featureClassesId)
-                           order by controllerName,featureClassName,featureInstanceName") or die(MYSQL_ERROR()); // where parentInstanceId='0'
-while($obj = mysql_fetch_object($erg))
+                           order by controllerName,featureClassName,featureInstanceName"); // where parentInstanceId='0'
+while($obj = mysqli_fetch_object($erg))
 {
  	if ($obj->controllerId != $lastController)
   {

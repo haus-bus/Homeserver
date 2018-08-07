@@ -13,7 +13,7 @@ if (! isset ( $_SESSION ["actLanguage"] ))
 function readControllers()
 {
   $erg = QUERY ( "select SQL_CACHE * from controller" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $controllers [$obj->id] = $obj;
   }
@@ -23,7 +23,7 @@ function readControllers()
 function readFeatureClasses()
 {
   $erg = QUERY ( "select SQL_CACHE * from featureClasses order by name" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $featureClasses [$obj->id] = $obj;
   }
@@ -33,7 +33,7 @@ function readFeatureClasses()
 function getNameForFeatureClass($featureClassesId)
 {
   $erg = QUERY ( "select name from featureClasses where id='$featureClassesId' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
     return $row [0];
   return "";
 }
@@ -42,7 +42,7 @@ function getClassesIdByName($featureClassName)
 	if (isset($_SESSION["featureClassNameCache"][$featureClassName])) return $_SESSION["featureClassNameCache"][$featureClassName];
 	
   $erg = QUERY ( "select id from featureClasses where name='$featureClassName' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
   {
   	$_SESSION["featureClassNameCache"][$featureClassName]=$row[0];
     return $row [0];
@@ -52,21 +52,21 @@ function getClassesIdByName($featureClassName)
 function getClassesIdByFeatureInstanceId($featureInstanceId)
 {
   $erg = QUERY ( "select featureClassesId from featureInstances where id='$featureInstanceId' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
     return $row [0];
   return "";
 }
 function getClassIdByName($featureClassName)
 {
   $erg = QUERY ( "select classId from featureClasses where name='$featureClassName' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
     return $row [0];
   return "";
 }
 function readFeatureClassesThatSupportType($type)
 {
   $erg = QUERY ( "select SQL_CACHE distinct(featureClassesId) from featureFunctions where type='$type'" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     $result [$row [0]] = 1;
   }
@@ -75,17 +75,17 @@ function readFeatureClassesThatSupportType($type)
 function getRoomForFeatureInstance($featureInstanceId)
 {
   $erg = QUERY ( "select roomId from roomFeatures where featureInstanceId='$featureInstanceId' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
   {
     $erg = QUERY ( "select * from rooms where id='$row[0]' limit 1" );
-    if ($obj = MYSQL_FETCH_OBJECT ( $erg ))
+    if ($obj = MYSQLi_FETCH_OBJECT ( $erg ))
     {
       return $obj;
     }
   }
   
   $erg = QUERY ( "select controller.name from controller join featureInstances on (featureInstances.controllerId = controller.id) where featureInstances.id='$featureInstanceId' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
   {
     $result->name = "Controller " . $row [0];
     $result->id = "0";
@@ -100,10 +100,10 @@ function getFeaturesForRoom($roomId)
 {
   $pos = 0;
   $erg = QUERY ( "select SQL_CACHE featureInstanceId from roomFeatures where roomId='$roomId'" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     $erg2 = QUERY ( "select SQL_CACHE * from featureInstances where id='$row[0]' limit 1" );
-    if ($obj = MYSQL_FETCH_OBJECT ( $erg2 ))
+    if ($obj = MYSQLi_FETCH_OBJECT ( $erg2 ))
     {
       $result [$pos ++] = $obj;
     }
@@ -117,7 +117,7 @@ function readRooms()
   if (! isset ( $roomsCache ))
   {
     $erg = QUERY ( "select SQL_CACHE * from rooms order by name" );
-    while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+    while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
     {
       $roomsCache [$obj->id] = $obj;
     }
@@ -128,7 +128,7 @@ function readRooms()
 function readRoomFeatures()
 {
   $erg = QUERY ( "select SQL_CACHE * from roomFeatures" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $roomFeatures [$obj->id] = $obj;
   }
@@ -138,7 +138,7 @@ function readRoomFeatures()
 function readMyRuleSignals($ruleId)
 {
   $erg = QUERY ( "select SQL_CACHE * from ruleSignals where ruleId='$ruleId'" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $result [$obj->featureInstanceId . "-" . $obj->featureFunctionId] = 1;
   }
@@ -147,7 +147,7 @@ function readMyRuleSignals($ruleId)
 function readMyBasicRuleSignals($ruleId)
 {
   $erg = QUERY ( "select SQL_CACHE * from basicRuleSignals where ruleId='$ruleId'" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $result [$obj->featureInstanceId] = 1;
   }
@@ -156,7 +156,7 @@ function readMyBasicRuleSignals($ruleId)
 function readMyRuleActions($ruleId)
 {
   $erg = QUERY ( "select SQL_CACHE * from ruleActions where ruleId='$ruleId'" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $result [$obj->featureInstanceId] = 1;
   }
@@ -165,7 +165,7 @@ function readMyRuleActions($ruleId)
 function readRuleActions()
 {
   $erg = QUERY ( "select SQL_CACHE * from ruleActions order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $ruleActions [$obj->id] = $obj;
   }
@@ -175,7 +175,7 @@ function readRuleActions()
 function readRuleSignals()
 {
   $erg = QUERY ( "select SQL_CACHE * from ruleSignals order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $ruleSignals [$obj->id] = $obj;
   }
@@ -185,7 +185,7 @@ function readRuleSignals()
 function readBasicRuleSignals()
 {
   $erg = QUERY ( "select SQL_CACHE * from basicRuleSignals order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $ruleSignals [$obj->id] = $obj;
   }
@@ -195,7 +195,7 @@ function readBasicRuleSignals()
 function readGroupFeatures($groupId)
 {
   $erg = QUERY ( "select SQL_CACHE * from groupFeatures where groupId='$groupId'" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $result [$obj->featureInstanceId] = $obj;
   }
@@ -204,7 +204,7 @@ function readGroupFeatures($groupId)
 function readGroups()
 {
   $erg = QUERY ( "select SQL_CACHE * from groups order by name" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $groups [$obj->id] = $obj;
   }
@@ -216,7 +216,7 @@ function readGroups()
 function readMySingleGroup($featureInstanceId)
 {
   $erg = QUERY ( "select SQL_CACHE groups.id, groups.single from groups join groupFeatures on (groupFeatures.groupId=groups.id) where groups.single='1' and featureInstanceId='$featureInstanceId' limit 1" );
-  if ($obj = MYSQL_FETCH_OBJECT ( $erg ))
+  if ($obj = MYSQLi_FETCH_OBJECT ( $erg ))
     return $obj;
   echo $featureInstanceId . " hat keinen Gruppeneintrag <br>";
 }
@@ -224,7 +224,7 @@ function readFeatureInstances($fields="*")
 {
 	if ($fields!="*") $fields="id,".$fields;
   $erg = QUERY ( "select SQL_CACHE $fields from featureInstances" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $featureInstances [$obj->id] = $obj;
   }
@@ -233,7 +233,7 @@ function readFeatureInstances($fields="*")
 function readGroupStates()
 {
   $erg = QUERY ( "select SQL_CACHE * from groupStates order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $groupStates [$obj->id] = $obj;
   }
@@ -242,7 +242,7 @@ function readGroupStates()
 function readFeatureFunctions()
 {
   $erg = QUERY ( "select SQL_CACHE * from featureFunctions order by type,functionId" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $featureFunctions [$obj->id] = $obj;
   }
@@ -251,7 +251,7 @@ function readFeatureFunctions()
 function readFeatureFunctionParams()
 {
   $erg = QUERY ( "select SQL_CACHE * from featureFunctionParams order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $featureFunctionParams [$obj->id] = $obj;
   }
@@ -260,7 +260,7 @@ function readFeatureFunctionParams()
 function readFeatureFunctionEnums()
 {
   $erg = QUERY ( "select SQL_CACHE * from featureFunctionEnums order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $featureFunctionEnums [$obj->id] = $obj;
   }
@@ -269,7 +269,7 @@ function readFeatureFunctionEnums()
 function readFeatureFunctionBitmasks()
 {
   $erg = QUERY ( "select SQL_CACHE * from featureFunctionBitmasks order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $featureFunctionBitmasks [$obj->id] = $obj;
   }
@@ -280,7 +280,7 @@ function getFunctionIdByName($objectId, $featureFunctionName)
 {
   $classId = getFeatureClassesId ( $objectId );
   $erg = QUERY ( "select functionId from featureFunctions where name='$featureFunctionName' and featureClassesId='$classId' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
     return $row [0];
   return "";
 }
@@ -289,7 +289,7 @@ function getFunctionIdByNameForClassName($className, $featureFunctionName)
 {
 	$classesId = getClassesIdByName($className);
   $erg = QUERY ( "select functionId from featureFunctions where name='$featureFunctionName' and featureClassesId='$classesId' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
     return $row [0];
   return "";
 }
@@ -298,7 +298,7 @@ function getFunctionsIdByNameForClassName($className, $featureFunctionName)
 {
 	$classesId = getClassesIdByName($className);
   $erg = QUERY ( "select id from featureFunctions where name='$featureFunctionName' and featureClassesId='$classesId' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
     return $row [0];
   return "";
 }
@@ -307,7 +307,7 @@ function readFeatureFunctionBitmaskNames($featureFunctionId, $paramId)
 {
   $i = 0;
   $erg = QUERY ( "select SQL_CACHE name from featureFunctionBitmasks where featureFunctionId='$featureFunctionId' and paramId='$paramId' order by id limit 8" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $featureFunctionBitmaskNames [$i ++] = $obj->name;
   }
@@ -339,7 +339,7 @@ function getSelectItem($act, $name, $value)
   return "<option $selected value='$act'>$name";
 }
 
-/// RECURSIVES LöSCHEN
+/// RECURSIVES Lï¿½EN
 function checkDatabaseIntegrity()
 {
 	require_once($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/dataBaseIntegrity.php");
@@ -471,7 +471,7 @@ function switchLanguage($language)
   require_once $_SERVER ["DOCUMENT_ROOT"] . '/homeserver/include/dbconnect.php';
   
   $erg = QUERY ( "select theKey,translation from languages where language = '$language'" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $_SESSION ["actLanguageSet"] [strtolower ( $obj->theKey )] = $obj->translation;
   }
@@ -537,7 +537,7 @@ function updateLastLogId()
   global $lastLogId;
   
   $erg = QUERY ( "select max(id) from udpCommandLog" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
     $lastLogId = $row [0];
   if ($lastLogId < 1)
     $lastLogId = 0;
@@ -551,7 +551,7 @@ function trace($text, $output=0)
 {
   global $PHP_SELF;
   
-  $text = mysql_real_escape_string ( $text );
+  $text = query_real_escape_string ( $text );
   $time = time ();
   $script = $PHP_SELF;
   QUERY ( "INSERT into trace (time,message,script) values('$time', '$text','$script')" );
@@ -662,7 +662,7 @@ function generateAndCheckRules()
   ob_end_flush ();
   ob_start ();
   
-  // echo "Regeln werden generiert und geprüft....<br><br>";
+  // echo "Regeln werden generiert und geprï¿½.<br><br>";
   global $dimmerClassesId, $rolloClassesId, $ledClassesId, $schalterClassesId, $irClassesId, $tasterClassesId, $logicalButtonClassesId, $ethernetClassesId, $pcServerClassesId;
   global $startFunctionId, $stopFunctionId, $moveToPositionFunctionId, $paramToOpen, $paramToClose, $paramToToggle, $paramPosition;
   global $functionTemplates;
@@ -693,20 +693,20 @@ function generateAndCheckRules()
   $start = microtime ( TRUE );
   
   $erg = QUERY ( "select `signal`,classesId,function,name from functionTemplates" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $functionTemplates [$obj->classesId . "-" . $obj->function . "-" . $obj->name] = $obj->signal;
   }
   
   $ledStatusBrightness = 100;
   $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'ledStatusBrightness' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg )) $ledStatusBrightness = $row [0];
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) $ledStatusBrightness = $row [0];
   
   $ledLogicalButtonBrightness = 50;
   $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'ledLogicalBrightness' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg )) $ledLogicalButtonBrightness = $row [0];
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) $ledLogicalButtonBrightness = $row [0];
     
-    // Alte generierten Sachen löschen
+    // Alte generierten Sachen lï¿½en
   QUERY ( "DELETE from groupSyncHelper" );
   QUERY ( "DELETE from groupfeatures where generated='1'" );
   QUERY ( "DELETE from groups where generated='1'" );
@@ -717,30 +717,30 @@ function generateAndCheckRules()
   QUERY ( "DELETE from rulesignalparams where generated='1'" );
   QUERY ( "DELETE from rulesignals where generated='1'" );
 
-  // Referenzielle Integrität  
+  // Referenzielle Integritã²  
   checkDatabaseIntegrity();
   
-  liveOut ( "- Aufräumen " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
+  liveOut ( "- AufrÃ¤umen " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
   
   // BaseRules erzeugen
   $start = microtime ( TRUE );
   $erg = QUERY ( "select distinct(groupId) from basicRules order by groupId" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     $groupId = $row [0];
     generateBaseRulesForGroup ( $groupId );
   }
   liveOut ( "- Basisregeln generieren " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
   
-  // Synchronisationsevents für manuell erstellte Gruppen
+  // Synchronisationsevents fï¿½uell erstellte Gruppen
   $start = microtime ( TRUE );
   $erg = QUERY ( "SELECT groups.id, COUNT( groupFeatures.featureInstanceId ) AS myCount FROM groups JOIN groupFeatures ON ( groupFeatures.groupId = groups.id ) WHERE single =0 AND groups.generated =0 and groups.groupType='' GROUP BY groups.id" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     if ($row [1] > 1)
     {
       $erg2 = QUERY ( "select max(ledStatus) from basicRules where groupId='$row[0]'" );
-      $row2 = MYSQL_FETCH_ROW ( $erg2 );
+      $row2 = MYSQLi_FETCH_ROW ( $erg2 );
       if ($row2 [0] > 1)
       {
         $manualGroup [$row [0]] = 1;
@@ -756,7 +756,7 @@ function generateAndCheckRules()
       }
     }
   }
-  liveOut ( "- Synchronisationsevents für manuelle Gruppen erzeugen " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
+  liveOut ( "- Synchronisationsevents fÃ¼r Gruppen erzeugen " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
   
   // Multigruppen erzeugen
   $start = microtime ( TRUE );
@@ -764,16 +764,16 @@ function generateAndCheckRules()
   liveOut ( "- Multigruppen erzeugen " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
   
   $erg = QUERY ( "select id from controller where size='999' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
   {
     $erg = QUERY ( "select id from featureInstances where controllerId='$row[0]'" );
-    while ( $row = MYSQL_FETCH_ROW ($erg)) $serverInstances [$row [0]] = 1;
+    while ( $row = MYSQLi_FETCH_ROW ($erg)) $serverInstances [$row [0]] = 1;
   }
   
   // LED Feedback erzeugen
   $start = microtime ( TRUE );
   $erg = QUERY ( "select distinct(groupId) from basicRules order by groupId" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     generateLedFeedbackForGroup ( $row [0], $manualGroup [$row [0]] );
   }
@@ -783,20 +783,20 @@ function generateAndCheckRules()
   // Signalgruppen generieren
   $start = microtime ( TRUE );
   $erg = QUERY ( "select id from groups where groupType!='' and generated='0'" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     generateSignalGroup ( $row [0] );
   }
   
   liveOut ( "- Signalgruppen generieren " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
   
-  // Prüfen ob es Gruppen mit nur DummySignalen gibt
+  // Prï¿½b es Gruppen mit nur DummySignalen gibt
   $start = microtime ( TRUE );
   removeDummyGroups ();
-  liveOut ( "- Dummysignale löschen " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
-  // liveOut("- Dummysignale löschen deaktiviert");
+  liveOut ( "- Dummysignale lÃ¶schen " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
+  // liveOut("- Dummysignale lï¿½en deaktiviert");
   
-  // Prüfen ob es in Gruppen Signale gibt, die mit StartState ALLE und auch AN oder AUS vorkommen und dann ersetzen
+  // Prï¿½b es in Gruppen Signale gibt, die mit StartState ALLE und auch AN oder AUS vorkommen und dann ersetzen
   $start = microtime ( TRUE );
   mixStateAllSignals ();
   liveOut ( "- Regeln optimieren " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
@@ -806,29 +806,28 @@ function generateAndCheckRules()
   mixSubGroups ();
   liveOut ( "- Subgruppen mischen " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
   
-  // Regeln prüfen
-  $start = microtime ( TRUE );
+  // Regeln prï¿½  $start = microtime ( TRUE );
   checkRuleConsistency ();
   
-  // Controllerleichen ohne features löschen
+  // Controllerleichen ohne features lï¿½en
   $erg = QUERY ( "select controller.id from controller left join featureInstances on (featureInstances.controllerId=controller.id) where featureInstances.id is null and bootloader=0 and online=0 limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg )) QUERY ( "delete from controller where id='$row[0]' limit 1" );
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) QUERY ( "delete from controller where id='$row[0]' limit 1" );
 
-  // Referenzielle Integrität  
+  // Referenzielle Integritã²  
   checkDatabaseIntegrity();
 
   
-  liveOut ( "- Abschlussprüfung " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
+  liveOut ( "- AbschlussprÃ¼fung" . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
   liveOut ( "- Gesamtdauer " . round ( microtime ( TRUE ) - $scriptStart, 2 ) . " Sekunden" );
 }
 function checkRuleConsistency()
 {
-  // Prüfen ob Aktoren in mehreren Gruppen durch das gleiche Signal getriggert werden
+  // Prï¿½b Aktoren in mehreren Gruppen durch das gleiche Signal getriggert werden
   /*
-   * $erg = QUERY("SELECT group_concat(distinct rulesignalparams.featureFunctionParamsId order by rulesignalparams.featureFunctionParamsId) as con1, group_concat(distinct rulesignalparams.paramValue order by rulesignalparams.paramValue) as con2, rules.groupid as groupId, rulesb.groupid as groupbId, rulesignals.featureinstanceid as mySignal,signalsb.featureinstanceid,ruleactions.featureinstanceid,actionsb.featureinstanceid as myAction,rulesignals.featurefunctionid as myFunction,signalsb.featurefunctionid,rulesignalparams.featureFunctionParamsId,signalparamsb.featureFunctionParamsId,rulesignalparams.paramValue,signalparamsb.paramvalue,ruleactions.featurefunctionid,actionsb.featurefunctionid FROM (rules join groups on (groups.id=rules.groupId) JOIN rulesignals ON ( rulesignals.ruleid = rules.id ) JOIN ruleactions ON ( ruleactions.ruleid = rules.id ) left join rulesignalparams on (rulesignalparams.rulesignalid=rulesignals.id) ) JOIN ( rules AS rulesb join groups as groupsb on (groupsb.id=rulesb.groupId) JOIN rulesignals AS signalsb ON ( signalsb.ruleid = rulesb.id ) JOIN ruleactions AS actionsb ON ( actionsb.ruleid = rulesb.id ) left join rulesignalparams as signalparamsb on (signalparamsb.rulesignalid=signalsb.id) ) WHERE rulesignals.featureinstanceid = signalsb.featureinstanceid AND ruleactions.featureinstanceid = actionsb.featureinstanceid AND rules.id != rulesb.id AND rules.activationstateid =0 AND rulesb.activationstateid =0 AND rulesignals.featurefunctionid = signalsb.featurefunctionid and rulesignals.groupalias=0 and signalsb.groupalias=0 and ruleactions.featureFunctionId!=169 and groups.subOf=0 and groupsb.subOf=0 group by rulesignals.id having (rulesignalparams.featureFunctionParamsId is null or group_concat(distinct rulesignalparams.featureFunctionParamsId order by rulesignalparams.featureFunctionParamsId)=group_concat(distinct signalparamsb.featureFunctionParamsId order by signalparamsb.featureFunctionParamsId)) and (rulesignalparams.paramvalue is null or group_concat(distinct rulesignalparams.paramvalue)=group_concat(distinct signalparamsb.paramvalue))"); while ( $obj = mysql_fetch_object($erg) ) { if ($obj->mySignal < 0) continue; $key = $obj->myAction . "-" . $obj->mySignal . "-" . $obj->myFunction . "-" . $obj->con1 . "-" . $obj->con2; if ($dones[$key] == 1) continue; $dones[$key] = 1; echo "Warnung: Doppelansteuerung von Aktor " . formatInstance($obj->myAction) . " in <a href='editRules.php?groupId=$obj->groupId' target='_blank'>dieser Gruppe</a> [<a href='editBaseConfig.php?groupId=$obj->groupId' target='_blank'>Basisregeln</a>] sowie in <a href='editRules.php?groupId=$obj->groupbId' target='_blank'>dieser Gruppe</a> [<a href='editBaseConfig.php?groupId=$obj->groupbId' target='_blank'>Basisregeln</a>]<br>"; }
+   * $erg = QUERY("SELECT group_concat(distinct rulesignalparams.featureFunctionParamsId order by rulesignalparams.featureFunctionParamsId) as con1, group_concat(distinct rulesignalparams.paramValue order by rulesignalparams.paramValue) as con2, rules.groupid as groupId, rulesb.groupid as groupbId, rulesignals.featureinstanceid as mySignal,signalsb.featureinstanceid,ruleactions.featureinstanceid,actionsb.featureinstanceid as myAction,rulesignals.featurefunctionid as myFunction,signalsb.featurefunctionid,rulesignalparams.featureFunctionParamsId,signalparamsb.featureFunctionParamsId,rulesignalparams.paramValue,signalparamsb.paramvalue,ruleactions.featurefunctionid,actionsb.featurefunctionid FROM (rules join groups on (groups.id=rules.groupId) JOIN rulesignals ON ( rulesignals.ruleid = rules.id ) JOIN ruleactions ON ( ruleactions.ruleid = rules.id ) left join rulesignalparams on (rulesignalparams.rulesignalid=rulesignals.id) ) JOIN ( rules AS rulesb join groups as groupsb on (groupsb.id=rulesb.groupId) JOIN rulesignals AS signalsb ON ( signalsb.ruleid = rulesb.id ) JOIN ruleactions AS actionsb ON ( actionsb.ruleid = rulesb.id ) left join rulesignalparams as signalparamsb on (signalparamsb.rulesignalid=signalsb.id) ) WHERE rulesignals.featureinstanceid = signalsb.featureinstanceid AND ruleactions.featureinstanceid = actionsb.featureinstanceid AND rules.id != rulesb.id AND rules.activationstateid =0 AND rulesb.activationstateid =0 AND rulesignals.featurefunctionid = signalsb.featurefunctionid and rulesignals.groupalias=0 and signalsb.groupalias=0 and ruleactions.featureFunctionId!=169 and groups.subOf=0 and groupsb.subOf=0 group by rulesignals.id having (rulesignalparams.featureFunctionParamsId is null or group_concat(distinct rulesignalparams.featureFunctionParamsId order by rulesignalparams.featureFunctionParamsId)=group_concat(distinct signalparamsb.featureFunctionParamsId order by signalparamsb.featureFunctionParamsId)) and (rulesignalparams.paramvalue is null or group_concat(distinct rulesignalparams.paramvalue)=group_concat(distinct signalparamsb.paramvalue))"); while ( $obj = MYSQLi_FETCH_object($erg) ) { if ($obj->mySignal < 0) continue; $key = $obj->myAction . "-" . $obj->mySignal . "-" . $obj->myFunction . "-" . $obj->con1 . "-" . $obj->con2; if ($dones[$key] == 1) continue; $dones[$key] = 1; echo "Warnung: Doppelansteuerung von Aktor " . formatInstance($obj->myAction) . " in <a href='editRules.php?groupId=$obj->groupId' target='_blank'>dieser Gruppe</a> [<a href='editBaseConfig.php?groupId=$obj->groupId' target='_blank'>Basisregeln</a>] sowie in <a href='editRules.php?groupId=$obj->groupbId' target='_blank'>dieser Gruppe</a> [<a href='editBaseConfig.php?groupId=$obj->groupbId' target='_blank'>Basisregeln</a>]<br>"; }
    */
   
-  // Prüfen ob in einer Gruppe vom gleichen Signar sowohl covered als auch DoubleClicked enthalten sind
+  // Prï¿½b in einer Gruppe vom gleichen Signar sowohl covered als auch DoubleClicked enthalten sind
   $lastGroupId = - 1;
   $foundCovered = "";
   $foundDoubleClick = "";
@@ -840,7 +839,7 @@ function checkRuleConsistency()
   $debug = 0;
   
   $erg = QUERY ( "select rules.id,rules.groupId,ruleSignals.featureFunctionId,ruleSignals.featureInstanceId from rules join ruleSignals on (ruleSignals.ruleId=rules.id) join groups on (groups.id = rules.groupId) join groupFeatures on (groupFeatures.groupId = rules.groupId) where groupAlias='0' order by groupId" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     if ($obj->groupId != $lastGroupId && $lastGroupId != - 1)
     {
@@ -852,11 +851,11 @@ function checkRuleConsistency()
         {
           if ($coveredInstance == $doubleClickInstance)
           {
-            $erg2 = QUERY ( "select ruleSignals.id from rules join ruleSignals on (ruleSignals.ruleId=rules.id) where groupId='$lastGroupId' and featureInstanceId='$doubleClickInstance' and featureFunctionId='$evCoveredFunctionId'" ) or die ( MYSQL_ERROR () );
-            while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+            $erg2 = QUERY ( "select ruleSignals.id from rules join ruleSignals on (ruleSignals.ruleId=rules.id) where groupId='$lastGroupId' and featureInstanceId='$doubleClickInstance' and featureFunctionId='$evCoveredFunctionId'" );
+            while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
             {
               // echo $obj2->id." -- ".$lastGroupId." - ".$coveredInstance."<br>";
-              MYSQL_QUERY ( "UPDATE ruleSignals set featureFunctionId='$evClickedFunctionId' where id='$obj2->id' limit 1" ) or die ( MYSQL_ERROR () );
+              QUERY ( "UPDATE ruleSignals set featureFunctionId='$evClickedFunctionId' where id='$obj2->id' limit 1" );
             }
           }
         }
@@ -874,16 +873,16 @@ function checkRuleConsistency()
   }
 }
 
-// Prüfen ob es in Gruppen Signale gibt, die mit StartState ALLE und auch AN oder AUS vorkommen und dann ersetzen
+// Prï¿½b es in Gruppen Signale gibt, die mit StartState ALLE und auch AN oder AUS vorkommen und dann ersetzen
 function mixStateAllSignals()
 {
   $erg = QUERY ( "select id from groups where single!=1" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     $groupId = $row [0];
     
     $erg2 = QUERY ( "select featureInstanceId,featureFunctionId,rules.id,groupAlias,ruleSignals.id as ruleSignalId from ruleSignals join rules on (rules.id = ruleSignals.ruleId) left join ruleSignalParams on (ruleSignalParams.ruleSignalId = ruleSignals.id) where activationStateId='0' and groupId='$groupId' and ruleSignals.featureFunctionId!='129'");
-    while ( $row2 = MYSQL_FETCH_ROW ( $erg2 ) )
+    while ( $row2 = MYSQLi_FETCH_ROW ( $erg2 ) )
     {
       $firstInstance = $row2 [0];
       $firstFunction = $row2 [1];
@@ -894,7 +893,7 @@ function mixStateAllSignals()
       $firstInsert = - 1;
       $secondInsert = - 1;
       $erg3 = QUERY ( "select rules.id from ruleSignals join rules on (rules.id = ruleSignals.ruleId) where activationStateId!='0' and groupId='$groupId' and ruleSignals.featureInstanceId='$firstInstance' and ruleSignals.featureFunctionId='$firstFunction' and ruleSignals.featureFunctionId!='129' limit 2");
-      while ( $row3 = MYSQL_FETCH_ROW ( $erg3 ) )
+      while ( $row3 = MYSQLi_FETCH_ROW ( $erg3 ) )
       {
         if ($firstInsert == - 1)
           $firstInsert = $row3 [0];
@@ -904,18 +903,18 @@ function mixStateAllSignals()
       
       if ($firstInsert != - 1 && $secondInsert != - 1)
       {
-        // Signale löschen
+        // Signale lï¿½en
         QUERY ( "DELETE from ruleSignals where id='$firstRuleSignalId' limit 1" );
         
         // Actions verschieben
         $erg3 = QUERY ( "select * from ruleActions where ruleId='$firstRuleId'" );
-        while ( $obj = MYSQL_FETCH_OBJECT ( $erg3 ) )
+        while ( $obj = MYSQLi_FETCH_OBJECT ( $erg3 ) )
         {
           QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$secondInsert','$obj->featureInstanceId','$obj->featureFunctionId','1')" );
-          $newActionId = mysql_insert_id ();
+          $newActionId = query_insert_id ();
           
           $erg4 = QUERY ( "select * from ruleActionParams where ruleActionId='$obj->id' order by id" );
-          while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg4 ) )
+          while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg4 ) )
           {
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated)
               	                         values('$newActionId','$obj2->featureFunctionParamsId','$obj2->paramValue','1')" );
@@ -924,7 +923,7 @@ function mixStateAllSignals()
         QUERY ( "UPDATE ruleActions set ruleId='$firstInsert',generated='1' where ruleId='$firstRuleId'" );
         
         $erg3 = QUERY ( "select count(*) from ruleSignals where ruleId='$firstRuleId'" );
-        $row3 = MYSQL_FETCH_ROW ( $erg3 );
+        $row3 = MYSQLi_FETCH_ROW ( $erg3 );
         if ($row3 [0] == 0)
           deleteRule ( $firstRuleId, 0 );
       }
@@ -937,23 +936,23 @@ function mixSubGroups()
 {
   // Alle Subgroupen durchgehen, die einen Vater haben
   $erg = QUERY ( "select id,subOf from groups where subOf>0" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     $groupId = $row [0];
     $newGroupId = $row [1]; // Deren Regeln mischen wir beim Vater rein
     
     $ergA = QUERY ( "select ruleSignals.id from ruleSignals join rules on (ruleSignals.ruleId=rules.id) where groupId='$groupId'" );
-    while ( $rowA = MYSQL_FETCH_ROW ( $ergA ) )
+    while ( $rowA = MYSQLi_FETCH_ROW ( $ergA ) )
     {
       $signalId = $rowA [0];
       
       $erg2 = QUERY ( "select rules.*, activation.basics as startBasics, resulting.basics as resultingBasics from rules join ruleSignals on (ruleSignals.ruleId=rules.id) left join groupStates as activation on (activation.id = rules.activationStateId) left join groupStates as resulting on (resulting.id = rules.resultingStateId) where ruleSignals.id='$signalId' limit 1" );
-      if ($obj2 = MYSQL_FETCH_OBJECT ( $erg2 ))
+      if ($obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ))
       {
         $myActivationStateId = "0";
         $myResultingStateId = "0";
         $erg4 = QUERY ( "select id,basics from groupStates where basics>0 and groupId='$newGroupId'" );
-        while ( $row4 = MYSQL_FETCH_ROW ( $erg4 ) )
+        while ( $row4 = MYSQLi_FETCH_ROW ( $erg4 ) )
         {
           if ($obj2->startBasics == $row4 [1])
             $myActivationStateId = $row4 [0];
@@ -964,7 +963,7 @@ function mixSubGroups()
         // if ($myActivationStateId=="0" || $myResultingStateId=="0") echo "Fehler in Subgruppe. States nicht supported <br>";
         
         $erg3 = QUERY ( "select * from ruleSignals where id='$signalId' limit 1" );
-        if ($obj3 = MYSQL_FETCH_OBJECT ( $erg3 ))
+        if ($obj3 = MYSQLi_FETCH_OBJECT ( $erg3 ))
         {
           $signalId = $obj3->id;
           $signalFeatureInstanceId = $obj3->featureInstanceId;
@@ -976,10 +975,10 @@ function mixSubGroups()
         } else
           die ( "Signal ID $signalId nicht gefunden" );
           
-          // Prüfen ob es die passende Regel schon gibt
+          // Prï¿½b es die passende Regel schon gibt
           // echo "select rules.id from rules join ruleSignals on (ruleSignals.ruleId=rules.id) where activationStateId='$myActivationStateId' and groupId='$newGroupId' and featureInstanceId='$signalFeatureInstanceId' and featureFunctionId='$signalFeatureFunctionId' limit 1 <br>";
         $erg3 = QUERY ( "select rules.id from rules join ruleSignals on (ruleSignals.ruleId=rules.id) where activationStateId='$myActivationStateId' and groupId='$newGroupId' and featureInstanceId='$signalFeatureInstanceId' and featureFunctionId='$signalFeatureFunctionId' limit 1" );
-        if ($row3 = MYSQL_FETCH_ROW ( $erg3 ))
+        if ($row3 = MYSQLi_FETCH_ROW ( $erg3 ))
         {
           $newRuleId = $row3 [0];
           // echo "gefunden $newRuleId <br>";
@@ -987,16 +986,16 @@ function mixSubGroups()
         {
           QUERY ( "INSERT into rules (groupId,activationStateId,resultingStateId,startDay,startHour,startMinute,endDay,endHour,endMinute,signalType,baseRule,generated,intraDay)
         	                     values('$newGroupId','$myActivationStateId','$myResultingStateId','$obj2->startDay','$obj2->startHour','$obj2->startMinute','$obj2->endDay','$obj2->endHour','$obj2->endMinute','$obj2->signalType','$obj2->baseRule','1','$obj2->intraDay')" );
-          $newRuleId = mysql_insert_id ();
+          $newRuleId = query_insert_id ();
           
           // echo "neu $newRuleId <br>";
           
           // Signale eintragen
           QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$newRuleId','$signalFeatureInstanceId','$signalFeatureFunctionId','1')" );
-          $newSignalId = mysql_insert_id ();
+          $newSignalId = query_insert_id ();
           
           $erg4 = QUERY ( "select * from ruleSignalParams where ruleSignalId='$signalId' order by id" );
-          while ( $obj4 = MYSQL_FETCH_OBJECT ( $erg4 ) )
+          while ( $obj4 = MYSQLi_FETCH_OBJECT ( $erg4 ) )
           {
             QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$newSignalId','$obj4->featureFunctionParamsId','$obj4->paramValue','1')" );
           }
@@ -1004,19 +1003,19 @@ function mixSubGroups()
         
         // Actions eintragen, wenns sie nicht schon gibt
         $erg3 = QUERY ( "select * from ruleActions where ruleId='$obj2->id' order by id" );
-        while ( $obj3 = MYSQL_FETCH_OBJECT ( $erg3 ) )
+        while ( $obj3 = MYSQLi_FETCH_OBJECT ( $erg3 ) )
         {
           // if ($obj2->offRule==1) $myOffInstances[$obj3->featureInstanceId]=1;
           $erg4 = QUERY ( "select id from ruleActions where ruleId='$newRuleId' and featureInstanceId='$obj3->featureInstanceId' and featureFunctionId='$obj3->featureFunctionId' limit 1" );
-          if ($row4 = MYSQL_FETCH_ROW ( $erg4 ))
+          if ($row4 = MYSQLi_FETCH_ROW ( $erg4 ))
           {
           } else
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$newRuleId','$obj3->featureInstanceId','$obj3->featureFunctionId','1')" );
-            $newSignalId = mysql_insert_id ();
+            $newSignalId = query_insert_id ();
             
             $erg4 = QUERY ( "select * from ruleActionParams where ruleActionId='$obj3->id' order by id" );
-            while ( $obj4 = MYSQL_FETCH_OBJECT ( $erg4 ) )
+            while ( $obj4 = MYSQLi_FETCH_OBJECT ( $erg4 ) )
             {
               QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newSignalId','$obj4->featureFunctionParamsId','$obj4->paramValue','1')" );
             }
@@ -1027,7 +1026,7 @@ function mixSubGroups()
   }
 }
 
-// Prüfen ob es Gruppen mit nur DummySignalen gibt
+// Prï¿½b es Gruppen mit nur DummySignalen gibt
 function removeDummyGroups()
 {
   // 46 19 dimmer evOn,evOff
@@ -1041,7 +1040,7 @@ function removeDummyGroups()
   $debug = 0;
   
   $erg = QUERY ( "select activationStateId, resultingStateId, rules.id, rules.groupId,ruleSignals.featureFunctionId,groupFeatures.featureInstanceId,ruleactions.featureInstanceId as actionInstanceId from rules join ruleSignals on (ruleSignals.ruleId=rules.id) join groups on (groups.id = rules.groupId) join groupFeatures on (groupFeatures.groupId = rules.groupId) left join ruleactions on(ruleactions.ruleId=rules.id) where groupAlias='0' and single=1 order by groupId" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     if (getClassesIdByFeatureInstanceId ( $obj->featureInstanceId ) == $ledClassesId)
       continue;
@@ -1098,7 +1097,7 @@ function removeDummyGroups()
 }
 function generateBaseRulesForGroup($groupId)
 {
-  // echo "Generiere Basisregeln für Gruppe $groupId <br>";
+  // echo "Generiere Basisregeln fï¿½ppe $groupId <br>";
   global $CONTROLLER_CLASSES_ID;
   global $signalParamWildcard;
   global $dimmerClassesId, $rolloClassesId, $ledClassesId, $schalterClassesId, $irClassesId, $tasterClassesId, $logicalButtonClassesId, $ethernetClassesId;
@@ -1112,7 +1111,7 @@ function generateBaseRulesForGroup($groupId)
   $myInstanceCount = 0;
   unset ( $diffFeatureClasses );
   $erg = QUERY ( "select featureClassesId,featureInstanceId,objectId from groupFeatures join featureInstances on (featureInstances.id=featureInstanceId) where groupId='$groupId'" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     $myClassesId = $row [0];
     $diffFeatureClasses [$myClassesId] = 1;
@@ -1126,66 +1125,66 @@ function generateBaseRulesForGroup($groupId)
   // Wenn wir verschiedene Aktortypen in einer Gruppe haben, werden die Schalterfunktionen als kleinster gemeinsamer Nenner angeboten
   if (count ( $diffFeatureClasses ) > 1) $isMixedGroup = 1;
   
-  // echo "Generiere Basisregeln für Gruppe $groupId $myInstanceCount <br>";
+  // echo "Generiere Basisregeln fï¿½ppe $groupId $myInstanceCount <br>";
   
   /*
-   * $isPartOfSub=0; $erg = QUERY("select id from groups where (id='$groupId' and subOf>0) or subOf='$groupId' limit 1"); if ($row=MYSQL_FETCH_ROW($erg)) $isPartOfSub=1;
+   * $isPartOfSub=0; $erg = QUERY("select id from groups where (id='$groupId' and subOf>0) or subOf='$groupId' limit 1"); if ($row=MYSQLi_FETCH_ROW($erg)) $isPartOfSub=1;
    */
   
   // Bewegungsmeldersonderfunktion
   $erg = QUERY ( "select id from basicRules where groupId='$groupId' and extras='Bewegungsmelder' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg )) $hasBewegung = TRUE;
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) $hasBewegung = TRUE;
   else $hasBewegung = FALSE;
     
     // Standardstates ggf. anlegen
   $erg = QUERY ( "select id from groupStates where groupId='$groupId' and basics='1' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg )) $firstState = $row [0];
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) $firstState = $row [0];
   else
   {
     $basicStateNames = getBasicStateNames ( $myClassesId );
     $offName = $basicStateNames->offName;
     $onName = $basicStateNames->onName;
     QUERY ( "INSERT into groupStates (groupId, name,basics,generated) values('$groupId','$offName','1','1')" );
-    $firstState = mysql_insert_id ();
+    $firstState = query_insert_id ();
   }
   
   $erg = QUERY ( "select id from groupStates where groupId='$groupId' and basics='2' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg )) $secondState = $row [0];
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) $secondState = $row [0];
   else
   {
     QUERY ( "INSERT into groupStates (groupId, name,basics,generated) values('$groupId','$onName','2','1')" );
-    $secondState = mysql_insert_id ();
+    $secondState = query_insert_id ();
   }
   
   if ($hasBewegung)
   {
     $erg = QUERY ( "select id from groupStates where groupId='$groupId' and basics='5' limit 1" );
-    if ($row = MYSQL_FETCH_ROW ( $erg )) $bewegungsState = $row [0];
+    if ($row = MYSQLi_FETCH_ROW ( $erg )) $bewegungsState = $row [0];
     else
     {
       QUERY ( "INSERT into groupStates (groupId, name,basics,generated) values('$groupId','Bewegung','5','1')" );
-      $bewegungsState = mysql_insert_id ();
+      $bewegungsState = query_insert_id ();
     }
   }
   
   $foundSignals = 0;
-  $foundStateChange = 0; // Wenn wir keine Statechanges haben, brauchen wir später auch keine Synchronisationsevents
+  $foundStateChange = 0; // Wenn wir keine Statechanges haben, brauchen wir spã³¥r auch keine Synchronisationsevents
   $erg = QUERY ( "select * from basicRules where groupId='$groupId' and active='1'" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $erg2 = QUERY ( "select count(*) from basicRuleSignals where ruleId='$obj->id'" );
-    $row = MYSQL_FETCH_ROW ( $erg2 );
+    $row = MYSQLi_FETCH_ROW ( $erg2 );
     if ($row [0] == 0) continue;
     
     if ($obj->extras == "Bewegungsmelder") $isBewegungsMelder = TRUE;
     else $isBewegungsMelder = FALSE;
       
-      // Wenn in einer Gruppe LED Feedback Gruppenstatus angewählt wurde, dann will man dass beim Event groupUndefined die Gruppe als aus gilt und sonst als an
+      // Wenn in einer Gruppe LED Feedback Gruppenstatus angewã§¬t wurde, dann will man dass beim Event groupUndefined die Gruppe als aus gilt und sonst als an
     if ($obj->ledStatus == 3) $completeGroupFeedback = 1;
     else if ($obj->ledStatus == 2) $completeGroupFeedback = 2;
     else $completeGroupFeedback = 0;
     
-    // Wenn wir keine Signale haben, brauchen wir später auch keine Synchronisationsevents
+    // Wenn wir keine Signale haben, brauchen wir spã³¥r auch keine Synchronisationsevents
     $foundSignals = 1; 
     
     if ($obj->fkt1 == "true" && ($myClassesId == $dimmerClassesId || $myClassesId == $ledClassesId))
@@ -1207,7 +1206,7 @@ function generateBaseRulesForGroup($groupId)
     {
       $signalType = $functionTemplates [$myClassesId . "-1-" . $obj->template];
       if ($signalType == "") $signalType = $functionTemplates ["-1-1-" . $obj->template];
-      if ($signalType == "") die ( "A: Templatekonfiguration fehlt für Class $myClassesId Fkt 1 Gruppe $groupId template $obj->template ! ID ".$obj->id );
+      if ($signalType == "") die ( "A: Templatekonfiguration fehlt fï¿½ss $myClassesId Fkt 1 Gruppe $groupId template $obj->template ! ID ".$obj->id );
       
       if ($signalType != "-")
       {
@@ -1216,14 +1215,14 @@ function generateBaseRulesForGroup($groupId)
         
         $signalType2 = $functionTemplates [$myClassesId . "-2-" . $obj->template];
         if ($signalType2 == "") $signalType2 = $functionTemplates ["-1-2-" . $obj->template];
-        if ($signalType2 == "") die ( "B: Templatekonfiguration fehlt für Class $myClassesId Fkt 2 Gruppe $groupId!" );
+        if ($signalType2 == "") die ( "B: Templatekonfiguration fehlt fï¿½ss $myClassesId Fkt 2 Gruppe $groupId!" );
         
         if ($isBewegungsMelder)
         {
           $startState = $firstState;
           $endState = $bewegungsState;
           $foundStateChange = 1;
-        }         // Wenn die Signale für AN und AUS gleich sind, brauchen wir die States
+        }         // Wenn die Signale fï¿½und AUS gleich sind, brauchen wir die States
         else if (($signalType == $signalType2 && isFunctionActive ( $obj->fkt2 )) || $hasBewegung)
         {
           $startState = $firstState;
@@ -1237,7 +1236,7 @@ function generateBaseRulesForGroup($groupId)
         
         // else $startState="0";
         
-        // Wenn das Signal nur zum anschalten verwendet wird, machen wir das unabhängig vom State
+        // Wenn das Signal nur zum anschalten verwendet wird, machen wir das unabhã­§ig vom State
         /*
          * if (($obj->fkt2!="-" && $obj->fkt2!="" && $obj->fkt2!="false") || ($isPartOfSub==1 && $generic!=1)) { $foundStateChange=1; } else { $startState="0"; $endState="0"; }
          */
@@ -1250,9 +1249,9 @@ function generateBaseRulesForGroup($groupId)
             // Regel anlegen
           QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated,extras,intraDay) 
                             values('$groupId','$obj->startDay','$obj->startHour','$obj->startMinute','$obj->endDay','$obj->endHour','$obj->endMinute','$startState','$endState','$ruleSignalType','1','1','$obj->extras','$obj->intraDay')" );
-          $ruleId = mysql_insert_id ();
+          $ruleId = query_insert_id ();
           
-          // Actions ergänzen
+          // Actions ergã­ºen
           foreach ( $myInstances as $arr )
           {
             $myClassesId = $arr ["myClassesId"];
@@ -1270,7 +1269,7 @@ function generateBaseRulesForGroup($groupId)
               }
               
               QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','25','1')" );
-              $newRuleActionId = mysql_insert_id ();
+              $newRuleActionId = query_insert_id ();
               
               QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','90','$obj->fkt1','1')" );
               
@@ -1287,13 +1286,13 @@ function generateBaseRulesForGroup($groupId)
             } else if ($myClassesId == $rolloClassesId)
             {
               QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','$startFunctionId','1')" );
-              $newRuleActionId = mysql_insert_id ();
+              $newRuleActionId = query_insert_id ();
               
               QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','142','$paramToOpen','1')" );
             } else if ($myClassesId == $ledClassesId)
             {
               QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','101','1')" );
-              $newRuleActionId = mysql_insert_id ();
+              $newRuleActionId = query_insert_id ();
               
               QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','165','$obj->fkt1','1')" );
               
@@ -1305,7 +1304,7 @@ function generateBaseRulesForGroup($groupId)
             } else if ($myClassesId == $logicalButtonClassesId)
             {
               QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','177','1')" );
-              $newRuleActionId = mysql_insert_id ();
+              $newRuleActionId = query_insert_id ();
               
               if ($obj->fkt1 == "C" || $obj->fkt1 == "true")
                 $brightness = $ledLogicalButtonBrightness;
@@ -1320,7 +1319,7 @@ function generateBaseRulesForGroup($groupId)
             } else if ($myClassesId == $schalterClassesId)
             {
               QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','60','1')" );
-              $newRuleActionId = mysql_insert_id ();
+              $newRuleActionId = query_insert_id ();
               
               $dauer = "0";
               if ($obj->fkt1 > 0)
@@ -1330,15 +1329,15 @@ function generateBaseRulesForGroup($groupId)
             } else if ($myClassesId == $tasterClassesId)
             {
               QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','188','1')" );
-              $newRuleActionId = mysql_insert_id ();
+              $newRuleActionId = query_insert_id ();
               QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','372','0','1')" ); // enable events off
             } else
               die ( "nicht implementierte class $myClassesId -3" );
           }
           
-          // Signale ergänzen
+          // Signale ergã­ºen
           $erg2 = QUERY ( "select basicRuleSignals.id, featureInstanceId, controllerId, featureClassesId, featureInstances.id as checkId from basicRuleSignals left join featureInstances on (featureInstances.id=basicRuleSignals.featureInstanceId) where ruleId='$obj->id' order by basicRuleSignals.id" );
-          while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+          while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
           {
             
             if ($obj2->featureInstanceId < 0) // Signalgruppe
@@ -1361,16 +1360,16 @@ function generateBaseRulesForGroup($groupId)
               // QUERY("UPDATE rules set activationStateId='0' where id='$ruleId' limit 1");
               
               $erg3 = QUERY ( "select id from featureInstances where controllerId='$obj2->controllerId' and featureClassesId='$CONTROLLER_CLASSES_ID' limit 1" );
-              if ($row = MYSQL_FETCH_ROW ( $erg3 ))
+              if ($row = MYSQLi_FETCH_ROW ( $erg3 ))
                 $controllerInstanceId = $row [0];
               else
                 die ( "ControllerInstanz zu controllerId $obj2->controllerId nicht gefunden" );
               
               $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' limit 1" );
-              if ($row = MYSQL_FETCH_ROW ( $erg3 ))
+              if ($row = MYSQLi_FETCH_ROW ( $erg3 ))
                 $timeParamValue = $row [0];
               else
-                showRuleError ( "Regel ohne gültigen Parameterwert gefunden. RegelID = $obj2->id", $groupId );
+                showRuleError ( "Regel ohne gï¿½n Parameterwert gefunden. RegelID = $obj2->id", $groupId );
               
               if ($timeParamValue == - 1) // evDay
               {
@@ -1387,7 +1386,7 @@ function generateBaseRulesForGroup($groupId)
                 $evTimeFunctionId = getClassesIdFunctionsIdByName ( $CONTROLLER_CLASSES_ID, "evTime" );
                 QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                         values('$ruleId','$controllerInstanceId','$evTimeFunctionId','1')" );
-                $ruleSignalId = mysql_insert_id ();
+                $ruleSignalId = query_insert_id ();
                 
                 $timeParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evTime", "weekTime" );
                 QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
@@ -1403,14 +1402,14 @@ function generateBaseRulesForGroup($groupId)
               
               QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback)
                                       values('$ruleId','$obj2->featureInstanceId','$evClickedFunctionId','1','$completeGroupFeedback')" );
-              $ruleSignalId = mysql_insert_id ();
+              $ruleSignalId = query_insert_id ();
               
               if ($signalClassesId == $irClassesId)
               {
                 $param1Value = "";
                 $i = 0;
                 $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-                while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+                while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
                 {
                   if ($param1Value == "")
                     $param1Value = $row [0];
@@ -1433,14 +1432,14 @@ function generateBaseRulesForGroup($groupId)
               
               QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback)
                                        values('$ruleId','$obj2->featureInstanceId','$evHoldStartFunctionId','1','$completeGroupFeedback')" );
-              $ruleSignalId = mysql_insert_id ();
+              $ruleSignalId = query_insert_id ();
               
               if ($signalClassesId == $irClassesId)
               {
                 $param1Value = "";
                 $i = 0;
                 $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-                while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+                while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
                 {
                   if ($param1Value == "")
                     $param1Value = $row [0];
@@ -1486,7 +1485,7 @@ function generateBaseRulesForGroup($groupId)
     {
       $signalType = $functionTemplates [$myClassesId . "-2-" . $obj->template];
       if ($signalType == "") $signalType = $functionTemplates ["-1-2-" . $obj->template];
-      if ($signalType == "") die ( "C: Templatekonfiguration fehlt für Class $myClassesId Fkt 2 Gruppe $groupId!" );
+      if ($signalType == "") die ( "C: Templatekonfiguration fehlt fï¿½ss $myClassesId Fkt 2 Gruppe $groupId!" );
       
       if ($signalType != "-")
       {
@@ -1495,14 +1494,14 @@ function generateBaseRulesForGroup($groupId)
         
         $signalType2 = $functionTemplates [$myClassesId . "-1-" . $obj->template];
         if ($signalType2 == "") $signalType2 = $functionTemplates ["-1-1-" . $obj->template];
-        if ($signalType2 == "") die ( "D: Templatekonfiguration fehlt für Class $myClassesId Fkt 1 Gruppe $groupId!" );
+        if ($signalType2 == "") die ( "D: Templatekonfiguration fehlt fï¿½ss $myClassesId Fkt 1 Gruppe $groupId!" );
         
         if ($isBewegungsMelder)
         {
           $startState = $bewegungsState;
           $endState = $firstState;
           $foundStateChange = 1;
-        }         // Wenn die Signale für AN und AUS gleich sind, brauchen wir die States
+        }         // Wenn die Signale fï¿½und AUS gleich sind, brauchen wir die States
         else if (($signalType == $signalType2 && isFunctionActive ( $obj->fkt1 )) || $hasBewegung)
         {
           $startState = $secondState;
@@ -1514,14 +1513,14 @@ function generateBaseRulesForGroup($groupId)
           $endState = "0";
         }
         
-        // Wenn die Signale für AN und AUS gleich sind, brauchen wir die States
+        // Wenn die Signale fï¿½und AUS gleich sind, brauchen wir die States
         // if ($signalType==$signalType2 || ($isPartOfSub==1 && $generic!=1)) $startState = $secondState;
         // else $startState="0";
         
         // $startState = $secondState;
         // $endState = $firstState;
         
-        // Wenn das Signal nur zum ausschalten verwendet wird, machen wir das unabhängig vom State
+        // Wenn das Signal nur zum ausschalten verwendet wird, machen wir das unabhã­§ig vom State
         /*
          * if (($obj->fkt1!="-" && $obj->fkt1!="" && $obj->fkt1!="false") || ($isPartOfSub==1 && $generic!=1)) { $offRule=0; // || ($obj->fkt3!="-" && $obj->fkt3!="" && $obj->fkt3!="false") || ($obj->fkt4!="-" && $obj->fkt4!="" && $obj->fkt4!="false")) $offRule=0; $foundStateChange=1; } else { $offRule=1; $startState="0"; $endState="0"; }
          */
@@ -1529,9 +1528,9 @@ function generateBaseRulesForGroup($groupId)
         // Regel anlegen
         QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated,offRule,extras,intraDay) 
                             values('$groupId','$obj->startDay','$obj->startHour','$obj->startMinute','$obj->endDay','$obj->endHour','$obj->endMinute','$startState','$endState','$ruleSignalType','1','1','$offRule','$obj->extras','$obj->intraDay')" );
-        $ruleId = mysql_insert_id ();
+        $ruleId = query_insert_id ();
         
-        // Actions ergänzen
+        // Actions ergã­ºen
         foreach ( ( array ) $myInstances as $arr )
         {
           $myClassesId = $arr ["myClassesId"];
@@ -1540,14 +1539,14 @@ function generateBaseRulesForGroup($groupId)
           if ($myClassesId == $dimmerClassesId)
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','25','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','90','0','1')" );
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','91','0','1')" );
           } else if ($myClassesId == $rolloClassesId)
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','$startFunctionId','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','142','$paramToClose','1')" );
           } else if ($myClassesId == $ledClassesId)
@@ -1556,7 +1555,7 @@ function generateBaseRulesForGroup($groupId)
           } else if ($myClassesId == $logicalButtonClassesId)
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','177','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','359','0','1')" );
           } else if ($myClassesId == $schalterClassesId)
@@ -1565,15 +1564,15 @@ function generateBaseRulesForGroup($groupId)
           } else if ($myClassesId == $tasterClassesId)
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','188','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','372','1','1')" ); // enable events on
           } else
             die ( "nicht implementierte class $myClassesId -4" );
         }
         
-        // Signale ergänzen
+        // Signale ergã­ºen
         $erg2 = QUERY ( "select basicRuleSignals.id, featureInstances.controllerId, featureInstanceId, featureClassesId, featureInstances.id as checkId from basicRuleSignals left join featureInstances on (featureInstances.id=basicRuleSignals.featureInstanceId) where ruleId='$obj->id' order by basicRuleSignals.id" );
-        while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+        while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
         {
           if ($obj2->featureInstanceId < 0) // Signalgruppe
           {
@@ -1593,16 +1592,16 @@ function generateBaseRulesForGroup($groupId)
             // QUERY("UPDATE rules set activationStateId='0' where id='$ruleId' limit 1");
             
             $erg3 = QUERY ( "select id from featureInstances where controllerId='$obj2->controllerId' and featureClassesId='$CONTROLLER_CLASSES_ID' limit 1" );
-            if ($row = MYSQL_FETCH_ROW ( $erg3 ))
+            if ($row = MYSQLi_FETCH_ROW ( $erg3 ))
               $controllerInstanceId = $row [0];
             else
               die ( "ControllerInstanz zu controllerId $obj2->controllerId nicht gefunden" );
             
             $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' limit 1" );
-            if ($row = MYSQL_FETCH_ROW ( $erg3 ))
+            if ($row = MYSQLi_FETCH_ROW ( $erg3 ))
               $timeParamValue = $row [0];
             else
-              showRuleError ( "Regel ohne gültigen Parameterwert gefunden. RegelID = $obj2->id", $groupId );
+              showRuleError ( "Regel ohne gï¿½n Parameterwert gefunden. RegelID = $obj2->id", $groupId );
             
             if ($timeParamValue == - 1) // evDay
             {
@@ -1619,7 +1618,7 @@ function generateBaseRulesForGroup($groupId)
               $evTimeFunctionId = getClassesIdFunctionsIdByName ( $CONTROLLER_CLASSES_ID, "evTime" );
               QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                         values('$ruleId','$controllerInstanceId','$evTimeFunctionId','1')" );
-              $ruleSignalId = mysql_insert_id ();
+              $ruleSignalId = query_insert_id ();
               
               $timeParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evTime", "weekTime" );
               QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
@@ -1635,14 +1634,14 @@ function generateBaseRulesForGroup($groupId)
             
             QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback)
                                       values('$ruleId','$obj2->featureInstanceId','$evClickedFunctionId','1','$completeGroupFeedback')" );
-            $ruleSignalId = mysql_insert_id ();
+            $ruleSignalId = query_insert_id ();
             
             if ($signalClassesId == $irClassesId)
             {
               $param1Value = "";
               $i = 0;
               $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-              while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+              while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
               {
                 if ($param1Value == "")
                   $param1Value = $row [0];
@@ -1665,10 +1664,10 @@ function generateBaseRulesForGroup($groupId)
             
             QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback	)
                                        values('$ruleId','$obj2->featureInstanceId','$evHoldStartFunctionId','1','$completeGroupFeedback')" );
-            $ruleSignalId = mysql_insert_id ();
+            $ruleSignalId = query_insert_id ();
             
             /*
-             * if ($obj2->featureInstanceId=="324") // Herm Hack { echo "Herms Hack <br>"; QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','66','25','1')"); $newRuleActionId=mysql_insert_id(); QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','90','35','1')"); QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','91','0','1')"); }
+             * if ($obj2->featureInstanceId=="324") // Herm Hack { echo "Herms Hack <br>"; QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','66','25','1')"); $newRuleActionId=query_insert_id(); QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','90','35','1')"); QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','91','0','1')"); }
              */
             
             if ($signalClassesId == $irClassesId)
@@ -1676,7 +1675,7 @@ function generateBaseRulesForGroup($groupId)
               $param1Value = "";
               $i = 0;
               $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-              while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+              while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
               {
                 if ($param1Value == "")
                   $param1Value = $row [0];
@@ -1723,7 +1722,7 @@ function generateBaseRulesForGroup($groupId)
       if ($signalType == "")
         $signalType = $functionTemplates ["-1-3-" . $obj->template];
       if ($signalType == "")
-        die ( "E: Templatekonfiguration fehlt für Class $myClassesId Fkt 3 Gruppe $groupId!" );
+        die ( "E: Templatekonfiguration fehlt fï¿½ss $myClassesId Fkt 3 Gruppe $groupId!" );
       
       if ($signalType != "-")
       {
@@ -1741,12 +1740,12 @@ function generateBaseRulesForGroup($groupId)
         } else if ($hasBewegung)
           $endState = $secondState;
           
-          // Regel anlegen fürs dimmen / toogle
+          // Regel anlegen fï¿½mmen / toogle
         QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated,extras,intraDay) 
                             values('$groupId','$obj->startDay','$obj->startHour','$obj->startMinute','$obj->endDay','$obj->endHour','$obj->endMinute','$startState','$endState','$ruleSignalType','1','1','$obj->extras','$obj->intraDay')" );
-        $ruleId = mysql_insert_id ();
+        $ruleId = query_insert_id ();
         
-        // Actions ergänzen
+        // Actions ergã­ºen
         foreach ( $myInstances as $arr )
         {
           $myClassesId = $arr ["myClassesId"];
@@ -1756,12 +1755,12 @@ function generateBaseRulesForGroup($groupId)
           {
             // TOGGLE
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','64','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','115','0','1')" );
           } else if ($myClassesId == $rolloClassesId)
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','$startFunctionId','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             
             // TOGGLE
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','142','0','1')" );
@@ -1769,9 +1768,9 @@ function generateBaseRulesForGroup($groupId)
             die ( "nicht implementierte class $myClassesId -5" );
         }
         
-        // Signale ergänzen
+        // Signale ergã­ºen
         $erg2 = QUERY ( "select basicRuleSignals.id, featureInstanceId, featureClassesId, featureInstances.id as checkId from basicRuleSignals left  join featureInstances on (featureInstances.id=basicRuleSignals.featureInstanceId) where ruleId='$obj->id' order by basicRuleSignals.id" );
-        while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+        while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
         {
           if ($obj2->featureInstanceId < 0) // Signalgruppe
           {
@@ -1791,14 +1790,14 @@ function generateBaseRulesForGroup($groupId)
             
             QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback)
                                       values('$ruleId','$obj2->featureInstanceId','$evClickedFunctionId','1','$completeGroupFeedback')" );
-            $ruleSignalId = mysql_insert_id ();
+            $ruleSignalId = query_insert_id ();
             
             if ($signalClassesId == $irClassesId)
             {
               $param1Value = "";
               $i = 0;
               $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-              while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+              while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
               {
                 if ($param1Value == "")
                   $param1Value = $row [0];
@@ -1821,14 +1820,14 @@ function generateBaseRulesForGroup($groupId)
             
             QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback)
                                        values('$ruleId','$obj2->featureInstanceId','$evHoldStartFunctionId','1','$completeGroupFeedback')" );
-            $ruleSignalId = mysql_insert_id ();
+            $ruleSignalId = query_insert_id ();
             
             if ($signalClassesId == $irClassesId)
             {
               $param1Value = "";
               $i = 0;
               $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-              while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+              while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
               {
                 if ($param1Value == "")
                   $param1Value = $row [0];
@@ -1866,7 +1865,7 @@ function generateBaseRulesForGroup($groupId)
           }
         }
         
-        // Bei Hold können wir noch holdEnd verwenden
+        // Bei Hold kï¿½n wir noch holdEnd verwenden
         if ($signalType == "hold")
         {
           $ruleSignalType = "holdEnd";
@@ -1883,9 +1882,9 @@ function generateBaseRulesForGroup($groupId)
           
           QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated,extras,intraDay) 
                                values('$groupId','$obj->startDay','$obj->startHour','$obj->startMinute','$obj->endDay','$obj->endHour','$obj->endMinute','$startState','$endState','$ruleSignalType','1','1','$obj->extras','$obj->intraDay')" );
-          $ruleIdHoldEnd = mysql_insert_id ();
+          $ruleIdHoldEnd = query_insert_id ();
           
-          // Actions ergänzen
+          // Actions ergã­ºen
           foreach ( $myInstances as $arr )
           {
             $myClassesId = $arr ["myClassesId"];
@@ -1899,9 +1898,9 @@ function generateBaseRulesForGroup($groupId)
               die ( "nicht implementierte class $myClassesId -7" );
           }
           
-          // Signale ergänzen
+          // Signale ergã­ºen
           $erg2 = QUERY ( "select basicRuleSignals.id, featureInstanceId, featureClassesId, featureInstances.id as checkId from basicRuleSignals left  join featureInstances on (featureInstances.id=basicRuleSignals.featureInstanceId) where ruleId='$obj->id' order by basicRuleSignals.id" );
-          while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+          while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
           {
             if ($obj2->featureInstanceId < 0) // Signalgruppe
             {
@@ -1919,14 +1918,14 @@ function generateBaseRulesForGroup($groupId)
             
             QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback)
                                        values('$ruleIdHoldEnd','$obj2->featureInstanceId','$evHoldEndFunctionId','1','$completeGroupFeedback')" );
-            $ruleSignalId = mysql_insert_id ();
+            $ruleSignalId = query_insert_id ();
             
             if ($signalClassesId == $irClassesId)
             {
               $param1Value = "";
               $i = 0;
               $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-              while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+              while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
               {
                 if ($param1Value == "")
                   $param1Value = $row [0];
@@ -1955,7 +1954,7 @@ function generateBaseRulesForGroup($groupId)
       if ($signalType == "")
         $signalType = $functionTemplates ["-1-4-" . $obj->template];
       if ($signalType == "")
-        die ( "F: Templatekonfiguration fehlt für Class $myClassesId Fkt 4 Gruppe $groupId!" );
+        die ( "F: Templatekonfiguration fehlt fï¿½ss $myClassesId Fkt 4 Gruppe $groupId!" );
       
       $ruleSignalType = $signalType;
       if ($signalType == "hold")
@@ -1976,9 +1975,9 @@ function generateBaseRulesForGroup($groupId)
           // Regel anlegen
         QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated,extras,intraDay) 
                               values('$groupId','$obj->startDay','$obj->startHour','$obj->startMinute','$obj->endDay','$obj->endHour','$obj->endMinute','$startState','$endState','$ruleSignalType','1','1','$obj->extras','$obj->intraDay')" );
-        $ruleId = mysql_insert_id ();
+        $ruleId = query_insert_id ();
         
-        // Actions ergänzen
+        // Actions ergã­ºen
         foreach ( $myInstances as $arr )
         {
           $myClassesId = $arr ["myClassesId"];
@@ -1987,7 +1986,7 @@ function generateBaseRulesForGroup($groupId)
           if ($myClassesId == $dimmerClassesId)
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','25','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','90','$obj->fkt4','1')" );
             
@@ -1998,13 +1997,13 @@ function generateBaseRulesForGroup($groupId)
           } else if ($myClassesId == $rolloClassesId)
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','$moveToPositionFunctionId','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','$paramPosition','$obj->fkt4','1')" );
           } else if ($myClassesId == $ledClassesId)
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','101','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','165','$obj->fkt4','1')" );
             
@@ -2015,7 +2014,7 @@ function generateBaseRulesForGroup($groupId)
           } else if ($myClassesId == $logicalButtonClassesId)
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','137','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             
             if ($obj->fkt4 == "C")
               $brightness = $ledLogicalButtonBrightness;
@@ -2030,7 +2029,7 @@ function generateBaseRulesForGroup($groupId)
           } else if ($myClassesId == $schalterClassesId)
           {
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','60','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             
             $dauer = "0";
             if ($obj->fkt4 > 0)
@@ -2040,9 +2039,9 @@ function generateBaseRulesForGroup($groupId)
             die ( "nicht implementierte class $myClassesId -8" );
         }
         
-        // Signale ergänzen
+        // Signale ergã­ºen
         $erg2 = QUERY ( "select basicRuleSignals.id, featureInstanceId, featureClassesId, featureInstances.id as checkId from basicRuleSignals left  join featureInstances on (featureInstances.id=basicRuleSignals.featureInstanceId) where ruleId='$obj->id' order by basicRuleSignals.id" );
-        while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+        while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
         {
           if ($obj2->featureInstanceId < 0) // Signalgruppe
           {
@@ -2062,14 +2061,14 @@ function generateBaseRulesForGroup($groupId)
             
             QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback)
                                         values('$ruleId','$obj2->featureInstanceId','$evClickedFunctionId','1','$completeGroupFeedback')" );
-            $ruleSignalId = mysql_insert_id ();
+            $ruleSignalId = query_insert_id ();
             
             if ($signalClassesId == $irClassesId)
             {
               $param1Value = "";
               $i = 0;
               $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-              while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+              while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
               {
                 if ($param1Value == "")
                   $param1Value = $row [0];
@@ -2092,14 +2091,14 @@ function generateBaseRulesForGroup($groupId)
             
             QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback)
                                          values('$ruleId','$obj2->featureInstanceId','$evHoldStartFunctionId','1','$completeGroupFeedback')" );
-            $ruleSignalId = mysql_insert_id ();
+            $ruleSignalId = query_insert_id ();
             
             if ($signalClassesId == $irClassesId)
             {
               $param1Value = "";
               $i = 0;
               $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-              while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+              while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
               {
                 if ($param1Value == "")
                   $param1Value = $row [0];
@@ -2119,7 +2118,7 @@ function generateBaseRulesForGroup($groupId)
             
             // Regel dimmStop
             /*
-             * $ruleSignalType="holdEnd"; QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule) values('$groupId','$obj->startDay','$obj->startHour','$obj->startMinute','$obj->endDay','$obj->endHour','$obj->endMinute','0','$secondState','$ruleSignalType','1')"); $ruleIdHoldEnd=mysql_insert_id(); $evHoldEndFunctionId = getClassesIdFunctionsIdByName($obj2->featureClassesId, "evHoldEnd"); QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId) values('$ruleIdHoldEnd','$obj2->featureInstanceId','$evHoldEndFunctionId')"); $ruleSignalId = mysql_insert_id(); if ($signalClassesId==$irClassesId) { $param1Value=""; $i=0; $erg = QUERY("select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2"); while($row=MYSQL_FETCH_ROW($erg)) { if ($param1Value=="") $param1Value=$row[0]; else $param2Value=$row[0]; } if ($param1Value=="") die("Params zu ruleSignalId $obj2->id nicht gefunden -12"); $irParamAddressId = getClassesIdFunctionParamIdByName($irClassesId,"evHoldEnd","address"); QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) values('$ruleSignalId','$irParamAddressId','$param1Value')"); $irParamCommandId = getClassesIdFunctionParamIdByName($irClassesId,"evHoldEnd","command"); QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) values('$ruleSignalId','$irParamCommandId','$param2Value')"); } // Actions ergänzen if ($myClassesId == $dimmerClassesId) { QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId) values('$ruleIdHoldEnd','$myInstanceId','65')"); } else die("nicht implementierte class $myClassesId -9");
+             * $ruleSignalType="holdEnd"; QUERY("INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule) values('$groupId','$obj->startDay','$obj->startHour','$obj->startMinute','$obj->endDay','$obj->endHour','$obj->endMinute','0','$secondState','$ruleSignalType','1')"); $ruleIdHoldEnd=query_insert_id(); $evHoldEndFunctionId = getClassesIdFunctionsIdByName($obj2->featureClassesId, "evHoldEnd"); QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId) values('$ruleIdHoldEnd','$obj2->featureInstanceId','$evHoldEndFunctionId')"); $ruleSignalId = query_insert_id(); if ($signalClassesId==$irClassesId) { $param1Value=""; $i=0; $erg = QUERY("select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2"); while($row=MYSQLi_FETCH_ROW($erg)) { if ($param1Value=="") $param1Value=$row[0]; else $param2Value=$row[0]; } if ($param1Value=="") die("Params zu ruleSignalId $obj2->id nicht gefunden -12"); $irParamAddressId = getClassesIdFunctionParamIdByName($irClassesId,"evHoldEnd","address"); QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) values('$ruleSignalId','$irParamAddressId','$param1Value')"); $irParamCommandId = getClassesIdFunctionParamIdByName($irClassesId,"evHoldEnd","command"); QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) values('$ruleSignalId','$irParamCommandId','$param2Value')"); } // Actions ergã­ºen if ($myClassesId == $dimmerClassesId) { QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId) values('$ruleIdHoldEnd','$myInstanceId','65')"); } else die("nicht implementierte class $myClassesId -9");
              */
           } else if ($signalType == "doubleClick")
           {
@@ -2152,7 +2151,7 @@ function generateBaseRulesForGroup($groupId)
       if ($signalType == "")
         $signalType = $functionTemplates ["-1-5-" . $obj->template];
       if ($signalType == "")
-        die ( "G: Templatekonfiguration fehlt für Class $myClassesId Fkt 5 Gruppe $groupId!" );
+        die ( "G: Templatekonfiguration fehlt fï¿½ss $myClassesId Fkt 5 Gruppe $groupId!" );
       
       $ruleSignalType = $signalType;
       if ($signalType == "hold")
@@ -2174,9 +2173,9 @@ function generateBaseRulesForGroup($groupId)
           // Regel anlegen
         QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated,extras,intraDay) 
                             values('$groupId','$obj->startDay','$obj->startHour','$obj->startMinute','$obj->endDay','$obj->endHour','$obj->endMinute','$startState','$endState','$ruleSignalType','1','1','$obj->extras','$obj->intraDay')" );
-        $ruleId = mysql_insert_id ();
+        $ruleId = query_insert_id ();
 
-        // Actions ergänzen
+        // Actions ergã­ºen
         foreach ( $myInstances as $arr )
         {
           $myClassesId = $arr ["myClassesId"];
@@ -2185,9 +2184,9 @@ function generateBaseRulesForGroup($groupId)
           QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','$stopFunctionId','1')" );
         }
         
-        // Signale ergänzen
+        // Signale ergã­ºen
         $erg2 = QUERY ( "select basicRuleSignals.id,featureInstanceId, featureClassesId, featureInstances.id as checkId from basicRuleSignals left  join featureInstances on (featureInstances.id=basicRuleSignals.featureInstanceId) where ruleId='$obj->id' order by basicRuleSignals.id" );
-        while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+        while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
         {
           if ($obj2->featureInstanceId < 0) // Signalgruppe
           {
@@ -2207,14 +2206,14 @@ function generateBaseRulesForGroup($groupId)
             
             QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback)
                                       values('$ruleId','$obj2->featureInstanceId','$evClickedFunctionId','1','$completeGroupFeedback')" );
-            $ruleSignalId = mysql_insert_id ();
+            $ruleSignalId = query_insert_id ();
             
             if ($signalClassesId == $irClassesId)
             {
               $param1Value = "";
               $i = 0;
               $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-              while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+              while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
               {
                 if ($param1Value == "")
                   $param1Value = $row [0];
@@ -2237,14 +2236,14 @@ function generateBaseRulesForGroup($groupId)
             
             QUERY ( "INSERT  ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated,completeGroupFeedback)
                                        values('$ruleId','$obj2->featureInstanceId','$evHoldEndFunctionId','1','$completeGroupFeedback')" );
-            $ruleSignalId = mysql_insert_id ();
+            $ruleSignalId = query_insert_id ();
             
             if ($signalClassesId == $irClassesId)
             {
               $param1Value = "";
               $i = 0;
               $erg3 = QUERY ( "select paramValue from basicRuleSignalParams where ruleSignalId='$obj2->id' order by id limit 2" );
-              while ( $row = MYSQL_FETCH_ROW ( $erg3 ) )
+              while ( $row = MYSQLi_FETCH_ROW ( $erg3 ) )
               {
                 if ($param1Value == "")
                   $param1Value = $row [0];
@@ -2285,14 +2284,14 @@ function generateBaseRulesForGroup($groupId)
     }
   }
   
-  // Dummyregeln ergänzen
+  // Dummyregeln ergã­ºen
   // $foundSignals == 1 && $foundStateChange == 1 && $myClassesId != $ledClassesId &&
   if ($myClassesId != $ethernetClassesId && $myClassesId != $logicalButtonClassesId && $myClassesId != $tasterClassesId && $myInstanceCount == 1 && $myClassesId != 24) // Bei Gruppen mir mehreren Aktoren generieren wir keine Statewechseldummies
   {
-    // Dummy für evOn
+    // Dummy fï¿½n
     QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,syncEvent,generated) 
                        values('$groupId','7','31','255','7','31','255','$firstState','$secondState','evOn','1','1','1')" );
-    $ruleId = mysql_insert_id ();
+    $ruleId = query_insert_id ();
     // QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId) values('$ruleId','$myInstanceId','-1')");
     
     if ($myClassesId == $dimmerClassesId)
@@ -2300,7 +2299,7 @@ function generateBaseRulesForGroup($groupId)
       $evOnFunctionId = getClassesIdFunctionsIdByName ( $dimmerClassesId, "evOn" );
       QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                 values('$ruleId','$myInstanceId','$evOnFunctionId','1')" );
-      $signalId = mysql_insert_id ();
+      $signalId = query_insert_id ();
       
       $dimmerParamBrightnessId = getClassesIdFunctionParamIdByName ( $dimmerClassesId, "evOn", "brightness" );
       QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
@@ -2311,10 +2310,10 @@ function generateBaseRulesForGroup($groupId)
       QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                 values('$ruleId','$myInstanceId','$statusFunctionId','1')" );
       /*
-       * $signalId=mysql_insert_id(); $positionParamId = getClassesIdFunctionParamIdByName($rolloClassesId,"e","position"); QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) values('$signalId','$positionParamId','$signalParamWildcard')");
+       * $signalId=query_insert_id(); $positionParamId = getClassesIdFunctionParamIdByName($rolloClassesId,"e","position"); QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) values('$signalId','$positionParamId','$signalParamWildcard')");
        */
     }     /*
-       * else if ($myClassesId==$logicalButtonClassesId) //$myClassesId == $ledClassesId || { $evOnFunctionId = getClassesIdFunctionsIdByName($ledClassesId,"evOn"); QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','$evOnFunctionId','1')"); $signalId=mysql_insert_id(); $brightnessId = getClassesIdFunctionParamIdByName($ledClassesId,"evOn","brightness"); QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$signalId','$brightnessId','$signalParamWildcard','1')"); }
+       * else if ($myClassesId==$logicalButtonClassesId) //$myClassesId == $ledClassesId || { $evOnFunctionId = getClassesIdFunctionsIdByName($ledClassesId,"evOn"); QUERY("INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$myInstanceId','$evOnFunctionId','1')"); $signalId=query_insert_id(); $brightnessId = getClassesIdFunctionParamIdByName($ledClassesId,"evOn","brightness"); QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$signalId','$brightnessId','$signalParamWildcard','1')"); }
        */
 else if ($myClassesId == $schalterClassesId)
     {
@@ -2329,10 +2328,10 @@ else if ($myClassesId == $schalterClassesId)
     } else
       die ( "nicht implementierte class $myClassesId -10" );
       
-      // Dummy für evOff
+      // Dummy fï¿½ff
     QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,syncEvent,generated) 
                        values('$groupId','7','31','255','7','31','255','0','$firstState','evOff','1','1','1')" );
-    $ruleId = mysql_insert_id ();
+    $ruleId = query_insert_id ();
     // QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId) values('$ruleId','$myInstanceId','-1')");
     
     if ($myClassesId == $dimmerClassesId)
@@ -2345,7 +2344,7 @@ else if ($myClassesId == $schalterClassesId)
       $statusFunctionId = getClassesIdFunctionsIdByName ( $rolloClassesId, "evClosed" );
       QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                 values('$ruleId','$myInstanceId','$statusFunctionId','1')" );
-      $signalId = mysql_insert_id ();
+      $signalId = query_insert_id ();
       
       $positionParamId = getClassesIdFunctionParamIdByName ( $rolloClassesId, "evClosed", "position" );
       QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) 
@@ -2379,7 +2378,7 @@ function isFunctionActive($fkt)
 }
 function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
 {
-  // echo "Generiere Ledfeedback für Gruppe $groupId <br>";
+  // echo "Generiere Ledfeedback fï¿½ppe $groupId <br>";
   global $CONTROLLER_CLASSES_ID;
   global $signalParamWildcard;
   global $dimmerClassesId, $rolloClassesId, $ledClassesId, $schalterClassesId, $irClassesId, $tasterClassesId, $logicalButtonClassesId;
@@ -2387,13 +2386,13 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
   global $serverInstances;
   
   $erg = QUERY ( "select featureInstanceId,featureClassesId from groupFeatures join featureInstances on (featureInstances.id=featureInstanceId) where groupId='$groupId' limit 1" );
-  $obj = MYSQL_FETCH_OBJECT ( $erg );
+  $obj = MYSQLi_FETCH_OBJECT ( $erg );
   $myInstanceId = $obj->featureInstanceId;
   $myClassesId = $obj->featureClassesId;
   
   // LED Feedback generieren
   $erg = QUERY ( "select * from basicRules where groupId='$groupId' and active='1'" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     // LED Feedback 0 = Kein, 1 = Aktor Einzeln, 2 = Teilszene, 3 = Komplettszene
     if ($obj->ledStatus == 0) // 0 = Kein Feedback
@@ -2401,8 +2400,8 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
     } else if ($obj->ledStatus == 2 || $obj->ledStatus == 3) // 2 = Teilszene 3 = Komplettszene
     {
       // $ledStatusBrightness="100";
-      // $erg2 = MYSQL_QUERY("select paramValue from basicConfig where paramKey = 'ledStatusBrightness' limit 1") or die(MYSQL_ERROR());
-      // if($row = MYSQL_FETCH_ROW($erg2)) $ledStatusBrightness=$row[0];
+      // $erg2 = QUERY("select paramValue from basicConfig where paramKey = 'ledStatusBrightness' limit 1");
+      // if($row = MYSQLi_FETCH_ROW($erg2)) $ledStatusBrightness=$row[0];
       // $ledStatusBrightness = (int)($ledStatusBrightness*255/100);
       
       $evGroupOnFunctionId = getClassesIdFunctionsIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOn" );
@@ -2411,23 +2410,23 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
       
       // LEDs der Signale suchen
       $erg2 = QUERY ( "select featureInstanceId from basicRuleSignals where ruleId='$obj->id' order by id" );
-      while ( $row = MYSQL_FETCH_ROW ( $erg2 ) )
+      while ( $row = MYSQLi_FETCH_ROW ( $erg2 ) )
       {
         $actSignalInstanceId = $row [0];
         $signalClassesId = getClassesIdByFeatureInstanceId ( $actSignalInstanceId );
         
         if ($signalClassesId == $tasterClassesId)
         {
-          // Erstmal alle bisherigen Feedbacks zu diesem Aktor-Signal-Paar löschen
+          // Erstmal alle bisherigen Feedbacks zu diesem Aktor-Signal-Paar lï¿½en
           // $ledFeedbackIndent=$myInstanceId."-".$actSignalInstanceId;
           // $erg4 = QUERY("select id from rules where ledFeedbackIndent='$ledFeedbackIndent'");
-          // while($row4=MYSQL_FETCH_ROW($erg4)) deleteRule($row4[0]);
+          // while($row4=MYSQLi_FETCH_ROW($erg4)) deleteRule($row4[0]);
           
           $ledInstanceId = getLedForTaster ( $actSignalInstanceId );
           if (! showError ( $ledInstanceId, $obj->id, $groupId, $actSignalInstanceId ))
           {
             $erg3 = QUERY ( "select groups.id from groups join groupFeatures on (groupFeatures.groupId=groups.id) where featureInstanceId='$ledInstanceId' limit 1" );
-            if ($row3 = MYSQL_FETCH_ROW ( $erg3 ))
+            if ($row3 = MYSQLi_FETCH_ROW ( $erg3 ))
               $ledGroupId = $row3 [0];
             else
               die ( "B) LED Groupid nicht gefunden zu ledInstanceId $ledInstanceId" );
@@ -2436,7 +2435,7 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
             $ledFirstState = "";
             $ledSecondState = "";
             $erg3 = QUERY ( "select id,basics from groupStates where groupId='$ledGroupId' and (basics='1' or basics='2') limit 2" );
-            while ( $row3 = MYSQL_FETCH_ROW ( $erg3 ) )
+            while ( $row3 = MYSQLi_FETCH_ROW ( $erg3 ) )
             {
               if ($row3 [1] == "1")
                 $ledFirstState = $row3 [0];
@@ -2462,14 +2461,14 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
             } else if ($szeneGroupId != "")
             {
               $erg3 = QUERY ( "select controllerId, groupIndex from groupSyncHelper where groupId='$szeneGroupId' order by id desc limit 1" );
-              if ($row3 = MYSQL_FETCH_ROW ( $erg3 ))
+              if ($row3 = MYSQLi_FETCH_ROW ( $erg3 ))
               {
                 $controllerId = getControllerFeatureInstanceIdForControllerId ( $row3 [0] );
                 $groupIndex = $row3 [1];
                 
-                // prüfen ob es diese regel bei der led nicht schon gibt
+                // prï¿½b es diese regel bei der led nicht schon gibt
                 $erg3 = QUERY ( "select ruleId from ruleSignals join rules on(ruleSignals.ruleId=rules.id) where featureInstanceId='$controllerId' and featureFunctionId='$evGroupUndefinedFunctionId' and groupId='$ledGroupId' limit 1" );
-                if ($row3 = MYSQL_FETCH_ROW ( $erg3 ))
+                if ($row3 = MYSQLi_FETCH_ROW ( $erg3 ))
                 {
                   // echo "Szene schon vorhanden <br>";
                 } else
@@ -2478,13 +2477,13 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
                   // Komplettszene: Einschalten bei groupOn
                   QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,ledFeedbackIndent,generated) 
                                         values('$ledGroupId','7','31','255','7','31','255','$ledFirstState','$ledSecondState','evOn','1','$ledFeedbackIndent','1')" );
-                  $actRuleId = mysql_insert_id ();
+                  $actRuleId = query_insert_id ();
                   
                   if ($obj->ledStatus == 2)
                   {
                     QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                                 values('$actRuleId','$controllerId','$evGroupUndefinedFunctionId','1')" );
-                    $actSignalId = mysql_insert_id ();
+                    $actSignalId = query_insert_id ();
                     $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupUndefined", "index" );
                     QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
                                                      values('$actSignalId','$indexParamId','$groupIndex','1')" );
@@ -2492,7 +2491,7 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
                   
                   QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                               values('$actRuleId','$controllerId','$evGroupOnFunctionId','1')" );
-                  $actSignalId = mysql_insert_id ();
+                  $actSignalId = query_insert_id ();
                   $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOn", "index" );
                   QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
                                                    values('$actSignalId','$indexParamId','$groupIndex','1')" );
@@ -2501,7 +2500,7 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
                   
                   QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated)
         		                                  values('$actRuleId','$ledInstanceId','$ledFunctionIdOn','1')" );
-                  $newRuleActionId = mysql_insert_id ();
+                  $newRuleActionId = query_insert_id ();
                   
                   $ledParamBrightnessId = getClassesIdFunctionParamIdByName ( $ledClassesId, "on", "brightness" );
                   $ledParamDurationId = getClassesIdFunctionParamIdByName ( $ledClassesId, "on", "duration" );
@@ -2514,13 +2513,13 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
                   // Bei Komplettszene auch ausschalten bei undefined
                   QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,ledFeedbackIndent,generated) 
                                         values('$ledGroupId','7','31','255','7','31','255','$ledSecondState','$ledFirstState','evOff','1','$ledFeedbackIndent','1')" );
-                  $actRuleId = mysql_insert_id ();
+                  $actRuleId = query_insert_id ();
                   
                   if ($obj->ledStatus == 3) // Komplettszene
                   {
                     QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                                 values('$actRuleId','$controllerId','$evGroupUndefinedFunctionId','1')" );
-                    $actSignalId = mysql_insert_id ();
+                    $actSignalId = query_insert_id ();
                     $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupUndefined", "index" );
                     QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
                                                      values('$actSignalId','$indexParamId','$groupIndex','1')" );
@@ -2528,7 +2527,7 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
                   
                   QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                               values('$actRuleId','$controllerId','$evGroupOffFunctionId','1')" );
-                  $actSignalId = mysql_insert_id ();
+                  $actSignalId = query_insert_id ();
                   $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOff", "index" );
                   QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
                                                    values('$actSignalId','$indexParamId','$groupIndex','1')" );
@@ -2550,17 +2549,17 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
     if ($obj->ledStatus == 1) // 1 = Aktor Einzeln
     {
       // $ledStatusBrightness="100";
-      // $erg2 = MYSQL_QUERY("select paramValue from basicConfig where paramKey = 'ledStatusBrightness' limit 1") or die(MYSQL_ERROR());
-      // if($row = MYSQL_FETCH_ROW($erg2)) $ledStatusBrightness=$row[0];
+      // $erg2 = QUERY("select paramValue from basicConfig where paramKey = 'ledStatusBrightness' limit 1");
+      // if($row = MYSQLi_FETCH_ROW($erg2)) $ledStatusBrightness=$row[0];
       // $ledStatusBrightness = (int)($ledStatusBrightness*255/100);
       
       // LEDs der Signale suchen
       $erg2 = QUERY ( "select featureInstanceId from basicRuleSignals where ruleId='$obj->id' order by id" );
-      while ( $row = MYSQL_FETCH_ROW ( $erg2 ) )
+      while ( $row = MYSQLi_FETCH_ROW ( $erg2 ) )
       {
         $actSignalInstanceId = $row [0];
         if ($serverInstances [$actSignalInstanceId] == 1)
-          continue; // Kein Feedback für virtuelle Servertaster
+          continue; // Kein Feedback fï¿½tuelle Servertaster
         
         $signalClassesId = getClassesIdByFeatureInstanceId ( $actSignalInstanceId );
         
@@ -2570,13 +2569,13 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
           
           if (! showError ( $ledInstanceId, $obj->id, $groupId, $actSignalInstanceId ))
           {
-            // Erstmal alle bisherigen Feedbacks zu diesem Aktor-Signal-Paar löschen
+            // Erstmal alle bisherigen Feedbacks zu diesem Aktor-Signal-Paar lï¿½en
             // $ledFeedbackIndent=$myInstanceId."-".$actSignalInstanceId;
             // $erg4 = QUERY("select id from rules where ledFeedbackIndent='$ledFeedbackIndent'");
-            // while($row4=MYSQL_FETCH_ROW($erg4)) deleteRule($row4[0]);
+            // while($row4=MYSQLi_FETCH_ROW($erg4)) deleteRule($row4[0]);
             
             $erg3 = QUERY ( "select groups.id from groups join groupFeatures on (groupFeatures.groupId=groups.id) where featureInstanceId='$ledInstanceId' limit 1" );
-            if ($row3 = MYSQL_FETCH_ROW ( $erg3 ))
+            if ($row3 = MYSQLi_FETCH_ROW ( $erg3 ))
               $ledGroupId = $row3 [0];
             else
               die ( "A) LED Groupid nicht gefunden zu ledInstanceId $ledInstanceId" );
@@ -2585,7 +2584,7 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
             $ledFirstState = "";
             $ledSecondState = "";
             $erg3 = QUERY ( "select id,basics from groupStates where groupId='$ledGroupId' and (basics='1' or basics='2') limit 2" );
-            while ( $row3 = MYSQL_FETCH_ROW ( $erg3 ) )
+            while ( $row3 = MYSQLi_FETCH_ROW ( $erg3 ) )
             {
               if ($row3 [1] == "1")
                 $ledFirstState = $row3 [0];
@@ -2620,17 +2619,17 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
               $paramBrightnessValue = $signalParamWildcard;
             } else if ($myClassesId == $rolloClassesId)
             {
-              die ( "LED-FEEDBACK NOCH NICHT IMPLEMENTIERT FÜR ROLLOS" );
+              die ( "LED-FEEDBACK NOCH NICHT IMPLEMENTIERT FÛ’ ROLLOS" );
             }
             
             // Einschalten bei evOn
             QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,baseRule,ledFeedbackIndent,generated) 
                                  values('$ledGroupId','7','31','255','7','31','255','$ledFirstState','$ledSecondState','1','$ledFeedbackIndent','1')" );
-            $ruleId = mysql_insert_id ();
+            $ruleId = query_insert_id ();
             
             QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                        values('$ruleId','$myInstanceId','$evOnFunctionId','1')" );
-            $signalId = mysql_insert_id ();
+            $signalId = query_insert_id ();
             
             if ($paramBrightnessId != - 1)
             {
@@ -2641,7 +2640,7 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
             $ledFunctionIdOn = getClassesIdFunctionsIdByName ( $ledClassesId, "on" );
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated)
                                        values('$ruleId','$ledInstanceId','$ledFunctionIdOn','1')" );
-            $newRuleActionId = mysql_insert_id ();
+            $newRuleActionId = query_insert_id ();
             $ledParamBrightnessId = getClassesIdFunctionParamIdByName ( $ledClassesId, "on", "brightness" );
             $ledParamDurationId = getClassesIdFunctionParamIdByName ( $ledClassesId, "on", "duration" );
             
@@ -2653,7 +2652,7 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
             // Ausschalten bei evOff
             QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,baseRule,ledFeedbackIndent,generated) 
                                  values('$ledGroupId','7','31','255','7','31','255','$ledSecondState','$ledFirstState','1','$ledFeedbackIndent','1')" );
-            $ruleId = mysql_insert_id ();
+            $ruleId = query_insert_id ();
             
             QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
          	                             values('$ruleId','$myInstanceId','$evOffFunctionId','1')" );
@@ -2668,19 +2667,19 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
     }
     
     /*
-     * if ($obj->ledStatus==4) // 4 = Gruppenstatus { // LEDs der Signale suchen $erg2=QUERY("select featureInstanceId from basicRuleSignals where ruleId='$obj->id' order by id"); while ($row=MYSQL_FETCH_ROW($erg2)) { $actSignalInstanceId = $row[0]; if ($serverInstances[$actSignalInstanceId]==1) continue; // Kein Feedback für virtuelle Servertaster $signalClassesId = getClassesIdByFeatureInstanceId($actSignalInstanceId); if ($signalClassesId == $tasterClassesId) { $ledInstanceId = getLedForTaster($actSignalInstanceId); if (!showError($ledInstanceId, $obj->id, $groupId, $actSignalInstanceId)) { // Standardstates auslesen $firstState=""; $secondState=""; $erg3 = QUERY("select id,basics from groupStates where groupId='$groupId' and (basics='1' or basics='2') limit 2"); while ($row3=MYSQL_FETCH_ROW($erg3)) { if ($row3[1]=="1") $firstState=$row3[0]; else if ($row3[1]=="2") $secondState=$row3[0]; } if ($firstState=="" || $secondState=="") die("States nicht gefunden zu Gruppe $groupId"); // ON Regeln finden $ledFunctionIdOn = getClassesIdFunctionsIdByName($ledClassesId,"on"); $ledParamBrightnessId = getClassesIdFunctionParamIdByName($ledClassesId,"on","brightness"); $ledParamDurationId = getClassesIdFunctionParamIdByName($ledClassesId,"on","duration"); $erg3 = QUERY("select id from rules where groupId='$groupId' and resultingStateId='$secondState'"); while ($row3=MYSQL_FETCH_ROW($erg3)) { $ruleId=$row3[0]; QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$ledInstanceId','$ledFunctionIdOn','1')"); $newRuleActionId=mysql_insert_id(); QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','$ledParamBrightnessId','$ledStatusBrightness','1')"); QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','$ledParamDurationId','0','1')"); } // OFF Regeln finden $ledFunctionIdOff = getClassesIdFunctionsIdByName($ledClassesId,"off"); $erg3 = QUERY("select id from rules where groupId='$groupId' and resultingStateId='$firstState'"); while ($row3=MYSQL_FETCH_ROW($erg3)) { $ruleId=$row3[0]; QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$ledInstanceId','$ledFunctionIdOff','1')"); } } else echo "Kein LogicalButton $actSignalInstanceId <br>"; } } }
+     * if ($obj->ledStatus==4) // 4 = Gruppenstatus { // LEDs der Signale suchen $erg2=QUERY("select featureInstanceId from basicRuleSignals where ruleId='$obj->id' order by id"); while ($row=MYSQLi_FETCH_ROW($erg2)) { $actSignalInstanceId = $row[0]; if ($serverInstances[$actSignalInstanceId]==1) continue; // Kein Feedback fï¿½tuelle Servertaster $signalClassesId = getClassesIdByFeatureInstanceId($actSignalInstanceId); if ($signalClassesId == $tasterClassesId) { $ledInstanceId = getLedForTaster($actSignalInstanceId); if (!showError($ledInstanceId, $obj->id, $groupId, $actSignalInstanceId)) { // Standardstates auslesen $firstState=""; $secondState=""; $erg3 = QUERY("select id,basics from groupStates where groupId='$groupId' and (basics='1' or basics='2') limit 2"); while ($row3=MYSQLi_FETCH_ROW($erg3)) { if ($row3[1]=="1") $firstState=$row3[0]; else if ($row3[1]=="2") $secondState=$row3[0]; } if ($firstState=="" || $secondState=="") die("States nicht gefunden zu Gruppe $groupId"); // ON Regeln finden $ledFunctionIdOn = getClassesIdFunctionsIdByName($ledClassesId,"on"); $ledParamBrightnessId = getClassesIdFunctionParamIdByName($ledClassesId,"on","brightness"); $ledParamDurationId = getClassesIdFunctionParamIdByName($ledClassesId,"on","duration"); $erg3 = QUERY("select id from rules where groupId='$groupId' and resultingStateId='$secondState'"); while ($row3=MYSQLi_FETCH_ROW($erg3)) { $ruleId=$row3[0]; QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$ledInstanceId','$ledFunctionIdOn','1')"); $newRuleActionId=query_insert_id(); QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','$ledParamBrightnessId','$ledStatusBrightness','1')"); QUERY("INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','$ledParamDurationId','0','1')"); } // OFF Regeln finden $ledFunctionIdOff = getClassesIdFunctionsIdByName($ledClassesId,"off"); $erg3 = QUERY("select id from rules where groupId='$groupId' and resultingStateId='$firstState'"); while ($row3=MYSQLi_FETCH_ROW($erg3)) { $ruleId=$row3[0]; QUERY("INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$ledInstanceId','$ledFunctionIdOff','1')"); } } else echo "Kein LogicalButton $actSignalInstanceId <br>"; } } }
      */
   }
 }
 function getControllerFeatureInstanceIdForControllerId($controllerId)
 {
   $erg = QUERY ( "select featureInstances.id from featureInstances join controller on (controller.objectId=featureInstances.objectId) where controller.id='$controllerId' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
     return $row [0];
 }
 
 /*
- * Idee: Wenn mehrere Signale einen Aktor steuern, kann man das problemlos über die Gruppe des Aktors regeln, auch wenn ein Signal später in eine Multigruppen rausgezogen wird, läuft alles über die DummySynchronisationsevent. Wenn aber ein Signal mehrere Aktoren ansteuern, muss es eine Statechart für alle Aktoren gemeinsam gehen. Dafür wird dann eine eigene Multigruppe erstellt. Kriterium ist also ob ein Signal mehrere Aktoren schaltet. Zusätzlich zu den DummyEvents gibt es dann die GroupStates über die der Gruppenzustand und das LED-Feedback gesteuert wird
+ * Idee: Wenn mehrere Signale einen Aktor steuern, kann man das problemlos ï¿½ie Gruppe des Aktors regeln, auch wenn ein Signal spã³¥r in eine Multigruppen rausgezogen wird, lã´¦t alles ï¿½ie DummySynchronisationsevent. Wenn aber ein Signal mehrere Aktoren ansteuern, muss es eine Statechart fï¿½e Aktoren gemeinsam gehen. Dafï¿½d dann eine eigene Multigruppe erstellt. Kriterium ist also ob ein Signal mehrere Aktoren schaltet. Zusã³ºlich zu den DummyEvents gibt es dann die GroupStates ï¿½ie der Gruppenzustand und das LED-Feedback gesteuert wird
  */
 function generateMultiGroups()
 {
@@ -2693,7 +2692,7 @@ function generateMultiGroups()
     echo "Generiere Autogruppen <br>";
   
   $erg = QUERY ( "select activationStateId,resultingStateId,ruleactions.featureInstanceId as actionFeatureId, rulesignals.id as ruleSignalId, rulesignals.featureInstanceId as signalFeatureId, rulesignals.featureFunctionId as signalFunctionId,groups.id as groupId, completeGroupFeedback from ruleactions join rules on (rules.id=ruleactions.ruleId) join ruleSignals on (ruleSignals.ruleId = rules.id) join groups on (rules.groupId=groups.id) where  single=1 and groups.generated=0 and groupLock=0 order by groups.id" ); // single=1 and and groupLock=0
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $key = $obj->signalFeatureId;
     
@@ -2705,7 +2704,7 @@ function generateMultiGroups()
     if ($myClassesId == $ledClassesId) // Ledevents nicht gruppieren
       continue;
     
-    if ($obj->activationStateId == 0 && $obj->completeGroupFeedback==0) // wenns unabhängig vom state ist und kein Feedback benötigt wird, nicht rausziegen
+    if ($obj->activationStateId == 0 && $obj->completeGroupFeedback==0) // wenns unabhã­§ig vom state ist und kein Feedback benï¿½t wird, nicht rausziegen
       continue;
       
       // if ($obj->groupId=="420") echo $obj->ruleSignalId."<br>";
@@ -2723,12 +2722,12 @@ function generateMultiGroups()
     if ($actionClassesId == $tasterClassesId) // Taster als Aktor nicht gruppieren
       continue;
       
-      // Bei Infrarot müssen zur Unterscheidung noch die Parameter rein
+      // Bei Infrarot mï¿½zur Unterscheidung noch die Parameter rein
     if ($myClassesId == $irClassesId)
     {
       $signalParams = "";
       $erg2 = QUERY ( "select paramValue from ruleSignalParams where ruleSignalId='$obj->ruleSignalId' order by featureFunctionParamsId" );
-      while ( $row = MYSQL_FETCH_ROW ( $erg2 ) )
+      while ( $row = MYSQLi_FETCH_ROW ( $erg2 ) )
       {
         if ($signalParams != "")
           $signalParams .= "-";
@@ -2791,7 +2790,7 @@ function generateMultiGroups()
   }
   
   $erg = QUERY ( "select distinct groupAlias from ruleSignals where groupAlias>0 order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     $basicStateNames = getBasicStateNames ( $aliasActionClass [$obj->groupAlias] ); // einfach einen aktor nehmen
     $offName = $basicStateNames->offName;
@@ -2804,18 +2803,18 @@ function generateMultiGroups()
     if ($debug == 1)
       echo "Erstelle Gruppe Generated $obj->groupAlias <br>";
     QUERY ( "INSERT into groups (name,single,generated) values('Generated $obj->groupAlias','0','1')" );
-    $newGroupId = mysql_insert_id ();
+    $newGroupId = query_insert_id ();
     
     QUERY ( "INSERT into groupStates (groupId,name, value,basics,generated) values ('$newGroupId','$offName','1','1','1')" );
-    $activationStateId = mysql_insert_id ();
+    $activationStateId = query_insert_id ();
     QUERY ( "INSERT into groupStates (groupId,name, value,basics,generated) values ('$newGroupId','$onName','2','2','1')" );
-    $resultingStateId = mysql_insert_id ();
+    $resultingStateId = query_insert_id ();
     
     // Wenn es in der neuen Gruppe verschiedene Classe existieren, machen wir aus evCovered ein evClicked
     $convertCoveredEvent = 0;
     $lastClass = "";
     $erg7 = QUERY ( "select distinct (ruleActions.featureInstanceId) from ruleActions join rules on (rules.id=ruleActions.ruleId) join ruleSignals on (ruleSignals.ruleId=rules.id) where ruleSignals.groupAlias='$obj->groupAlias'" );
-    while ( $row = MYSQL_FETCH_ROW ( $erg7 ) )
+    while ( $row = MYSQLi_FETCH_ROW ( $erg7 ) )
     {
       $actClassesId = getClassesIdByFeatureInstanceId ( $row [0] );
       if ($lastClass == "")
@@ -2832,23 +2831,23 @@ function generateMultiGroups()
     // unset($myOffInstances);
     
     $erg7 = QUERY ( "select id from ruleSignals where groupAlias='$obj->groupAlias' order by id" );
-    while ( $row = MYSQL_FETCH_ROW ( $erg7 ) )
+    while ( $row = MYSQLi_FETCH_ROW ( $erg7 ) )
     {
       $signalId = $row [0];
       
       // Features eintragen
       $erg2 = QUERY ( "select ruleActions.featureInstanceId from ruleActions join rules on (ruleActions.ruleId = rules.id) join ruleSignals on (ruleSignals.ruleId = rules.id) where ruleSignals.id='$signalId' limit 1" );
-      if ($obj2 = MYSQL_FETCH_OBJECT ( $erg2 ))
+      if ($obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ))
       {
         QUERY ( "delete from groupFeatures where featureInstanceId='$obj2->featureInstanceId' and groupId='$newGroupId' limit 1" );
         QUERY ( "INSERT into groupFeatures (featureInstanceId, groupId,generated) values('$obj2->featureInstanceId','$newGroupId','1')" );
       } else
         die ( "Fehler: ActionInstance nicht gefunden zu GroupAlias $obj->groupAlias" );
         
-        // Regeln mischen die über die signals markiert wurden
+        // Regeln mischen die ï¿½ie signals markiert wurden
       $extras = "";
       $erg2 = QUERY ( "select rules.*, activation.basics as startBasics, resulting.basics as resultingBasics from rules join ruleSignals on (ruleSignals.ruleId=rules.id) left join groupStates as activation on (activation.id = rules.activationStateId) left join groupStates as resulting on (resulting.id = rules.resultingStateId) where ruleSignals.id='$signalId' limit 1" );
-      if ($obj2 = MYSQL_FETCH_OBJECT ( $erg2 ))
+      if ($obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ))
       {
         if ($obj2->extras != "")
           $extras = $obj2->extras;
@@ -2866,7 +2865,7 @@ function generateMultiGroups()
           $myResultingStateId = $resultingStateId;
         
         $erg3 = QUERY ( "select * from ruleSignals where id='$signalId' limit 1" );
-        if ($obj3 = MYSQL_FETCH_OBJECT ( $erg3 ))
+        if ($obj3 = MYSQLi_FETCH_OBJECT ( $erg3 ))
         {
           $signalId = $obj3->id;
           $signalFeatureInstanceId = $obj3->featureInstanceId;
@@ -2880,10 +2879,10 @@ function generateMultiGroups()
         } else
           die ( "Signal ID $signalId nicht gefunden" );
           
-          // Prüfen ob es die passende Regel schon gibt
+          // Prï¿½b es die passende Regel schon gibt
           // echo "select rules.id from rules join ruleSignals on (ruleSignals.ruleId=rules.id) where activationStateId='$myActivationStateId' and groupId='$newGroupId' and featureInstanceId='$signalFeatureInstanceId' and featureFunctionId='$signalFeatureFunctionId' limit 1 <br>";
         $erg3 = QUERY ( "select rules.id from rules join ruleSignals on (ruleSignals.ruleId=rules.id) where activationStateId='$myActivationStateId' and groupId='$newGroupId' and featureInstanceId='$signalFeatureInstanceId' and featureFunctionId='$signalFeatureFunctionId' limit 1" );
-        if ($row3 = MYSQL_FETCH_ROW ( $erg3 ))
+        if ($row3 = MYSQLi_FETCH_ROW ( $erg3 ))
         {
           $newRuleId = $row3 [0];
           // echo "gefunden $newRuleId <br>";
@@ -2891,7 +2890,7 @@ function generateMultiGroups()
         {
           QUERY ( "INSERT into rules (groupId,activationStateId,resultingStateId,startDay,startHour,startMinute,endDay,endHour,endMinute,signalType,baseRule,generated, intraDay)
     	                     values('$newGroupId','$myActivationStateId','$myResultingStateId','$obj2->startDay','$obj2->startHour','$obj2->startMinute','$obj2->endDay','$obj2->endHour','$obj2->endMinute','$obj2->signalType','$obj2->baseRule','1','$obj2->intraDay')" );
-          $newRuleId = mysql_insert_id ();
+          $newRuleId = query_insert_id ();
           if ($myResultingStateId != 0 || $myActivationStateId != 0)
             $foundStateChanges = 1;
             
@@ -2899,10 +2898,10 @@ function generateMultiGroups()
             
           // Signale eintragen
           QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$newRuleId','$signalFeatureInstanceId','$signalFeatureFunctionId','1')" );
-          $newSignalId = mysql_insert_id ();
+          $newSignalId = query_insert_id ();
           
           $erg4 = QUERY ( "select * from ruleSignalParams where ruleSignalId='$signalId' order by id" );
-          while ( $obj4 = MYSQL_FETCH_OBJECT ( $erg4 ) )
+          while ( $obj4 = MYSQLi_FETCH_OBJECT ( $erg4 ) )
           {
             QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$newSignalId','$obj4->featureFunctionParamsId','$obj4->paramValue','1')" );
           }
@@ -2910,15 +2909,15 @@ function generateMultiGroups()
         
         // Actions eintragen
         $erg3 = QUERY ( "select * from ruleActions where ruleId='$obj2->id' order by id" );
-        while ( $obj3 = MYSQL_FETCH_OBJECT ( $erg3 ) )
+        while ( $obj3 = MYSQLi_FETCH_OBJECT ( $erg3 ) )
         {
           // if ($obj2->offRule==1) $myOffInstances[$obj3->featureInstanceId]=1;
           
           QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$newRuleId','$obj3->featureInstanceId','$obj3->featureFunctionId','1')" );
-          $newSignalId = mysql_insert_id ();
+          $newSignalId = query_insert_id ();
           
           $erg4 = QUERY ( "select * from ruleActionParams where ruleActionId='$obj3->id' order by id" );
-          while ( $obj4 = MYSQL_FETCH_OBJECT ( $erg4 ) )
+          while ( $obj4 = MYSQLi_FETCH_OBJECT ( $erg4 ) )
           {
             QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newSignalId','$obj4->featureFunctionParamsId','$obj4->paramValue','1')" );
           }
@@ -2949,19 +2948,19 @@ function generateSignalGroup($groupId)
   QUERY ( "DELETE from groupSyncHelper where groupId='$groupId'" );
   
   $erg = QUERY ( "select name,groupType from groups where id='$groupId' limit 1" );
-  $row = mysql_fetch_row ( $erg );
-  $name = mysql_real_escape_string ( "Generated " . $row [0] );
+  $row = MYSQLi_FETCH_row ( $erg );
+  $name = query_real_escape_string ( "Generated " . $row [0] );
   $groupType = $row [1];
   
   QUERY ( "insert into groups (single,name,generated) values('0','$name','1')" );
-  $newGroupId = mysql_insert_id ();
+  $newGroupId = query_insert_id ();
   
   // Jedem Status der Gruppe einen Index zuweisen
   $index = 0;
   $groupThreshold = 0;
   unset ( $indexList );
   $erg2 = QUERY ( "select activationStateId from rules join ruleSignals on(ruleSignals.ruleId = rules.id) where groupId='$groupId' order by activationStateId" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg2 ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg2 ) )
   {
     if ($row [0] % 2 == 0)
     {
@@ -2981,7 +2980,7 @@ function generateSignalGroup($groupId)
     die ( "Fehler: Signalgruppe mit mehr als 64 Membern gefunden -> $totalMembers" );
     
     // Passende Gruppe(n) erstellen
-    // Wenn mehr als 8 Member beteiligt sind müssen wir Gruppen kaskadieren
+    // Wenn mehr als 8 Member beteiligt sind mï¿½wir Gruppen kaskadieren
     // Zum Verwalten des Gruppenstatus wird dann eine Obergruppe verwendet, die als Member so viele Untergruppen verwendet, wie Aktoren im Spiel sind.
     // Maximal also 8x8 = 64 Member
   $nrNeededGroups = ( int ) ($totalMembers / 8);
@@ -2996,13 +2995,13 @@ function generateSignalGroup($groupId)
     // Freie Gruppe auf irgend einem Controller suchen.
     $controllerId = - 1;
     $erg2 = QUERY ( "select id from controller where size!='999' and online='1'" );
-    while ( $row = MYSQL_FETCH_ROW ( $erg2 ) )
+    while ( $row = MYSQLi_FETCH_ROW ( $erg2 ) )
     {
       $controllerId = $row [0];
       
       $myGroupIndex = 0;
       $erg3 = QUERY ( "select groupIndex from groupSyncHelper where controllerId='$controllerId' order by groupIndex desc limit 1" );
-      if ($row3 = MYSQL_FETCH_ROW ( $erg3 ))
+      if ($row3 = MYSQLi_FETCH_ROW ( $erg3 ))
         $myGroupIndex = $row3 [0] + 1;
         
         // Controller ist schon voll.
@@ -3016,7 +3015,7 @@ function generateSignalGroup($groupId)
     
     if ($controllerId == - 1)
     {
-      die ( "Fehler: keine freie Gruppe für Signalgruppe gefunden" );
+      die ( "Fehler: keine freie Gruppe fï¿½nalgruppe gefunden" );
     }
     
     // Gruppe reservieren
@@ -3024,7 +3023,7 @@ function generateSignalGroup($groupId)
     
     // Controller als Instanz suchen
     $erg2 = QUERY ( "select id from featureInstances where controllerId='$controllerId' and featureClassesId='$CONTROLLER_CLASSES_ID' limit 1" );
-    if ($row = MYSQL_FETCH_ROW ( $erg2 ))
+    if ($row = MYSQLi_FETCH_ROW ( $erg2 ))
       $controllerInstanceId = $row [0];
     else
       die ( "Fehler: Controller Instance zu controllerId $controllerId nicht gefunden" );
@@ -3051,7 +3050,7 @@ function generateSignalGroup($groupId)
   // Pro Status die Aktivierungs und Deaktivierungsevents eintragen und damit Bit in Syncgruppe schalten
   $syncActorDone = "";
   $erg2 = QUERY ( "select rules.id, activationStateId from rules join ruleSignals on(ruleSignals.ruleId = rules.id) where groupId='$groupId' order by activationStateId" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg2 ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg2 ) )
   {
     $ruleId = $row [0];
     if ($syncActorDone [$ruleId] == 1)
@@ -3077,25 +3076,25 @@ function generateSignalGroup($groupId)
     // Regel
     QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,syncEvent,generated) 
                       values('$newGroupId','7','31','255','7','31','255','0','0','evOn','1','1','1')" );
-    $newRuleId = mysql_insert_id ();
+    $newRuleId = query_insert_id ();
     
     QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$newRuleId','$controllerInstanceId','169','1')" );
-    $newRuleActionId = mysql_insert_id ();
+    $newRuleActionId = query_insert_id ();
     QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','326','$myGroupIndex','1')" );
     QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','327','$actFeatureIndex','1')" );
     QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','328','$active','1')" );
     QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','349','$groupThreshold','1')" );
     
-    // Signale ergänzen
+    // Signale ergã­ºen
     $erg3 = QUERY ( "select * from ruleSignals where ruleId='$ruleId'" );
-    while ( $obj3 = mysql_fetch_object ( $erg3 ) )
+    while ( $obj3 = MYSQLi_FETCH_object ( $erg3 ) )
     {
       QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) 
                                values('$newRuleId','$obj3->featureInstanceId','$obj3->featureFunctionId','1')" );
-      $signalId = mysql_insert_id ();
+      $signalId = query_insert_id ();
       
       $erg4 = QUERY ( "select * from ruleSignalParams where ruleSignalId='$obj3->id'" );
-      while ( $obj4 = mysql_fetch_object ( $erg4 ) )
+      while ( $obj4 = MYSQLi_FETCH_object ( $erg4 ) )
       {
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated)
                                  values('$signalId','$obj4->featureFunctionParamsId','$obj4->paramValue','1')" );
@@ -3103,8 +3102,8 @@ function generateSignalGroup($groupId)
     }
   }
   
-  // Wenn mehr als eine Gruppe nötig war, haben wir geschachtelt.
-  // Dann hier die Subevents eintragen und später die Gesamtgruppe als Eventgeber eintragen
+  // Wenn mehr als eine Gruppe nï¿½ war, haben wir geschachtelt.
+  // Dann hier die Subevents eintragen und spã³¥r die Gesamtgruppe als Eventgeber eintragen
   if ($nrNeededGroups > 1)
   {
     $globalGroupIndex = $syncGroups [$nrNeededGroups - 1] ["myGroupIndex"];
@@ -3115,53 +3114,53 @@ function generateSignalGroup($groupId)
     
     $nrSubGroups = $nrNeededGroups - 1;
     
-    // Synchronisationsevents für die Subgruppen eintragen
+    // Synchronisationsevents fï¿½ Subgruppen eintragen
     for($i = 0; $i < $nrSubGroups; $i ++)
     {
       $myGroupIndex = $syncGroups [$i] ["myGroupIndex"];
       $controllerInstanceId = $syncGroups [$i] ["controllerInstanceId"];
       
       QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated) values('$newGroupId','7','31','255','7','31','255','0','0','evOn','1','1')" );
-      $actRuleId = mysql_insert_id ();
+      $actRuleId = query_insert_id ();
       
       if ($groupType == "SIGNALS-OR")
       {
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupUndefinedFunctionId','1')" );
-        $actSignalId = mysql_insert_id ();
+        $actSignalId = query_insert_id ();
         $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupUndefined", "index" );
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
       }
       
       QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupOnFunctionId','1')" );
-      $actSignalId = mysql_insert_id ();
+      $actSignalId = query_insert_id ();
       $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOn", "index" );
       QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
       
       QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$globalControllerInstanceId','169','1')" );
-      $newRuleActionId = mysql_insert_id ();
+      $newRuleActionId = query_insert_id ();
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','326','$globalGroupIndex','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','327','$i','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','328','1','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','349','$nrSubGroups','1')" );
       
       QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated) values('$newGroupId','7','31','255','7','31','255','0','0','evOff','1','1')" );
-      $actRuleId = mysql_insert_id ();
+      $actRuleId = query_insert_id ();
       
       QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupOffFunctionId','1')" );
-      $actSignalId = mysql_insert_id ();
+      $actSignalId = query_insert_id ();
       $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOff", "index" );
       QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
       
       if ($groupType == "SIGNALS-AND")
       {
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupUndefinedFunctionId','1')" );
-        $actSignalId = mysql_insert_id ();
+        $actSignalId = query_insert_id ();
         $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupUndefined", "index" );
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
       }
       
       QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$globalControllerInstanceId','169','1')" );
-      $newRuleActionId = mysql_insert_id ();
+      $newRuleActionId = query_insert_id ();
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','326','$globalGroupIndex','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','327','$i','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','328','0','1')" );
@@ -3178,14 +3177,14 @@ function generateSignalGroup($groupId)
   // Dann die Gruppenevents in allen Regeln eintragen, die auf diese Gruppen referenzieren
   // $evGroupOnFunctionId $evGroupOffFunctionId $evGroupUndefinedFunctionId
   $erg = QUERY ( "select id,eventType from basicrulegroupsignals where groupId='$groupId'" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     $searchFeatureInstanceId = $row [0] * - 1;
     $eventType = $row [1];
     // echo "SearchInstance = " . $searchFeatureInstanceId . "<br>";
     
     $erg2 = QUERY ( "select ruleId from ruleSignals where featureInstanceId='$searchFeatureInstanceId' order by id" );
-    while ( $row2 = MYSQL_FETCH_ROW ( $erg2 ) )
+    while ( $row2 = MYSQLi_FETCH_ROW ( $erg2 ) )
     {
       $actRuleId = $row2 [0];
       // echo $searchFeatureInstanceId . " in " . $actRuleId . "<br>";
@@ -3195,7 +3194,7 @@ function generateSignalGroup($groupId)
       {
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) 
                             values('$actRuleId','$controllerInstanceId','$evGroupOnFunctionId','1')" );
-        $actSignalId = mysql_insert_id ();
+        $actSignalId = query_insert_id ();
         $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOn", "index" );
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
                             values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
@@ -3206,19 +3205,19 @@ function generateSignalGroup($groupId)
       {
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) 
                           values('$actRuleId','$controllerInstanceId','$evGroupOffFunctionId','1')" );
-        $actSignalId = mysql_insert_id ();
+        $actSignalId = query_insert_id ();
         $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOff", "index" );
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
                                    values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
       }
       
       // Group-UNDEFINED
-      // Was Signal undefined bewirken soll, hängt davon ab welches feedback gewünscht war
+      // Was Signal undefined bewirken soll, hã­§t davon ab welches feedback gewï¿½ war
       if (($eventType == "ACTIVE" && $groupType == "SIGNALS-OR") || ($eventType == "DEACTIVE" && $groupType == "SIGNALS-AND"))
       {
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) 
                    values('$actRuleId','$controllerInstanceId','$evGroupUndefinedFunctionId','1')" );
-        $actSignalId = mysql_insert_id ();
+        $actSignalId = query_insert_id ();
         $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupUndefined", "index" );
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
                    values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
@@ -3248,7 +3247,7 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
   $groupThreshold = 0;
   unset ( $indexList );
   $erg2 = QUERY ( "select distinct featureInstanceId from ruleActions join rules on (rules.id=ruleActions.ruleId) where groupId='$groupId' order by featureInstanceId" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg2 ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg2 ) )
   {
     $myClassesId = getClassesIdByFeatureInstanceId ( $row [0] );
     if ($myClassesId == $logicalButtonClassesId) continue;
@@ -3257,11 +3256,11 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
   }
   
   $totalMembers = count ( $indexList );
-  if ($totalMembers == 0) continue;
+  if ($totalMembers == 0) return;
   if ($totalMembers > 64) die ( "Fehler: Gruppe mit mehr als 64 Membern gefunden -> $totalMembers" );
     
     // Passende Gruppe(n) erstellen
-    // Wenn mehr als 8 Member beteiligt sind müssen wir Gruppen kaskadieren
+    // Wenn mehr als 8 Member beteiligt sind mï¿½wir Gruppen kaskadieren
     // Zum Verwalten des Gruppenstatus wird dann eine Obergruppe verwendet, die als Member so viele Untergruppen verwendet, wie Aktoren im Spiel sind.
     // Maximal also 8x8 = 64 Member
   $nrNeededGroups = ( int ) ($totalMembers / 8);
@@ -3270,26 +3269,26 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
   if ($nrNeededGroups > 1)
     $schachtelNeeded = 1;
     
-    // Wir versuchen den ersten Aktor als Host für die Gruppe zu verwenden
+    // Wir versuchen den ersten Aktor als Host fï¿½ Gruppe zu verwenden
   $erg4 = QUERY ( "select featureInstanceId from groupFeatures where groupId='$groupId' order by id limit 1" );
-  $row4 = MYSQL_FETCH_ROW ( $erg4 );
+  $row4 = MYSQLi_FETCH_ROW ( $erg4 );
   $firstAktor = $row4 [0];
   
   unset ( $syncGroups );
   for($i = 0; $i < $nrNeededGroups; $i ++)
   {
     // Freie Gruppe auf Controller der beteiligten Aktoren suchen.
-    // Dabei zunächst versuchen, das erste Feature zu treffen, weil submitRules die Regel auf den Controller des ersten Features packt.
+    // Dabei zunã¢¨st versuchen, das erste Feature zu treffen, weil submitRules die Regel auf den Controller des ersten Features packt.
     // Dadurch werden die setGroupState Aufrufe alle intern abgehandelt
     $controllerId = - 1;
     $erg2 = QUERY ( "select distinct(controllerId) from featureInstances join groupFeatures on (groupFeatures.featureInstanceId=featureInstances.id) join controller on (featureInstances.controllerId=controller.id) where groupId='$groupId' and size!=999 order by featureInstances.id='$firstAktor', featureInstances.id" );
-    while ( $row = MYSQL_FETCH_ROW ( $erg2 ) )
+    while ( $row = MYSQLi_FETCH_ROW ( $erg2 ) )
     {
       $controllerId = $row [0];
       
       $myGroupIndex = 0;
       $erg3 = QUERY ( "select groupIndex from groupSyncHelper where controllerId='$controllerId' order by groupIndex desc limit 1" );
-      if ($row3 = MYSQL_FETCH_ROW ( $erg3 ))
+      if ($row3 = MYSQLi_FETCH_ROW ( $erg3 ))
         $myGroupIndex = $row3 [0] + 1;
         
         // Controller ist schon voll.
@@ -3312,7 +3311,7 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
     
     // Controller als Instanz suchen
     $erg2 = QUERY ( "select id from featureInstances where controllerId='$controllerId' and featureClassesId='$CONTROLLER_CLASSES_ID' limit 1" );
-    if ($row = MYSQL_FETCH_ROW ( $erg2 ))
+    if ($row = MYSQLi_FETCH_ROW ( $erg2 ))
       $controllerInstanceId = $row [0];
     else
       die ( "Fehler: Controller Instance zu controllerId $controllerId nicht gefunden" );
@@ -3342,7 +3341,7 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
   
   // On und Off State aus der Gruppe auslesen
   $erg2 = QUERY ( "select ruleId,featureInstanceId,groupStates.basics as resultingBasics,groupStates.id as resultingStateId from ruleActions join rules on (rules.id=ruleActions.ruleId) left join groupStates on (groupStates.id=rules.resultingStateId) where rules.groupId='$groupId' order by ruleActions.id" );
-  while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+  while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
   {
     if ($obj2->resultingBasics == "2")
       $myOnStateId = $obj2->resultingStateId;
@@ -3350,10 +3349,10 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
       $myOffStateId = $obj2->resultingStateId;
   }
   
-  // Pro Aktor ein Event für den On-Zustand und Off-Zustand generieren und damit Bit in Syncgruppe schalten
+  // Pro Aktor ein Event fï¿½ On-Zustand und Off-Zustand generieren und damit Bit in Syncgruppe schalten
   $syncActorDone = "";
   $erg2 = QUERY ( "select ruleId,featureInstanceId,groupStates.name as resultingStateName,groupStates.id as resultingStateId from ruleActions join rules on (rules.id=ruleActions.ruleId) left join groupStates on (groupStates.id=rules.resultingStateId) where rules.groupId='$groupId' order by ruleActions.id" );
-  while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+  while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
   {
     $myClassesId = getClassesIdByFeatureInstanceId ( $obj2->featureInstanceId );
     if ($myClassesId == $logicalButtonClassesId)
@@ -3371,12 +3370,12 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
     {
       $syncActorDone [$obj2->featureInstanceId] = 1;
       
-      // Dummy für evOn
+      // Dummy fï¿½n
       QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,syncEvent,generated) values('$groupId','7','31','255','7','31','255','0','0','evOn','1','1','1')" );
-      $ruleId = mysql_insert_id ();
+      $ruleId = query_insert_id ();
       
       QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$controllerInstanceId','169','1')" );
-      $newRuleActionId = mysql_insert_id ();
+      $newRuleActionId = query_insert_id ();
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','326','$myGroupIndex','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','327','$actFeatureIndex','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','328','1','1')" );
@@ -3386,7 +3385,7 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
       {
         $evOnFunctionId = getClassesIdFunctionsIdByName ( $dimmerClassesId, "evOn" );
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$obj2->featureInstanceId','$evOnFunctionId','1')" );
-        $signalId = mysql_insert_id ();
+        $signalId = query_insert_id ();
         
         $dimmerParamBrightnessId = getClassesIdFunctionParamIdByName ( $dimmerClassesId, "evOn", "brightness" );
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$signalId','$dimmerParamBrightnessId','$signalParamWildcard','1')" );
@@ -3398,7 +3397,7 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
       {
         $evOnFunctionId = getClassesIdFunctionsIdByName ( $ledClassesId, "evOn" );
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$obj2->featureInstanceId','$evOnFunctionId','1')" );
-        $signalId = mysql_insert_id ();
+        $signalId = query_insert_id ();
         
         $dimmerParamBrightnessId = getClassesIdFunctionParamIdByName ( $ledClassesId, "evOn", "brightness" );
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$signalId','$dimmerParamBrightnessId','$signalParamWildcard','1')" );
@@ -3408,19 +3407,19 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$obj2->featureInstanceId','$evOnFunctionId','1')" );
       } else if ($myClassesId == 21)
       {
-        echo "dummy für server fehlt noch <br>";
+        echo "dummy fï¿½ver fehlt noch <br>";
       } else if ($myClassesId == $tasterClassesId)
       {
         // hat keine Events
       } else
         die ( "nicht implementierte class $myClassesId -1 -> $obj2->ruleId" );
         
-        // Dummy für evOff
+        // Dummy fï¿½ff
       QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,syncEvent,generated) values('$groupId','7','31','255','7','31','255','0','0','evOff','1','1','1')" );
-      $ruleId = mysql_insert_id ();
+      $ruleId = query_insert_id ();
       
       QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$controllerInstanceId','169','1')" );
-      $newRuleActionId = mysql_insert_id ();
+      $newRuleActionId = query_insert_id ();
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','326','$myGroupIndex','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','327','$actFeatureIndex','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','328','0','1')" );
@@ -3434,7 +3433,7 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
       {
         $statusFunctionId = getClassesIdFunctionsIdByName ( $rolloClassesId, "evClosed" );
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$obj2->featureInstanceId','$statusFunctionId','1')" );
-        $signalId = mysql_insert_id ();
+        $signalId = query_insert_id ();
         
         $dimmerParamBrightnessId = getClassesIdFunctionParamIdByName ( $rolloClassesId, "evClosed", "position" );
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$signalId','$dimmerParamBrightnessId','$signalParamWildcard','1')" );
@@ -3448,7 +3447,7 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$obj2->featureInstanceId','$evOffFunctionId','1')" );
       } else if ($myClassesId == 21)
       {
-        echo "dummy für server fehlt noch <br>";
+        echo "dummy fï¿½ver fehlt noch <br>";
       } else if ($myClassesId == $tasterClassesId)
       {
         // hat keine Events
@@ -3457,8 +3456,8 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
     }
   }
   
-  // Wenn mehr als eine Gruppe nötig war, haben wir geschachtelt.
-  // Dann hier die Subevents eintragen und später die Gesamtgruppe als Eventgeber eintragen
+  // Wenn mehr als eine Gruppe nï¿½ war, haben wir geschachtelt.
+  // Dann hier die Subevents eintragen und spã³¥r die Gesamtgruppe als Eventgeber eintragen
   if ($nrNeededGroups > 1)
   {
     $globalGroupIndex = $syncGroups [$nrNeededGroups - 1] ["myGroupIndex"];
@@ -3466,53 +3465,53 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
     
     $nrSubGroups = $nrNeededGroups - 1;
     
-    // Synchronisationsevents für die Subgruppen eintragen
+    // Synchronisationsevents fï¿½ Subgruppen eintragen
     for($i = 0; $i < $nrSubGroups; $i ++)
     {
       $myGroupIndex = $syncGroups [$i] ["myGroupIndex"];
       $controllerInstanceId = $syncGroups [$i] ["controllerInstanceId"];
       
       QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated) values('$groupId','7','31','255','7','31','255','0','0','evOn','1','1')" );
-      $actRuleId = mysql_insert_id ();
+      $actRuleId = query_insert_id ();
       
       if ($completeGroupFeedback != 1)
       {
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupUndefinedFunctionId','1')" );
-        $actSignalId = mysql_insert_id ();
+        $actSignalId = query_insert_id ();
         $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupUndefined", "index" );
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
       }
       
       QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupOnFunctionId','1')" );
-      $actSignalId = mysql_insert_id ();
+      $actSignalId = query_insert_id ();
       $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOn", "index" );
       QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
       
       QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$globalControllerInstanceId','169','1')" );
-      $newRuleActionId = mysql_insert_id ();
+      $newRuleActionId = query_insert_id ();
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','326','$globalGroupIndex','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','327','$i','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','328','1','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','349','$nrSubGroups','1')" );
       
       QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated) values('$groupId','7','31','255','7','31','255','0','0','evOff','1','1')" );
-      $actRuleId = mysql_insert_id ();
+      $actRuleId = query_insert_id ();
       
       QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupOffFunctionId','1')" );
-      $actSignalId = mysql_insert_id ();
+      $actSignalId = query_insert_id ();
       $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOff", "index" );
       QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
       
       if ($completeGroupFeedback == 1)
       {
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupUndefinedFunctionId','1')" );
-        $actSignalId = mysql_insert_id ();
+        $actSignalId = query_insert_id ();
         $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupUndefined", "index" );
         QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
       }
       
       QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$globalControllerInstanceId','169','1')" );
-      $newRuleActionId = mysql_insert_id ();
+      $newRuleActionId = query_insert_id ();
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','326','$globalGroupIndex','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','327','$i','1')" );
       QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) values('$newRuleActionId','328','0','1')" );
@@ -3526,31 +3525,31 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
   // Dann die Events der Synchronisationsgruppe eintragen um damit die Gruppenstates zu schalten
   // $evGroupOnFunctionId $evGroupOffFunctionId $evGroupUndefinedFunctionId
   QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated) values('$groupId','7','31','255','7','31','255','$myOffStateId','$myOnStateId','evOn','1','1')" );
-  $actRuleId = mysql_insert_id ();
+  $actRuleId = query_insert_id ();
   $onRuleId = $actRuleId;
   
   QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupOnFunctionId','1')" );
-  $actSignalId = mysql_insert_id ();
+  $actSignalId = query_insert_id ();
   $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOn", "index" );
   QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
   
   QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,generated) values('$groupId','7','31','255','7','31','255','$myOnStateId','$myOffStateId','evOff','1','1')" );
-  $actRuleId = mysql_insert_id ();
+  $actRuleId = query_insert_id ();
   $offRuleId = $actRuleId;
   
   QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupOffFunctionId','1')" );
-  $actSignalId = mysql_insert_id ();
+  $actSignalId = query_insert_id ();
   $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOff", "index" );
   QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
   
-  // Was Signal undefined bewirken soll, hängt davon ab welches feedback gewünscht war
+  // Was Signal undefined bewirken soll, hã­§t davon ab welches feedback gewï¿½ war
   if ($completeGroupFeedback == 1)
     $actRuleId = $offRuleId;
   else
     $actRuleId = $onRuleId;
   
   QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$actRuleId','$controllerInstanceId','$evGroupUndefinedFunctionId','1')" );
-  $actSignalId = mysql_insert_id ();
+  $actSignalId = query_insert_id ();
   $indexParamId = getClassesIdFunctionParamIdByName ( $CONTROLLER_CLASSES_ID, "evGroupUndefined", "index" );
   QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$actSignalId','$indexParamId','$myGroupIndex','1')" );
 }
@@ -3559,7 +3558,7 @@ function generateRotation($groupId)
   $firstInstance = "";
   $secondInstance = "";
   $erg = QUERY ( "select featureInstanceId from groupFeatures where groupId='$groupId' order by id" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     if ($firstInstance == "")
       $firstInstance = $row [0];
@@ -3579,37 +3578,37 @@ function generateRotation($groupId)
   }
   
   QUERY ( "INSERT into groupStates (groupId,name, value,basics,generated) values ('$groupId','1an','3','0','1')" );
-  $firstOnStateId = mysql_insert_id ();
+  $firstOnStateId = query_insert_id ();
   QUERY ( "INSERT into groupStates (groupId,name, value,basics,generated) values ('$groupId','2an','4','0','1')" );
-  $secondOnStateId = mysql_insert_id ();
+  $secondOnStateId = query_insert_id ();
   
   // Standardstates suchen
   $erg = QUERY ( "select id from groupStates where groupId='$groupId' and basics='1' limit 1" );
-  $row = MYSQL_FETCH_ROW ( $erg );
+  $row = MYSQLi_FETCH_ROW ( $erg );
   $ausState = $row [0];
   
   $erg = QUERY ( "select id from groupStates where groupId='$groupId' and basics='2' limit 1" );
-  $row = MYSQL_FETCH_ROW ( $erg );
+  $row = MYSQLi_FETCH_ROW ( $erg );
   $anState = $row [0];
   
   // Regel suchen, die anschaltet
   $erg = QUERY ( "select rules.id from rules join groupStates as activation on (activation.id = rules.activationStateId) left join groupStates as resulting on (resulting.id = rules.resultingStateId) where activation.basics=1 and resulting.basics=2 and rules.groupId='$groupId' limit 1" );
-  $row = MYSQL_FETCH_ROW ( $erg );
+  $row = MYSQLi_FETCH_ROW ( $erg );
   $origRuleId = $row [0];
   
   QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,syncEvent,generated) 
                      values('$groupId','7','31','255','7','31','255','$ausState','$firstOnStateId','on','1','0','1')" );
-  $ruleId = mysql_insert_id ();
+  $ruleId = query_insert_id ();
   
   $erg = QUERY ( "select * from ruleSignals where ruleId='$origRuleId' order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
   	                        values('$ruleId','$obj->featureInstanceId','$obj->featureFunctionId','1')" );
-    $newSignalId = mysql_insert_id ();
+    $newSignalId = query_insert_id ();
     
     $erg2 = QUERY ( "select * from ruleSignalParams where ruleSignalId='$obj->id' order by id" );
-    while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+    while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
     {
       QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
                                     values('$newSignalId','$obj2->featureFunctionParamsId','$obj2->paramValue','1')" );
@@ -3617,16 +3616,16 @@ function generateRotation($groupId)
   }
   
   $erg = QUERY ( "select * from ruleActions where ruleId='$origRuleId' order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     if ($obj->featureInstanceId == $firstInstance)
     {
       QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) 
                                 values('$ruleId','$obj->featureInstanceId','$obj->featureFunctionId','1')" );
-      $newActionId = mysql_insert_id ();
+      $newActionId = query_insert_id ();
       
       $erg2 = QUERY ( "select * from ruleActionParams where ruleActionId='$obj->id' order by id" );
-      while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+      while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
       {
         QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) 
                                       values('$newActionId','$obj2->featureFunctionParamsId','$obj2->paramValue','1')" );
@@ -3636,17 +3635,17 @@ function generateRotation($groupId)
   
   QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,signalType,baseRule,syncEvent,generated) 
                      values('$groupId','7','31','255','7','31','255','$firstOnStateId','$secondOnStateId','on','1','0','1')" );
-  $ruleId = mysql_insert_id ();
+  $ruleId = query_insert_id ();
   
   $erg = QUERY ( "select * from ruleSignals where ruleId='$origRuleId' order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
   	                        values('$ruleId','$obj->featureInstanceId','$obj->featureFunctionId','1')" );
-    $newSignalId = mysql_insert_id ();
+    $newSignalId = query_insert_id ();
     
     $erg2 = QUERY ( "select * from ruleSignalParams where ruleSignalId='$obj->id' order by id" );
-    while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+    while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
     {
       QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
                                     values('$newSignalId','$obj2->featureFunctionParamsId','$obj2->paramValue','1')" );
@@ -3654,16 +3653,16 @@ function generateRotation($groupId)
   }
   
   $erg = QUERY ( "select * from ruleActions where ruleId='$origRuleId' order by id" );
-  while ( $obj = MYSQL_FETCH_OBJECT ( $erg ) )
+  while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     if ($obj->featureInstanceId == $secondInstance)
     {
       QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) 
                                 values('$ruleId','$obj->featureInstanceId','$obj->featureFunctionId','1')" );
-      $newActionId = mysql_insert_id ();
+      $newActionId = query_insert_id ();
       
       $erg2 = QUERY ( "select * from ruleActionParams where ruleActionId='$obj->id' order by id" );
-      while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+      while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
       {
         QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) 
                                       values('$newActionId','$obj2->featureFunctionParamsId','$obj2->paramValue','1')" );
@@ -3676,24 +3675,24 @@ function generateRotation($groupId)
   
   // Zweiten Aktor rauswerfen
   $erg = QUERY ( "select id from ruleActions where ruleId='$origRuleId' and featureInstanceId='$secondInstance' limit 1" );
-  $row = MYSQL_FETCH_ROW ( $erg );
+  $row = MYSQLi_FETCH_ROW ( $erg );
   deleteRuleAction ( $row [0], 0);
   
   // ersten Aktor ausschalten
   // Regel suchen, die ausschaltet
   $erg = QUERY ( "select rules.id from rules join groupStates as activation on (activation.id = rules.activationStateId) left join groupStates as resulting on (resulting.id = rules.resultingStateId) where activation.basics=2 and resulting.basics=1 and rules.groupId='$groupId' limit 1" );
-  $row = MYSQL_FETCH_ROW ( $erg );
+  $row = MYSQLi_FETCH_ROW ( $erg );
   $origRuleId = $row [0];
   
   $erg = QUERY ( "select * from ruleActions where ruleId='$origRuleId' and featureInstanceId='$firstInstance' limit 1" );
-  $obj = MYSQL_FETCH_OBJECT ( $erg );
+  $obj = MYSQLi_FETCH_OBJECT ( $erg );
   
   QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated) 
                            values('$ruleId','$obj->featureInstanceId','$obj->featureFunctionId','1')" );
-  $newActionId = mysql_insert_id ();
+  $newActionId = query_insert_id ();
   
   $erg2 = QUERY ( "select * from ruleActionParams where ruleActionId='$obj->id' order by id" );
-  while ( $obj2 = MYSQL_FETCH_OBJECT ( $erg2 ) )
+  while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
   {
     QUERY ( "INSERT into ruleActionParams (ruleActionId,featureFunctionParamsId,paramValue,generated) 
                                      values('$newActionId','$obj2->featureFunctionParamsId','$obj2->paramValue','1')" );
@@ -3728,9 +3727,9 @@ function formatInstance($instanceId)
 {
   $obj = getFeatureInstanceData ( $instanceId );
   if ($obj->roomName != "")
-    $result = $obj->roomName . " » ";
+    $result = $obj->roomName . " Â» ";
   else
-    $result = "Controller " . $obj->controllerName . " » ";
+    $result = "Controller " . $obj->controllerName . " Â» ";
   $result .= $obj->featureInstanceName;
   return $result;
 }
@@ -3746,7 +3745,7 @@ function getFeatureInstanceData($instanceId)
 	                      left join roomFeatures on (roomFeatures.featureInstanceId = featureInstances.id)
 	                      left join rooms on (rooms.id = roomFeatures.roomId)
 	                      where featureInstances.id = $instanceId limit 1" );
-  if ($obj = MYSQL_FETCH_OBJECT ( $erg ))
+  if ($obj = MYSQLi_FETCH_OBJECT ( $erg ))
     return $obj;
   else
     return "Fehler: Instance $instanceId unbekannt";
@@ -3759,7 +3758,7 @@ function getLedForTaster($actInstanceId)
   
   // Zum Taster den LogicalButton suchen
   $erg2 = QUERY ( "select parentInstanceId,objectid from featureInstances where id = '$actInstanceId' limit 1" );
-  if ($row = MYSQL_FETCH_ROW ( $erg2 ))
+  if ($row = MYSQLi_FETCH_ROW ( $erg2 ))
   {
     $parentInstanceId = $row [0];
     if ($parentInstanceId == 0) return "EKeine ParentInstanceId gefunden zu Tasterinstanz $actInstanceId. (Kein LogicalButton erstellt?)";
@@ -3767,7 +3766,7 @@ function getLedForTaster($actInstanceId)
     $myInstance = getInstanceId ( $myObjectId );
     
     $erg2 = QUERY ( "select featureInstances.objectid,online,controller.name from featureInstances join controller on (controller.id=featureInstances.controllerId) where featureInstances.id = '$parentInstanceId' limit 1" );
-    if ($row = MYSQL_FETCH_ROW ( $erg2 ))
+    if ($row = MYSQLi_FETCH_ROW ( $erg2 ))
     {
       if ($row [1] == 0)
         return "EController " . $row [2] . " offline";
@@ -3776,7 +3775,7 @@ function getLedForTaster($actInstanceId)
       
       // Dann schauen bei welchem Index in der Konfiguration die InstanzId des Tasters eingetragen ist
       $erg2 = QUERY ( "select functionData from lastReceived where senderObj = '$parentObjectId' and function='Configuration' and type='RESULT' order by id desc limit 1" );
-      if ($row = MYSQL_FETCH_ROW ( $erg2 ))
+      if ($row = MYSQLi_FETCH_ROW ( $erg2 ))
         $functionData = unserialize ( $row [0] );
       else
       {
@@ -3791,7 +3790,7 @@ function getLedForTaster($actInstanceId)
             return "EKeine Antwort beim lesen der LogicalButton-Konfiguration zu Objekt $parentObjectId. Abbruch!";
         }
         $erg2 = QUERY ( "select functionData from lastReceived where senderObj = '$parentObjectId' and function='Configuration' and type='RESULT' order by id desc limit 1" );
-        $row = MYSQL_FETCH_ROW ( $erg2 );
+        $row = MYSQLi_FETCH_ROW ( $erg2 );
         $functionData = unserialize ( $row [0] );
       }
       
@@ -3805,7 +3804,7 @@ function getLedForTaster($actInstanceId)
         }
       }
       
-      // Dann InstanzId der LED zum zugehörigen Index suchen
+      // Dann InstanzId der LED zum zugehï¿½en Index suchen
       if ($buttonIndex > 0)
       {
         $ledInstance = 0;
@@ -3821,7 +3820,7 @@ function getLedForTaster($actInstanceId)
         if ($ledInstance > 0)
         {
           $erg2 = QUERY ( "select id,objectId from featureInstances where parentInstanceId='$parentInstanceId'" );
-          while ( $row = MYSQL_FETCH_ROW ( $erg2 ) )
+          while ( $row = MYSQLi_FETCH_ROW ( $erg2 ) )
           {
             $actClassesId = getClassesIdByFeatureInstanceId ( $row [0] );
             
@@ -3833,11 +3832,11 @@ function getLedForTaster($actInstanceId)
           }
           return "ELED Instanz $ledInstance nicht in featureInstances gefunden.";
         } else
-          return "ELED Instanz nicht gefunden <br>Prüfen Sie die Konfiguration des LogicalButton: <a href='editFeatureInstance.php?id=$parentInstanceId' target='_blank'>" . formatInstance ( $parentInstanceId ) . "</a>";
+          return "ELED Instanz nicht gefunden <br>Prï¿½ie die Konfiguration des LogicalButton: <a href='editFeatureInstance.php?id=$parentInstanceId' target='_blank'>" . formatInstance ( $parentInstanceId ) . "</a>";
       } else
-        return "EButton Index nicht gefunden. <br>Prüfen Sie die Konfiguration des LogicalButton: <a href='editFeatureInstance.php?id=$parentInstanceId' target='_blank'>" . formatInstance ( $parentInstanceId ) . "</a>";
+        return "EButton Index nicht gefunden. <br>Prï¿½ie die Konfiguration des LogicalButton: <a href='editFeatureInstance.php?id=$parentInstanceId' target='_blank'>" . formatInstance ( $parentInstanceId ) . "</a>";
     } else
-      return "EObjectId zum Taster Id $parentInstanceId nicht gefunden <br>Prüfen Sie die Konfiguration des LogicalButton: <a href='editFeatureInstance.php?id=$parentInstanceId' target='_blank'>" . formatInstance ( $parentInstanceId ) . "</a>";
+      return "EObjectId zum Taster Id $parentInstanceId nicht gefunden <br>Prï¿½ie die Konfiguration des LogicalButton: <a href='editFeatureInstance.php?id=$parentInstanceId' target='_blank'>" . formatInstance ( $parentInstanceId ) . "</a>";
   } else
     return "ESignal ID $actInstanceId nicht gefunden <br>";
 }
@@ -3849,7 +3848,7 @@ function getSyncGroupIdForSignalInstanceId($actSignalInstanceId)
   $first = "";
   $ledClassesId = getClassesIdByName ( "Led" );
   $erg = QUERY ( "select distinct ruleActions.featureInstanceId,featureClasses.id from ruleActions join rules on (rules.id=ruleActions.ruleId) join ruleSignals on (ruleSignals.ruleId=rules.id) join featureInstances on (featureInstances.id=ruleActions.featureInstanceId) join featureClasses on (featureClasses.id=featureInstances.featureClassesId) where ruleSignals.featureInstanceId='$actSignalInstanceId' and not (activationStateId=0 and resultingStateId=0 and completeGroupFeedback=0) order by ruleActions.featureInstanceId" );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     if ($row [1] == $ledClassesId)
       continue; // leds werden nicht gruppiert und nicht synchronisiert
@@ -3864,11 +3863,11 @@ function getSyncGroupIdForSignalInstanceId($actSignalInstanceId)
     // Gruppe zu diesen Features suchen
   $myGroup = - 1;
   $erg = QUERY ( "select groupId from groupFeatures join groups on (groups.id=groupFeatures.groupId) where featureInstanceId='$first'" ); // and groups.generated=1
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     $actGroupMembers = "";
     $erg2 = QUERY ( "select featureInstanceId from groupFeatures where groupId='$row[0]' order by featureInstanceId" );
-    while ( $row2 = MYSQL_FETCH_ROW ( $erg2 ) )
+    while ( $row2 = MYSQLi_FETCH_ROW ( $erg2 ) )
     {
       $actGroupMembers .= $row2 [0] . "-";
     }
@@ -3943,8 +3942,8 @@ function getWeather($woeid)
 // @deprecated
 function getWoeID()
 {
-  $erg = QUERY ( "select paramValue, paramKey from basicConfig where paramKey='locationZipCode' or paramKey='locationCountry' limit 2" ) or die ( MYSQL_ERROR () );
-  while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+  $erg = QUERY ( "select paramValue, paramKey from basicConfig where paramKey='locationZipCode' or paramKey='locationCountry' limit 2" );
+  while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
   {
     if ($row [1] == "locationZipCode")
       $zipCode = $row [0];
@@ -3987,7 +3986,7 @@ function isWindows()
 }
 function triggerTreeUpdate()
 {
-  $_SESSION ["lastTreeUpdate"] = 0;
+  forceTreeUpdate();
 }
 function liveOut($newOut)
 {
@@ -4004,8 +4003,8 @@ function treeStatusOut($newOut)
 
 function checkAndSetTimeZone()
 {
-  $erg = MYSQL_QUERY ( "select paramValue from basicConfig where paramKey = 'timeZone' limit 1" ) or die ( MYSQL_ERROR () );
-  if ($row = MYSQL_FETCH_ROW ( $erg )) date_default_timezone_set ( $row [0] );
+  $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'timeZone' limit 1" );
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) date_default_timezone_set ( $row [0] );
   else if (strcmp ( date_default_timezone_get (), ini_get ( 'date.timezone' ) )) echo "Zeitzone muss eingestellt werden unter Weitere Einstellungen -> Standorteinstellungen ! \n\n\n";
 }
 
@@ -4015,8 +4014,8 @@ function readDauerWithTimebase($objectId, $dauer)
   
   if ($configCache [$objectId] == "")
   {
-    $erg = QUERY ( "select functionData from lastReceived  where senderObj='$objectId' and type='RESULT' and function='Configuration' order by id desc limit 1" ) or die ( MYSQL_ERROR () );
-    if ($row = MYSQL_FETCH_ROW ( $erg ))
+    $erg = QUERY ( "select functionData from lastReceived  where senderObj='$objectId' and type='RESULT' and function='Configuration' order by id desc limit 1" );
+    if ($row = MYSQLi_FETCH_ROW ( $erg ))
       $configCache [$objectId] = unserialize ( $row [0] )->paramData [2]->dataValue;
     else
     {
@@ -4044,12 +4043,12 @@ function readDauerWithTimebase($objectId, $dauer)
 }
 function getStreamContext()
 {
-  $erg = MYSQL_QUERY ( "select paramValue from basicConfig where paramKey = 'proxy' limit 1" ) or die ( MYSQL_ERROR () );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'proxy' limit 1" );
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
     $myProxy = $row [0];
   
-  $erg = MYSQL_QUERY ( "select paramValue from basicConfig where paramKey = 'proxyPort' limit 1" ) or die ( MYSQL_ERROR () );
-  if ($row = MYSQL_FETCH_ROW ( $erg ))
+  $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'proxyPort' limit 1" );
+  if ($row = MYSQLi_FETCH_ROW ( $erg ))
     $myProxyPort = $row [0];
   
   if ($con = @fsockopen ( $myProxy, $myProxyPort, $eroare, $eroare_str, 3 ))
@@ -4071,11 +4070,16 @@ function getNetworkIp()
 {
   global $UDP_BCAST_IP;
   
-  $erg = MYSQL_QUERY ( "select paramValue from basicConfig where paramKey = 'netWorkIp' limit 1" ) or die ( MYSQL_ERROR () );
-  if ($row = MYSQL_FETCH_ROW ( $erg )) $myNetwork = $row [0];
+  $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'netWorkIp' limit 1" );
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) $myNetwork = $row [0];
   
   if (filter_var ( $myNetwork, FILTER_VALIDATE_IP )) return $myNetwork;
-  
+
   return '255.255.255.255';
+}
+
+function forceTreeUpdate()
+{
+	 QUERY("INSERT into treeUpdateHelper values('1')");
 }
 ?>

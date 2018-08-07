@@ -5,7 +5,7 @@ require($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 if ($id=="")
 {
 	$erg = QUERY("select id from webapppages where pos='1' limit 1");
-	if ($row=MYSQL_FETCH_ROW($erg)) $id=$row[0];
+	if ($row=MYSQLi_FETCH_ROW($erg)) $id=$row[0];
 	else die("<html><body><br><br>Fehler!<br>Es wurde keine Startseite konfiguriert.<br>Bitte in der Administration unter Webapplikation Seiten anlegen und eine als Startseite konfigurieren");
 }
 
@@ -15,14 +15,14 @@ else $html="<html><body>kein svg<center><form><table width=90%><tr><td>%BUTTONS%
 
 $where="1=2";
 $erg = QUERY("select id,name from webapppageszeilen where pageId='$id' order by pos");
-while($row=MYSQL_FETCH_ROW($erg))
+while($row=MYSQLi_FETCH_ROW($erg))
 {
 	$zeilen[$row[0]]=$row[1];
 	$where.=" or zeilenId='$row[0]'";
 }
 
 $erg = QUERY("select id,zeilenId,name,featureInstanceId from webapppagesbuttons where $where order by zeilenId,pos");
-while($obj=MYSQL_FETCH_OBJECT($erg))
+while($obj=MYSQLi_FETCH_OBJECT($erg))
 {
 	$buttonName[$obj->zeilenId][$obj->id]=$obj->name;
 	$buttonLink[$obj->zeilenId][$obj->id]=$obj->featureInstanceId;

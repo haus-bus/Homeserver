@@ -5,7 +5,7 @@ if ($action=="readOnlineVersion")
 {
   $cxContext = getStreamContext();
 
-  $in = @file_get_contents("http://www.haus-bus.de/version.chk", False, $cxContext);
+  $in = @file_get_contents("http://www.haus-bus.de/version2018.chk", False, $cxContext);
   $pos = strpos($in,"-");
   if ($pos===FALSE) $message="Onlineversionen konnten nicht gelesen werden - Keine Internetverbindung?";
   else
@@ -86,7 +86,7 @@ if ($action=="readOnlineVersion")
 
 setupTreeAndContent("updates_design.html", $message);
 
-$versionWebApplication=trim(file_get_contents("version.chk"));
+$versionWebApplication=trim(file_get_contents("version2018.chk"));
 $html = str_replace("%VERSION_WEB_APPLICATION%","V".$versionWebApplication, $html);
 
 $versionMainController=trim(@file_get_contents("../firmware/AR8.chk"));
@@ -140,8 +140,8 @@ chooseTag("%OPT_UPDATE_SONOFF%", $html);
 $versionsTag = getTag("%VERSIONS%",$html);
 $versions="";
 $lastId="";
-$erg = MYSQL_QUERY("select name,firmwareId,majorRelease,minorRelease,booterMajor,booterMinor,online from controller where not (bootloader=1 and online!=1) order by firmwareId") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select name,firmwareId,majorRelease,minorRelease,booterMajor,booterMinor,online from controller where not (bootloader=1 and online!=1) order by firmwareId");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	 $actTag = $versionsTag;
 	 
@@ -156,7 +156,7 @@ while($obj=MYSQL_FETCH_OBJECT($erg))
 	 else if ($obj->firmwareId==3) $typ="Multitaster SD6";
 	 else if ($obj->firmwareId==4) $typ="IO128";
 	 else if ($obj->firmwareId==5) $typ="Sonoff WLAN Relais";
-	 else if ($obj->firmwareId==6) $typ="ESP TCP Brücke";
+	 else if ($obj->firmwareId==6) $typ="ESP TCP BrÃ¼cke";
 	 else $typ="Unbekannt";
 	 $actTag = str_replace("%TYP%",$typ,$actTag);
 	 if ($obj->online!=1) $obj->name="[offline] ".$obj->name;

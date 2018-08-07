@@ -5,36 +5,36 @@ include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 
 if ($action=="chooseLanguage")
 {
-  // Alle Tabellen auf zu übersetzende Namen überprüfen
+  // Alle Tabellen auf zu Ã¼bersetzende Namen Ã¼berprÃ¼fen
   if ($update==1)
   {
-    MYSQL_QUERY("update languages set checked='0'") or die(MYSQL_ERROR());
+    QUERY("update languages set checked='0'");
 
-    $erg = MYSQL_QUERY("select name from featureFunctions") or die(MYSQL_ERROR());
-    while($obj=MYSQL_FETCH_OBJECT($erg))
+    $erg = QUERY("select name from featureFunctions");
+    while($obj=mysqli_fetch_OBJECT($erg))
     {
-      $erg2 = MYSQL_QUERY("select id from languages where language='$language' and theKey='$obj->name' limit 1") or die(MYSQL_ERROR());
-      if ($row=MYSQL_FETCH_ROW($erg2)) MYSQL_QUERY("update languages set checked='1' where language='$language' and theKey='$obj->name' limit 1") or die(MYSQL_ERROR());
-      else MYSQL_QUERY("INSERT into languages (language,theKey,translation,checked) values('$language','$obj->name','$obj->name','1')") or die(MYSQL_ERROR());
+      $erg2 = QUERY("select id from languages where language='$language' and theKey='$obj->name' limit 1");
+      if ($row=mysqli_fetch_ROW($erg2)) QUERY("update languages set checked='1' where language='$language' and theKey='$obj->name' limit 1");
+      else QUERY("INSERT into languages (language,theKey,translation,checked) values('$language','$obj->name','$obj->name','1')");
     }
      
-    $erg = MYSQL_QUERY("select name from featureFunctionParams") or die(MYSQL_ERROR());
-    while($obj=MYSQL_FETCH_OBJECT($erg))
+    $erg = QUERY("select name from featureFunctionParams");
+    while($obj=mysqli_fetch_OBJECT($erg))
     {
-      $erg2 = MYSQL_QUERY("select id from languages where language='$language' and theKey='$obj->name' limit 1") or die(MYSQL_ERROR());
-      if ($row=MYSQL_FETCH_ROW($erg2)) MYSQL_QUERY("update languages set checked='1' where language='$language' and theKey='$obj->name' limit 1") or die(MYSQL_ERROR());
-      else MYSQL_QUERY("INSERT into languages (language,theKey,translation,checked) values('$language','$obj->name','$obj->name','1')") or die(MYSQL_ERROR());
+      $erg2 = QUERY("select id from languages where language='$language' and theKey='$obj->name' limit 1");
+      if ($row=mysqli_fetch_ROW($erg2)) QUERY("update languages set checked='1' where language='$language' and theKey='$obj->name' limit 1");
+      else QUERY("INSERT into languages (language,theKey,translation,checked) values('$language','$obj->name','$obj->name','1')");
     }
 
-    $erg = MYSQL_QUERY("select name from featureFunctionEnums") or die(MYSQL_ERROR());
-    while($obj=MYSQL_FETCH_OBJECT($erg))
+    $erg = QUERY("select name from featureFunctionEnums");
+    while($obj=mysqli_fetch_OBJECT($erg))
     {
-      $erg2 = MYSQL_QUERY("select id from languages where language='$language' and theKey='$obj->name' limit 1") or die(MYSQL_ERROR());
-      if ($row=MYSQL_FETCH_ROW($erg2)) MYSQL_QUERY("update languages set checked='1' where language='$language' and theKey='$obj->name' limit 1") or die(MYSQL_ERROR());
-      else MYSQL_QUERY("INSERT into languages (language,theKey,translation,checked) values('$language','$obj->name','$obj->name','1')") or die(MYSQL_ERROR());
+      $erg2 = QUERY("select id from languages where language='$language' and theKey='$obj->name' limit 1");
+      if ($row=mysqli_fetch_ROW($erg2)) QUERY("update languages set checked='1' where language='$language' and theKey='$obj->name' limit 1");
+      else QUERY("INSERT into languages (language,theKey,translation,checked) values('$language','$obj->name','$obj->name','1')");
     }
     
-    MYSQL_QUERY("delete from languages where language='$language' and checked='0'") or die(MYSQL_ERROR());
+    QUERY("delete from languages where language='$language' and checked='0'");
   }
 }
 
@@ -45,7 +45,7 @@ if ($submitted!="")
   {
     $translation = "key".$id;
     $translation=$$translation;
-    MYSQL_QUERY("UPDATE languages set translation='$translation' where id='$id' limit 1") or die(MYSQL_ERROR());
+    QUERY("UPDATE languages set translation='$translation' where id='$id' limit 1");
   }
 
   switchLanguage($language);
@@ -68,8 +68,8 @@ $html = str_replace("%LANGUAGE_OPTIONS%",$languageOptions, $html);
 $entryTag = getTag("%ENTRIES%", $html);
 $entries="";
 $ids="";
-$erg = MYSQL_QUERY("select id,theKey, translation from languages where language='$language' order by theKey") or die(MYSQL_ERROR());
-while($obj = MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id,theKey, translation from languages where language='$language' order by theKey");
+while($obj = mysqli_fetch_OBJECT($erg))
 {
   $actTag = $entryTag;
   $actTag = str_replace("%KEY%",$obj->theKey, $actTag);

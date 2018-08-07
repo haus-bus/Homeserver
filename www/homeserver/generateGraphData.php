@@ -3,18 +3,18 @@ include_once ($_SERVER["DOCUMENT_ROOT"] . "/homeserver/include/all.php");
 
 function generateGraphData($graphId="")
 {
-	$erg = MYSQL_QUERY("select time from graphData where graphId='-1' limit 1") or die(MYSQL_ERROR());
-  if($row=MYSQL_FETCH_ROW($erg)) $lastId=$row[0];
+	$erg = QUERY("select time from graphData where graphId='-1' limit 1");
+  if($row=mysqli_fetch_ROW($erg)) $lastId=$row[0];
   else
   {
   	$lastId=0;
-  	MYSQL_QUERY("INSERT into graphData (graphId, time) values('-1','0')") or die(MYSQL_ERROR());
+  	QUERY("INSERT into graphData (graphId, time) values('-1','0')");
   }
 	
 	if ($graphId>0) $whereGraph="WHERE graphs.id='$graphId'";
 
 $erg = QUERY("select * from graphs");
-while ($graphObj = MYSQL_FETCH_OBJECT($erg)) 
+while ($graphObj = mysqli_fetch_OBJECT($erg)) 
 {
 	// fixed,seconds,minutes,hours,days
   if ($graphObj->timeMode == "seconds") $and = "time>" . (time() - $graphObj->timeParam1);
@@ -47,7 +47,7 @@ while ($graphObj = MYSQL_FETCH_OBJECT($erg))
 				        join featureFunctions on ( featureFunctions.id=graphSignalEvents.functionId  )
 				        $whereGraph";
   $erg = QUERY($sql);
-  while ( $obj = mysql_fetch_object($erg) )
+  while ( $obj = mysqli_fetch_object($erg) )
   {
   	$signals[$obj->graphId][$obj->id][$obj->eventId] = $obj;
   	$where .= " or (senderObj='$obj->objectId' and fktId='$obj->functionId' and ".$graphAnd[$obj->graphId].")";
@@ -60,7 +60,7 @@ while ($graphObj = MYSQL_FETCH_OBJECT($erg))
   $sql = "select functionData,senderObj,time,fktId,id from udpCommandLog where ($where) and id>'$lastId' order by id";
   //die($sql);
   $erg = QUERY($sql);
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
   	$myLastId=$obj->id;
     foreach( $signals as $graphId=>$arr)
@@ -81,14 +81,14 @@ while ($graphObj = MYSQL_FETCH_OBJECT($erg))
 		      $val = matheval($actFkt);
 		    	
 		    	//echo "Graph: ".$graphId.", Signal: $signalId".", time = ".$obj->time.", value = ".$val."<br>";
-		    	MYSQL_QUERY("INSERT into graphData (graphId, signalId, time, value) values('$graphId','$signalId','$obj->time','$val')") or die(MYSQL_ERROR());
+		    	QUERY("INSERT into graphData (graphId, signalId, time, value) values('$graphId','$signalId','$obj->time','$val')");
 		    }
 		  }
      }
     }
   }
   
-  if ($myLastId>$lastId) MYSQL_QUERY("UPDATE graphData set time='$myLastId' where graphId='-1' limit 1") or die(MYSQL_ERROR());
+  if ($myLastId>$lastId) QUERY("UPDATE graphData set time='$myLastId' where graphId='-1' limit 1");
 }
 
 function matheval($equation)
@@ -101,8 +101,9 @@ function matheval($equation)
   // you could use str_replace on this next line
   // if you really, really want to fine-tune this equation
   $equation = preg_replace("/([0-9]+)(%)/", ".\$1", $equation);
+
   if ($equation == "") $return = 0;
-  else eval("\$return=" . $equation . ";");
+  else eval("\$return=\"$equation\";");
   return $return;
 }
 ?>

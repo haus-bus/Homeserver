@@ -7,8 +7,8 @@ if ($action=="") $action="addSignal";
 
 if ($check==1)
 {
-  $erg = MYSQL_QUERY("select id,sender,function,senderSubscriberData,functionData from udpCommandLog where type='EVENT' and id>'$lastId' order by id limit 1") or die(MYSQL_ERROR());
-  if ($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select id,sender,function,senderSubscriberData,functionData from udpCommandLog where type='EVENT' and id>'$lastId' order by id limit 1");
+  if ($obj=mysqli_fetch_OBJECT($erg))
   {
     $senderData = unserialize($obj->senderSubscriberData);
     $senderId = $senderData->featureInstanceObject->id;
@@ -23,8 +23,8 @@ if ($check==1)
   else die("");
 }
 
-$erg = MYSQL_QUERY("select max(id) from udpCommandLog") or die(MYSQL_ERROR());
-if ($row=MYSQL_FETCH_ROW($erg)) $lastId=$row[0];
+$erg = QUERY("select max(id) from udpCommandLog");
+if ($row=mysqli_fetch_ROW($erg)) $lastId=$row[0];
 else $lastId=0;
 
 $html = str_replace("%FIRST_ID%",$lastId,$html);

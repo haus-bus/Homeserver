@@ -2,25 +2,25 @@
 require($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 error_reporting(E_ERROR);
 
-$erg = MYSQL_QUERY("select featureClassesId,objectId from featureInstances where id='$featureInstanceId' limit 1") or die(MYSQL_ERROR());
-if ($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select featureClassesId,objectId from featureInstances where id='$featureInstanceId' limit 1");
+if ($obj=mysqli_fetch_OBJECT($erg))
 {
   $featureClassesId = $obj->featureClassesId;
   $objectId=$obj->objectId;
 }
-else die("FEHLER! Ungültige featureInstanceId $featureInstanceId");
+else die("FEHLER! UngÃ¼ltige featureInstanceId $featureInstanceId");
 
 if ($action=="save" && $preset!="")
 {
   $value=(int)$value;
   if ($value>100) $value=100;
   else if ($value<0) $value=0;
-  MYSQL_QUERY("INSERT into guiControlsSaved (featureInstanceId, name, value) values('$featureInstanceId','$preset','$value')") or die(MYSQL_ERROR());
-  $lastId=mysql_insert_id();
-  $erg = MYSQL_QUERY("select max(sort) from guiControlsSaved where featureInstanceId='$featureInstanceId'") or die(MYSQL_ERROR());
-  $row=MYSQL_FETCH_ROW($erg);
+  QUERY("INSERT into guiControlsSaved (featureInstanceId, name, value) values('$featureInstanceId','$preset','$value')");
+  $lastId=query_insert_id();
+  $erg = QUERY("select max(sort) from guiControlsSaved where featureInstanceId='$featureInstanceId'");
+  $row=mysqli_fetch_ROW($erg);
   $sort=$row[0]+1;
-  MYSQL_QUERY("update guiControlsSaved set sort='$sort' where id='$lastId' limit 1")  or die(MYSQL_ERROR());
+  QUERY("update guiControlsSaved set sort='$sort' where id='$lastId' limit 1") ;
   header("Location: rolloControl.php?featureInstanceId=$featureInstanceId");
   exit;
 }
@@ -31,7 +31,7 @@ else if ($action=="editSort")
   {
     $value="delete$actId";
     $delete=$$value;
-    if ($delete==1) MYSQL_QUERY("delete from guiControlsSaved where id='$actId' limit 1")  or die(MYSQL_ERROR());
+    if ($delete==1) QUERY("delete from guiControlsSaved where id='$actId' limit 1") ;
     else
     {
       $value="sort$actId";
@@ -44,7 +44,7 @@ else if ($action=="editSort")
       if ($position>100) $position=100;
       else if ($position<0) $position=0;
 
-      MYSQL_QUERY("update guiControlsSaved set sort='$sort',name='$name',value='$position' where id='$actId' limit 1")  or die(MYSQL_ERROR());
+      QUERY("update guiControlsSaved set sort='$sort',name='$name',value='$position' where id='$actId' limit 1") ;
     }
   }
 }
@@ -87,8 +87,8 @@ $presets="";
 $config="";
 $paramIds="";
 $i=0;
-$erg = MYSQL_QUERY("select name, value,sort,id from guiControlsSaved where featureInstanceId='$featureInstanceId' order by sort") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select name, value,sort,id from guiControlsSaved where featureInstanceId='$featureInstanceId' order by sort");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
   $actTag = $presetTags;
   $actTag = str_replace("%PRESET%",$obj->name,$actTag);
@@ -131,8 +131,8 @@ function getLastStatus($lastStatusId)
   $statusId = getObjectFunctionIdByName($objectId, "Status");
   $evStopId = getObjectFunctionIdByName($objectId, "evClosed");
   $evOpenId = getObjectFunctionIdByName($objectId, "evOpen");
-  $erg3 = MYSQL_QUERY("select functionData,fktId from udpCommandLog where senderObj='$objectId' and (fktId='$statusId'||fktId='$evStopId'||fktId='$evOpenId') and id>'$lastStatusId' order by id desc limit 1") or die(MYSQL_ERROR());
-  if ($row3=MYSQL_FETCH_ROW($erg3))
+  $erg3 = QUERY("select functionData,fktId from udpCommandLog where senderObj='$objectId' and (fktId='$statusId'||fktId='$evStopId'||fktId='$evOpenId') and id>'$lastStatusId' order by id desc limit 1");
+  if ($row3=mysqli_fetch_ROW($erg3))
   {
   	if ($row3[1]==$evOpenId) return 100;
   	

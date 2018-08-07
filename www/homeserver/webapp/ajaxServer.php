@@ -6,8 +6,8 @@ if ($cutPos!==FALSE) $id = substr($id,0,$cutPos);
 
 if (!isset($_SESSION["utf8Encoding"]))
 {
-   $erg = MYSQL_QUERY("select paramValue from basicConfig where paramKey = 'utf8Encoding' limit 1") or die(MYSQL_ERROR());
-   if ($row=MYSQL_FETCH_ROW($erg)) $utf8Encoding=$row[0];
+   $erg = QUERY("select paramValue from basicConfig where paramKey = 'utf8Encoding' limit 1");
+   if ($row=MYSQLi_FETCH_ROW($erg)) $utf8Encoding=$row[0];
    else $utf8Encoding=0;
    $_SESSION["utf8Encoding"]=$utf8Encoding;
 }
@@ -44,7 +44,7 @@ if ($command == "registerObjects")
   }
   
   $erg = QUERY("select featureClassesId,objectId from featureInstances where $where");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = MYSQLi_FETCH_OBJECT($erg) )
   {
     $_SESSION["ajaxObjects"][$obj->objectId]["featureClassesId"] = $obj->featureClassesId;
   }
@@ -57,7 +57,7 @@ else if ($command == "readStatus")
 {
 	$where = $_SESSION["myWhere"];
   $erg = QUERY("select featureClassesId,objectId from featureInstances where $where");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = MYSQLi_FETCH_OBJECT($erg) )
   {
   	if ($obj->featureClassesId!=$currentReaderClassesId) callObjectMethodByName($obj->objectId, "getStatus");
   }
@@ -78,7 +78,7 @@ else if ($command == "updateMyStatus")
   //print_r($_SESSION["ajaxObjects"]);
   
 
-  // TOdo hier f�r nicht gef�llt objecte eine Statusabfrage machen und dann Status neu einlesen
+  // TOdo hier fï¿½r nicht gefï¿½llt objecte eine Statusabfrage machen und dann Status neu einlesen
   
 
   $result = "";
@@ -120,7 +120,7 @@ else if ($command == "click")
       {
         $duration = $functionParam1;
         if ($duration == "") $duration = "0";
-        callObjectMethodByName($id, "on", array ("duration" => $duration ));
+        callObjectMethodByName($id, "on", array ("onTime" => $duration ));
       }
     }
   }
@@ -238,7 +238,7 @@ function updateStatus()
   $sql .= ") order by id";
   //echo $sql."<br>";
   $erg = QUERY($sql);
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = MYSQLi_FETCH_OBJECT($erg) )
   {
     $_SESSION["ajaxLastId"] = $obj->id;
     
@@ -306,8 +306,8 @@ function updateStatus()
     else if ($data->featureClassesId == $temperatureClassesId)
     {
       $myStatus = $data->paramData[0]->dataValue . "." . $data->paramData[1]->dataValue;
-      if ( $_SESSION["utf8Encoding"] == 1) $myStatus .= utf8_encode("�") . "C";
-      else $myStatus .= "�C";
+      if ( $_SESSION["utf8Encoding"] == 1) $myStatus .= utf8_encode("°") . "C";
+      else $myStatus .= "°C";
       if ($data->name == "Status") setObjectStatus($obj->senderObj, 1, $myStatus);
     }
     else if ($data->featureClassesId == $humidityClassesId)
@@ -347,8 +347,8 @@ function setObjectStatus($objectId, $status, $text)
 
 function getParamNameForObjectFunction($objectId,$functionName,$paramId)
 {
-  $erg = MYSQL_QUERY("select featureFunctionParams.name from featureFunctionParams join featureFunctions on (featureFunctions.id=featureFunctionParams.featureFunctionId) join  featureInstances on (featureInstances.featureClassesId = featureFunctions.featureClassesId) where  featurefunctions.name='$functionName' and featureInstances.objectId='$objectId' order by featureFunctionParams.id limit $paramId,1") or die(MYSQL_ERROR());
-  $row=MYSQL_FETCH_ROW($erg);
+  $erg = QUERY("select featureFunctionParams.name from featureFunctionParams join featureFunctions on (featureFunctions.id=featureFunctionParams.featureFunctionId) join  featureInstances on (featureInstances.featureClassesId = featureFunctions.featureClassesId) where  featurefunctions.name='$functionName' and featureInstances.objectId='$objectId' order by featureFunctionParams.id limit $paramId,1");
+  $row=MYSQLi_FETCH_ROW($erg);
   return $row[0];
 }
 ?>

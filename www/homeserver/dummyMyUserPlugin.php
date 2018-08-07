@@ -1,8 +1,8 @@
 <?php
 /**
-* Hier können eigene Implementierungen angelegt werden.
+* Hier kÃ¶nnen eigene Implementierungen angelegt werden.
 * Eine Beschreibung der Funktionen und aller Parameter befindet sich in der Klasse /homeserver/userPlugin.php
-* Die Klasse userPlugin.php darf allerdings nicht geändert werden, da diese bei jedem Update überschrieben wird.
+* Die Klasse userPlugin.php darf allerdings nicht geÃ¤ndert werden, da diese bei jedem Update Ã¼berschrieben wird.
 */
 
 function myEventOccured($senderData, $receiverData, $functionData)

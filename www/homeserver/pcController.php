@@ -1,6 +1,6 @@
 <?php
 $PC_SERVER_DEVICE_ID=$argv[1];
-if ($PC_SERVER_DEVICE_ID==1) die("serverDeviceId 12222 ist für den PC-Server reserviert. Bitte eine andere Instanz vergeben.");
+if ($PC_SERVER_DEVICE_ID==1) die("serverDeviceId 12222 ist fÃ¼r den PC-Server reserviert. Bitte eine andere Instanz vergeben.");
 if ($PC_SERVER_DEVICE_ID=="") $PC_SERVER_DEVICE_ID=12223;
 $output=$argv[2];
 
@@ -65,7 +65,7 @@ while(true)
     // Kontroll-Byte
     $dataPos++;
 
-    // Nachrichtenzähler
+    // NachrichtenzÃ¤hler
     $messageCounter = $datagramm[$dataPos++];
 
     // Sender-ID
@@ -74,14 +74,14 @@ while(true)
     if ($output==1) echo "Sender: $sender, ClassId Sender: ".getClassId($sender).$lb;
     $senderSubscriberData = getBusSubscriberData($sender);
 
-    // Empfänger-ID
+    // EmpfÃ¤nger-ID
     $receiver = bytesToDword($datagramm,$dataPos);
     if ($output==1) echo "Receiver: $receiver, ClassId Receiver: ".getClassId($receiver).$lb;
     $receiverSubscriberData = getBusSubscriberData($receiver);
 
     // Nutzdaten
     $length = bytesToWord($datagramm, $dataPos);
-    if ($output==1) echo "Datenlänge: ".$length.$lb;
+    if ($output==1) echo "DatenlÃ¤nge: ".$length.$lb;
     $functionId = $datagramm[$dataPos++];
     if ($output==1) echo "Function ID: ".$functionId.$lb;
 

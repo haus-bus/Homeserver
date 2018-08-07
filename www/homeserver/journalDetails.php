@@ -7,13 +7,13 @@ $groupTag=getTag("%GROUP%",$html);
 $groups="";
 if ($import==1) $table="udpcommandlogimport";
 else $table="udpcommandlog";
-$erg = MYSQL_QUERY("select functionData,senderSubscriberData,receiverSubscriberData,udpDataLogId from $table where id='$id' limit 1") or die(MYSQL_ERROR());
-if($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select functionData,senderSubscriberData,receiverSubscriberData,udpDataLogId from $table where id='$id' limit 1");
+if($obj=mysqli_fetch_OBJECT($erg))
 {
 	if ($import==1) $table="udpDataLogimport";
   else $table="udpDataLog";
-  $erg2 = MYSQL_QUERY("select data from $table where id='$obj->udpDataLogId' limit 1") or die(MYSQL_ERROR());
-  if($row=MYSQL_FETCH_ROW($erg2))
+  $erg2 = QUERY("select data from $table where id='$obj->udpDataLogId' limit 1");
+  if($row=mysqli_fetch_ROW($erg2))
   {
     $data=explode(",",$row[0]);
 
@@ -33,12 +33,12 @@ if($obj=MYSQL_FETCH_OBJECT($erg))
     else
     {
       $dataComment.="<br>Kontrollbyte: ".$data[$dataPos++];
-      $dataComment.="<br>Nachrichtenz‰hler: ".$data[$dataPos++];
+      $dataComment.="<br>Nachrichtenz√§hler: ".$data[$dataPos++];
       $dataComment.="<br>Sender ObjectId: 0x".twoDigits(str_replace("0x","",$data[$dataPos+3])).twoDigits(str_replace("0x","",$data[$dataPos+2])).twoDigits(str_replace("0x","",$data[$dataPos+1])).twoDigits(str_replace("0x","",$data[$dataPos]));
       $dataPos+=4;
-      $dataComment.="<br>Empf‰nger ObjectId: 0x".twoDigits(str_replace("0x","",$data[$dataPos+3])).twoDigits(str_replace("0x","",$data[$dataPos+2])).twoDigits(str_replace("0x","",$data[$dataPos+1])).twoDigits(str_replace("0x","",$data[$dataPos]));
+      $dataComment.="<br>Empf√§nger ObjectId: 0x".twoDigits(str_replace("0x","",$data[$dataPos+3])).twoDigits(str_replace("0x","",$data[$dataPos+2])).twoDigits(str_replace("0x","",$data[$dataPos+1])).twoDigits(str_replace("0x","",$data[$dataPos]));
       $dataPos+=4;
-      $dataComment.="<br>Nutzdatenl‰nge: ".(hexdec($data[$dataPos++])+hexdec($data[$dataPos++])*256);
+      $dataComment.="<br>Nutzdatenl√§nge: ".(hexdec($data[$dataPos++])+hexdec($data[$dataPos++])*256);
       $dataComment.="<br>Function ID: ".$data[$dataPos++];
       
       $pos=0;
@@ -72,7 +72,7 @@ if($obj=MYSQL_FETCH_OBJECT($erg))
   $groups.=$actTag;
 
   $actTag = $groupTag;
-  $actTag = str_replace("%GROUP_NAME%","Empf‰nger Busteilnehmerdaten",$actTag);
+  $actTag = str_replace("%GROUP_NAME%","Empf√§nger Busteilnehmerdaten",$actTag);
 
   $myObj = unserialize($obj->receiverSubscriberData);
   $entryTrag = getTag("%ENTRY%",$actTag);

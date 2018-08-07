@@ -46,7 +46,7 @@
   %TREE_ELEMENTS%
   </applet>	
   
-  <p class="content" align="center"><a href="javascript: document.getElementById('myApplet').expandAllChildren(0);">Alles öffnen</a>|<a	href="javascript: document.getElementById('myApplet').collapseAllChildren(0);">Alles schließen</a>|<a	href="javascript: refresh();">Refresh</a></p>
+  <p class="content" align="center"><a href="javascript: document.getElementById('myApplet').expandAllChildren(0);">Alles Ã¶ffnen</a>|<a	href="javascript: document.getElementById('myApplet').collapseAllChildren(0);">Alles schlieÃŸen</a>|<a	href="javascript: refresh();">Refresh</a></p>
  </td>
  <td width="20">&nbsp;</td>
  <td valign=top>

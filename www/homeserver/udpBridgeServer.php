@@ -13,20 +13,20 @@ if (strpos($check,"0")!==FALSE) die("Runlevel 0 (shutdown) erkannt");
 if (strpos($check,"6")!==FALSE) die("Runlevel 6 (reboot) erkannt");
 
 if ($_SERVER["DOCUMENT_ROOT"]=="") $_SERVER["DOCUMENT_ROOT"]="../";
+$waitForDb=1;
 require($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 require($_SERVER["DOCUMENT_ROOT"]."/homeserver/userPlugin.php");
 
 $announceServerFunctionId = getFunctionsIdByNameForClassName("TcpClient", "announceServer");
 
 $ifConfig = shell_exec('/sbin/ifconfig eth0');
-$pos = strpos($ifConfig,"inet Adr");
-$pos = strpos($ifConfig,":",$pos);
-$pos2 = strpos($ifConfig," ",$pos);
+$pos = strpos($ifConfig,"inet");
+$pos = strpos($ifConfig," ",$pos);
+$pos2 = strpos($ifConfig," ",$pos+1);
 $address = substr($ifConfig,$pos+1,$pos2-$pos-1);
 $addressParts = explode(".", $address);
 
 $networkIp = getNetworkIp();
-
 
 $lb="\n";
 $line="--------------------------------------------------------".$lb;
@@ -46,8 +46,8 @@ else logMe( "in VERBOSE MODE ! \n");
 
 logMe( "Opening TCP Socket on port $TCP_PORT and ip $address \n");
 if (($tcpSocket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === false) traceError("TCP socket_create() fehlgeschlagen: Grund: " . socket_strerror(socket_last_error()));
-if (!socket_set_option($tcpSocket, SOL_SOCKET, SO_REUSEADDR, 1)) traceError("TCP Kann SO_REUSEADDR nicht setzen für Socket: ". socket_strerror(socket_last_error()));
-if (!socket_set_option($tcpSocket, SOL_SOCKET, SO_REUSEPORT, 1)) traceError("TCP Kann SO_REUSEPORT nicht setzen für Socket: ". socket_strerror(socket_last_error()));
+if (!socket_set_option($tcpSocket, SOL_SOCKET, SO_REUSEADDR, 1)) traceError("TCP Kann SO_REUSEADDR nicht setzen fÃ¼r Socket: ". socket_strerror(socket_last_error()));
+if (!socket_set_option($tcpSocket, SOL_SOCKET, SO_REUSEPORT, 1)) traceError("TCP Kann SO_REUSEPORT nicht setzen fÃ¼r Socket: ". socket_strerror(socket_last_error()));
 if (!socket_set_nonblock($tcpSocket)) die("UDP Could not set socket to non blocking mode: ". socket_strerror(socket_last_error()) . PHP_EOL);
 if (socket_bind($tcpSocket, $address, $TCP_PORT) === false) traceError("TCP socket_bind() fehlgeschlagen: Grund: " . socket_strerror(socket_last_error($sock)));
 if (socket_listen($tcpSocket, 5) === false) traceError ("TCP socket_listen() fehlgeschlagen: Grund: " . socket_strerror(socket_last_error($sock)));
@@ -57,7 +57,7 @@ else logMe( "in VERBOSE MODE ! \n");
 
 ob_implicit_flush(true);
 
-// Clients hält die aktiven Sockets
+// Clients hÃ¤lt die aktiven Sockets
 for ($i=0;$i<$MAX_CLIENTS;$i++)
 {
 	$newClient = new stdClass();
@@ -279,6 +279,7 @@ function handleUdpData($data)
 	global $addressParts;
 	global $clients;
 	global $TCP_PORT;
+	global $debug;
 
   if ($udpOutput==1)
   {
@@ -320,7 +321,7 @@ function handleUdpData($data)
     // Kontroll-Byte
     $dataPos++;
 
-    // Nachrichtenzähler
+    // NachrichtenzÃ¤hler
     $messageCounter = $datagramm[$dataPos++];
 
     // Sender-ID
@@ -329,14 +330,14 @@ function handleUdpData($data)
     if ($udpOutput==1) logMe( "Sender: $sender, ClassId Sender: ".getClassId($sender).$lb);
     $senderSubscriberData = getBusSubscriberData($sender);
 
-    // Empfänger-ID
+    // EmpfÃ¤nger-ID
     $receiver = bytesToDword($datagramm,$dataPos);
     if ($udpOutput==1) logMe( "Receiver: $receiver, ClassId Receiver: ".getClassId($receiver).$lb);
     $receiverSubscriberData = getBusSubscriberData($receiver);
 
     // Nutzdaten
     $length = bytesToWord($datagramm, $dataPos);
-    if ($udpOutput==1) logMe( "Datenlänge: ".$length.$lb);
+    if ($udpOutput==1) logMe( "DatenlÃ¤nge: ".$length.$lb);
     
     $functionId = $datagramm[$dataPos++];
     if ($udpOutput==1) logMe( "Function ID: ".$functionId.$lb);
@@ -362,13 +363,13 @@ function handleUdpData($data)
     // DEBUG Ausgabe
     if ($udpOutput==1)
     {
-    	logMe( "Nachrichtenzähler: $messageCounter".$lb);
+    	logMe( "NachrichtenzÃ¤hler: $messageCounter".$lb);
       logMe( "Nachrichtentyp: $messageType".$lb);
       logMe( $lb);
       logMe( "Sender: ".$senderSubscriberData->debugStr.$lb);
-      logMe( "Empfänger: ".$receiverSubscriberData->debugStr.$lb);
+      logMe( "EmpfÃ¤nger: ".$receiverSubscriberData->debugStr.$lb);
       logMe( $lb);
-      logMe( "Datenlänge: ".$length.$lb);
+      logMe( "DatenlÃ¤nge: ".$length.$lb);
       logMe( "Funktion: ".$functionData->functionDebugStr.$lb);
       logMe( "Parameter: ".$functionData->paramsDebugStr.$lb);
     }

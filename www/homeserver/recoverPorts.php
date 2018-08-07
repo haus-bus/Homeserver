@@ -4,7 +4,7 @@ include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 $tasterClassesId=getClassesIdByName("DigitalPort");
 
 $erg = QUERY("select featureInstances.objectId,recovery.configuration from featureInstances join recovery on (recovery.objectId=featureInstances.objectId) where featureClassesId='$tasterClassesId' order by featureInstances.id");
-while($obj=MYSQL_FETCH_OBJECT($erg))
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	$config = unserialize($obj->configuration);
 	$ledMask = $config[0]->dataValue;

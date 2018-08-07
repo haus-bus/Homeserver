@@ -204,19 +204,6 @@ function executeSystemCommand($functionData)
   global $output;
   global $EXECUTOR_OBJECT_ID;
 
-  if ($pcServerGroupId>0) {}
-  else
-  {
-    $erg = QUERY("select groups.id from groups join groupFeatures on (groupFeatures.groupId=groups.id) join featureInstances on (featureInstances.id =
-groupFeatures.featureInstanceId) where featureInstances.objectId='$EXECUTOR_OBJECT_ID' limit 1");
-    if ($row=MYSQL_FETCH_ROW($erg)) $pcServerGroupId=$row[0];
-    else
-    {
-  	   echo "Gruppe vom PC-Server nicht gefunden!\n";
-  	   return;
-    }
-  }
-
   foreach((array)$functionData->paramData as $id3=>$obj3)
   {
     $nr = $obj3->dataValue;
@@ -224,10 +211,22 @@ groupFeatures.featureInstanceId) where featureInstances.objectId='$EXECUTOR_OBJE
     else if ($nr==-2) createSnapshot();
     else
     {
+   	  if ($pcServerGroupId>0) {}
+      else
+      {
+        $erg = QUERY("select groups.id from groups join groupFeatures on (groupFeatures.groupId=groups.id) join featureInstances on (featureInstances.id = groupFeatures.featureInstanceId) where featureInstances.objectId='$EXECUTOR_OBJECT_ID' limit 1");
+        if ($row=mysqli_fetch_ROW($erg)) $pcServerGroupId=$row[0];
+        else
+        {
+  	       echo "Gruppe vom PC-Server nicht gefunden!\n";
+  	       return;
+        }
+      }
+
       $erg=QUERY("select ruleActionParams.id,ruleActionParams.paramValue from ruleActionParams join ruleActions on
 (ruleActions.id=ruleActionParams.ruleActionId) join rules on (rules.id = ruleActions.ruleId) where groupId='$pcServerGroupId' order by ruleActionParams.id
 limit $nr,1");
-      $row=MYSQL_FETCH_ROW($erg);
+      $row=mysqli_fetch_ROW($erg);
       if ($output==1) echo "exec: ".$row[1]." - ".$row[0]."\n";
 
       //$cmd = 'nohup nice -n 10 /usr/bin/php -c /path/to/php.ini -f /path/to/php/file.php action=generate var1_id=23 var2_id=35 gen_id=535 >>
@@ -429,12 +428,12 @@ function traceToJournal($message, $functionStr="")
   $messageCounter="0";
   $senderSubscriberDataDebugStr="PC-Server";
   $receiverSubscriberDataDebugStr="PC-Server";
-  $paramsStr=mysql_real_escape_string($message);
+  $paramsStr=query_real_escape_string($message);
 
-  MYSQL_QUERY("INSERT into udpCommandLog (time, type, messageCounter,  sender,  receiver,  function,  params, functionData, senderSubscriberData,
+  QUERY("INSERT into udpCommandLog (time, type, messageCounter,  sender,  receiver,  function,  params, functionData, senderSubscriberData,
 receiverSubscriberData, udpDataLogId,senderObj,fktId)
 
 values('$time','$messageType','$messageCounter','$senderSubscriberDataDebugStr','$receiverSubscriberDataDebugStr','$functionStr','$paramsStr','$functionData'
-, '$senderSubscriberData','$receiverSubscriberData','$udpDataLogId','$senderObj','$fktId')") or die(MYSQL_ERROR());
+, '$senderSubscriberData','$receiverSubscriberData','$udpDataLogId','$senderObj','$fktId')");
 }
 ?>

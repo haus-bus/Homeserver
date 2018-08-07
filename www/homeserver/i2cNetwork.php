@@ -17,7 +17,7 @@ if($action=="renewTiming" && $network>0)
 if($action=="renewAllTimings")
 {
 	$erg = QUERY("select distinct network from i2cNetworks order by network");
-	while($obj=MYSQL_FETCH_OBJECT($erg))
+	while($obj=mysqli_fetch_OBJECT($erg))
 	{
 		 renewTimingOfNetwork($obj->network);
 	}
@@ -29,15 +29,15 @@ if($action=="renewAllTimings")
 if ($action=="csv")
 {
 	 $erg = QUERY("select * from controller");
-	 while($obj=MYSQL_FETCH_OBJECT($erg))
+	 while($obj=mysqli_fetch_OBJECT($erg))
 	 {
 		 $deviceIds[$obj->id]=getDeviceId($obj->objectId);
 		 $deviceNames[$obj->id]=$obj->name;
 	 }
 	 
-	 $result="Netzwerk;Sender-DeviceId;Empfänger-DeviceId;SCL;SDA\n";
-	 $erg = QUERY("select * from i2cTimings order by networkId,senderId") or die(MYSQL_ERROR());
-	 while($obj=MYSQL_FETCH_OBJECT($erg))
+	 $result="Netzwerk;Sender-DeviceId;EmpfÃ¤nger-DeviceId;SCL;SDA\n";
+	 $erg = QUERY("select * from i2cTimings order by networkId,senderId");
+	 while($obj=mysqli_fetch_OBJECT($erg))
 	 {
 	 	  $result.=$obj->networkId.";".$deviceIds[$obj->senderId].";".$deviceIds[$obj->receiverId].";".$obj->scl.";".$obj->sda."\n";
 	 }
@@ -56,13 +56,13 @@ if ($action=="csv")
 function renewTimingOfNetwork($networkId)
 {
 	$erg = QUERY("select * from controller where online='1' and bootloader!=1");
-	while($obj=MYSQL_FETCH_OBJECT($erg))
+	while($obj=mysqli_fetch_OBJECT($erg))
 	{
 		 if ($obj->majorRelease==0 && $obj->minorRelease<80) $error.="Fehler: Controller $obj->name hat zu alte Firmware Version $obj->minorRelease geladen <br>";
 		 $deviceIds[$obj->id]=getDeviceId($obj->objectId);
 		 $deviceNames[$obj->id]=$obj->name;
 	}
-	if ($error!="") die($error."<b>Bitte zunächst die Controllerfirmware aktualisieren</b>");
+	if ($error!="") die($error."<b>Bitte zunÃ¤chst die Controllerfirmware aktualisieren</b>");
 
   flushOut("<br><table width=95% align=center><tr><td>");
   flushOut("Ermittle Bus-Timing von Netzwerk $networkId <hr>");
@@ -70,9 +70,9 @@ function renewTimingOfNetwork($networkId)
   QUERY("DELETE from i2cTimings where networkId='$networkId'");
    
   $erg = QUERY("select * from i2cNetworks where network='$networkId' order by id");
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  while($obj=mysqli_fetch_OBJECT($erg))
   {
-  	// einmal broadcast alle werte löschen
+  	// einmal broadcast alle werte lÃ¶schen
   	callInstanceMethodForObjectId( 45057, 222);
   	sleepMs(200);
   	
@@ -81,7 +81,7 @@ function renewTimingOfNetwork($networkId)
  	  sleep(1);
 
     $erg2 = QUERY("select * from i2cNetworks where network='$networkId' order by id");
-    while($obj2=MYSQL_FETCH_OBJECT($erg2))
+    while($obj2=mysqli_fetch_OBJECT($erg2))
     {
     	$gatewayObjectId = getObjectIdOfFirstGateway($obj2->controllerId);
       $result = callObjectMethodByNameAndRecover ( $gatewayObjectId, "getBusTiming", "", "BusTiming", 3, 2, 0 );    	  
@@ -106,8 +106,8 @@ function renewTimingOfNetwork($networkId)
 function getObjectIdOfFirstGateway($controllerId)
 {
 	$erg = QUERY("select objectId from featureInstances where controllerId='$controllerId' and featureClassesId='27' order by objectId limit 1");
- 	$obj = MYSQL_FETCH_OBJECT($erg);
- 	if (getInstanceId($obj->objectId)!=1) die("Softwarefehler. Bitte Herm Bescheid geben: ".$obj->objectId." für Controler $controllerId");
+ 	$obj = mysqli_fetch_OBJECT($erg);
+ 	if (getInstanceId($obj->objectId)!=1) die("Softwarefehler. Bitte Herm Bescheid geben: ".$obj->objectId." fÃ¼r Controler $controllerId");
  	return $obj->objectId;
 }
 
@@ -116,14 +116,14 @@ if ($action=="renew")
 //	updateControllerStatus();
 	
 	$erg = QUERY("select * from controller where online='1' and bootloader!=1");
-	while($obj=MYSQL_FETCH_OBJECT($erg))
+	while($obj=mysqli_fetch_OBJECT($erg))
 	{
 		 if ($obj->majorRelease==0 && $obj->minorRelease<80) $error.="Fehler: Controller $obj->name hat zu alte Firmware Version $obj->minorRelease geladen <br>";
 		 $deviceIds[$obj->id]=getDeviceId($obj->objectId);
 		 $deviceNames[$obj->id]=$obj->name;
 	}
 	
-	if ($error!="") die($error."<b>Bitte zunächst die Controllerfirmware aktualisieren</b>");
+	if ($error!="") die($error."<b>Bitte zunÃ¤chst die Controllerfirmware aktualisieren</b>");
 	else
 	{
 	
@@ -132,15 +132,15 @@ if ($action=="renew")
      A. ermitteln der Busnetze (LAN, I2C)
         1. auf einen I2C Controller, der kein LAN-Gateway hat und noch keinem I2C-Netz zugeordnet ist, das Kommando checkBusTiming schicken
         2. Broadcast-Abfrage auf Gateway1 Objekten ( receiverId = 0x0000B001) Funktion getBusTiming
-        3. alle Antworten, die Werte ungleich 0 enthalten gehören zu einem I2C Netzwerk
+        3. alle Antworten, die Werte ungleich 0 enthalten gehÃ¶ren zu einem I2C Netzwerk
         4. Schritte 1-3 so oft wiederholen bis alle Controller, die online sind, einem Netzwerk zugeordnet sind
      */
      
      // Netzwerkcontroller ermitteln
     flushOut("<br><table width=95% align=center><tr><td>");
     flushOut("Ermittle Ethernetcontroller<hr>");
-    $erg = MYSQL_QUERY("select controller.id,controller.name from controller join featureInstances on (featureInstances.controllerId = controller.id) where featureClassesId='21' and size!=999 and online='1' order by controller.id") or die(MYSQL_ERROR());
-    while($obj=MYSQL_FETCH_OBJECT($erg))
+    $erg = QUERY("select controller.id,controller.name from controller join featureInstances on (featureInstances.controllerId = controller.id) where featureClassesId='21' and size!=999 and online='1' order by controller.id");
+    while($obj=mysqli_fetch_OBJECT($erg))
     {
     	 $netzwerkController[$obj->id]=$obj->name;
     	 flushOut("DeviceId ".$deviceIds[$obj->id]." - ".$obj->name."<br>");
@@ -152,7 +152,7 @@ if ($action=="renew")
     // Netzwerke abklappern
     $network=0;
     $erg = QUERY("select id,name from controller where size!=999 and online='1' and bootloader!=1 order by id");
-    while($obj=MYSQL_FETCH_OBJECT($erg))
+    while($obj=mysqli_fetch_OBJECT($erg))
     {
     	if (isset($netzwerkController[$obj->id])) continue;
     	if ($done[$obj->id]==1) continue;
@@ -160,11 +160,11 @@ if ($action=="renew")
     	$network++;
     	flushOut("<br>Ermittle Teilnehmer vom Netzwerk $network<hr>");
 
-      flushOut("DeviceId ".$deviceIds[$obj->id]." ".$deviceNames[$obj->id]." gehört zum Netzwerk<br>");
+      flushOut("DeviceId ".$deviceIds[$obj->id]." ".$deviceNames[$obj->id]." gehÃ¶rt zum Netzwerk<br>");
       QUERY("INSERT into i2cNetworks (network, controllerId,ethernet) values('$network','$obj->id','0')");
       $done[$obj->id]=1;
     	
-     	// einmal broadcast alle werte löschen
+     	// einmal broadcast alle werte lÃ¶schen
     	callInstanceMethodForObjectId( 45057, 222);
     	sleepMs(200);
 
@@ -179,15 +179,15 @@ if ($action=="renew")
    	  sleep(2);
        unset($inserted);  
    	  $erg3 = QUERY("select senderObj,functionData from udpCommandLog where id>'$rememberedId' and fktId='129' order by id");
-   	  while($obj3=MYSQL_FETCH_OBJECT($erg3))
+   	  while($obj3=mysqli_fetch_OBJECT($erg3))
    	  {
 	  	  $data=unserialize($obj3->functionData);
 
    	  */
 
    	  // Ergebnisse einsammeln
-     	$erg2 = MYSQL_QUERY("select * from controller where size!=999 and online='1' and bootloader!=1") or die(MYSQL_ERROR());
-	    while($obj2=MYSQL_FETCH_OBJECT($erg2))
+     	$erg2 = QUERY("select * from controller where size!=999 and online='1' and bootloader!=1");
+	    while($obj2=mysqli_fetch_OBJECT($erg2))
 	    {
 	    	if ($done[$obj2->id]==1) continue;
 	    	
@@ -214,7 +214,7 @@ if ($action=="renew")
 	  	    $show=""; $ethernet="";
 	  	    if (isset($netzwerkController[$obj2->id])) {$show = "als Ethernetgateway"; $ethernet=1;}
 	  	    
- 	        flushOut("DeviceId ".$deviceIds[$obj2->id]." ".$deviceNames[$obj2->id]." gehört zum Netzwerk $show <br>");
+ 	        flushOut("DeviceId ".$deviceIds[$obj2->id]." ".$deviceNames[$obj2->id]." gehÃ¶rt zum Netzwerk $show <br>");
   	      QUERY("INSERT into i2cNetworks (network, controllerId,ethernet) values('$network','$obj2->id','$ethernet')");
   	      $done[$obj2->id]=1;
 	  	  }
@@ -235,8 +235,8 @@ function flushOut($message)
 
 setupTreeAndContent("i2cNetwork_design.html", $message);
 
-$erg = MYSQL_QUERY("select * from controller where online='1' and bootloader!=1 and size!=999") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select * from controller where online='1' and bootloader!=1 and size!=999");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	 $deviceIds[$obj->id]=getDeviceId($obj->objectId);
 	 $deviceNames[$obj->id]=$obj->name;
@@ -246,7 +246,7 @@ while($obj=MYSQL_FETCH_OBJECT($erg))
 $networksNormal="";
 $networksEthernet="";
 $erg = QUERY("select * from i2cNetworks order by network");
-while($obj=MYSQL_FETCH_OBJECT($erg))
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	 $checked[$obj->controllerId]=1;
 	 if ($obj->ethernet==1)
@@ -297,7 +297,7 @@ foreach($networksEthernet as $network=>$member)
 	 unset($senderData);
 	 unset($receiverData);
 	 $erg = QUERY("select * from i2cTimings where networkId='$network' order by senderId");
-	 while($obj=MYSQL_FETCH_OBJECT($erg))
+	 while($obj=mysqli_fetch_OBJECT($erg))
 	 {
 	 	  $senderData[$obj->senderId][$obj->receiverId]="1";
 	 	  $receiverData[$obj->receiverId][$obj->senderId]["scl"]=$obj->scl;

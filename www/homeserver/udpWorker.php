@@ -7,7 +7,7 @@ if (strpos($check,"0")!==FALSE) die("Runlevel 0 (shutdown) erkannt");
 if (strpos($check,"6")!==FALSE) die("Runlevel 6 (reboot) erkannt");
 
 if ($_SERVER["DOCUMENT_ROOT"]=="") $_SERVER["DOCUMENT_ROOT"]="../";
-
+$waitForDb=1;
 require($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 require_once($_SERVER["DOCUMENT_ROOT"]."/homeserver/simulator.php");
 require($_SERVER["DOCUMENT_ROOT"]."/homeserver/serverInstance.php");
@@ -53,7 +53,7 @@ while(true)
   {
     $errormsg = socket_strerror($errorcode);
     echo "Fehler ".$errorCode.": ".$errormsg."<br>";
-    MYSQL_QUERY("INSERT into udpCommandLog (time,  sender,  function,  params) values('".time()."','UdpWorker','SocketError $errorcode','$errormsg')") or die(MYSQL_ERROR());
+    QUERY("INSERT into udpCommandLog (time,  sender,  function,  params) values('".time()."','UdpWorker','SocketError $errorcode','$errormsg')");
   }
 
   if ($output==1) echo $line;
@@ -89,15 +89,15 @@ while(true)
   {
  	  // RAW Daten erstmal loggen
     $time=time();
-    MYSQL_QUERY("INSERT into udpDataLog (time, data) values('$time','$rawData')") or die(MYSQL_ERROR());
-    $udpDataLogId = mysql_insert_id();
+    QUERY("INSERT into udpDataLog (time, data) values('$time','$rawData')");
+    $udpDataLogId = query_insert_id();
     if ($output==1) echo "Raw data: ".$rawData.$lb;
 
 
     // Kontroll-Byte
     $dataPos++;
 
-    // Nachrichtenzähler
+    // NachrichtenzÃ¤hler
     $messageCounter = $datagramm[$dataPos++];
 
     // Sender-ID
@@ -105,9 +105,10 @@ while(true)
     
     if ($output==1) echo "Sender: $sender, ClassId Sender: ".getClassId($sender).$lb;
     $senderSubscriberData = getBusSubscriberData($sender);
+    //print_r($senderSubscriberData);
     //$dataPos+=4;
 
-    // Empfänger-ID
+    // EmpfÃ¤nger-ID
     $receiver = bytesToDword($datagramm,$dataPos);
     if ($output==1) echo "Receiver: $receiver, ClassId Receiver: ".getClassId($receiver).$lb;
     $receiverSubscriberData = getBusSubscriberData($receiver);
@@ -115,7 +116,7 @@ while(true)
 
     // Nutzdaten
     $length = bytesToWord($datagramm, $dataPos);
-    if ($output==1) echo "Datenlänge: ".$length.$lb;
+    if ($output==1) echo "DatenlÃ¤nge: ".$length.$lb;
     $functionId = $datagramm[$dataPos++];
     if ($output==1) echo "Function ID: ".$functionId.$lb;
 
@@ -157,7 +158,7 @@ while(true)
       	$commandData[0]=5; // getConfiguration;
       	sendCommand($sender, $commandData);
       	
-      	// Zeit ist nicht genau, aber wird dann später über den Timesyncer genauer eingestellt
+      	// Zeit ist nicht genau, aber wird dann spÃ¤ter Ã¼ber den Timesyncer genauer eingestellt
       	unset($commandData);
         $commandData["weekTime"]=toWeekTime(date("N")-1,date("H"),date("i"));
         callObjectMethodByName($sender, "setTime", $commandData);
@@ -178,39 +179,39 @@ while(true)
 
     if ($correspondingControllerObjectId!=$MY_OBJECT_ID && getClassId($sender)!=91) // 91 ist TCP client
     {
-      MYSQL_QUERY("UPDATE controller set online='1' where objectId='$correspondingControllerObjectId' limit 1") or die(MYSQL_ERROR());
-      if ($output==1) echo "updating ".getFormatedObjectId($correspondingControllerObjectId)." affected = ".mysql_affected_rows().$lb;
+      QUERY("UPDATE controller set online='1' where objectId='$correspondingControllerObjectId' limit 1");
+      if ($output==1) echo "updating ".getFormatedObjectId($correspondingControllerObjectId)." affected = ".mysqli_affected_rows().$lb;
     }
     
     // DEBUG Ausgabe
     $myMessageCounter++;
-    if ($output==1) echo "Nachrichtenzähler: $messageCounter  [".$myMessageCounter."]".$lb;
+    if ($output==1) echo "NachrichtenzÃ¤hler: $messageCounter  [".$myMessageCounter."]".$lb;
     if ($output==1) echo "Nachrichtentyp: $messageType".$lb;
     if ($output==1) echo $lb;
 
     if ($output==1) echo "Sender: ".$senderSubscriberData->debugStr.$lb;
-    if ($output==1) echo "Empfänger: ".$receiverSubscriberData->debugStr.$lb;
+    if ($output==1) echo "EmpfÃ¤nger: ".$receiverSubscriberData->debugStr.$lb;
     if ($output==1) echo $lb;
-    if ($output==1) echo "Datenlänge: ".$length.$lb;
+    if ($output==1) echo "DatenlÃ¤nge: ".$length.$lb;
     if ($output==1) echo "Function: ".$functionData->functionDebugStr.$lb;
     if ($output==1) echo "Parameter: ".$functionData->paramsDebugStr.$lb;
 
     $senderObj = $senderSubscriberData->objectId;
     $fktId = $functionData->functionId;
-    
-    $senderSubscriberDataDebugStr=mysql_real_escape_string($senderSubscriberData->debugStr);
-    $receiverSubscriberDataDebugStr=mysql_real_escape_string($receiverSubscriberData->debugStr);
-    $senderSubscriberData=mysql_real_escape_string(serialize($senderSubscriberData));
-    $receiverSubscriberData=mysql_real_escape_string(serialize($receiverSubscriberData));
-    $functionStr=mysql_real_escape_string($functionData->functionDebugStr);
-    $paramsStr=mysql_real_escape_string($functionData->paramsDebugStr);
-    $functionDataSql=mysql_real_escape_string(serialize($functionData));
 
-    MYSQL_QUERY("delete from lastreceived where senderObj='$senderObj' and function='$functionStr' limit 1") or die(MYSQL_ERROR());
-    MYSQL_QUERY("INSERT into lastreceived (time,type, function, functionData, senderObj) values('$time','$messageType','$functionStr','$functionDataSql','$senderObj')") or die(MYSQL_ERROR());
+    $senderSubscriberDataDebugStr=query_real_escape_string($senderSubscriberData->debugStr);
+    $receiverSubscriberDataDebugStr=query_real_escape_string($receiverSubscriberData->debugStr);
+    $senderSubscriberData=query_real_escape_string(serialize($senderSubscriberData));
+    $receiverSubscriberData=query_real_escape_string(serialize($receiverSubscriberData));
+    $functionStr=query_real_escape_string($functionData->functionDebugStr);
+    $paramsStr=query_real_escape_string($functionData->paramsDebugStr);
+    $functionDataSql=query_real_escape_string(serialize($functionData));
+
+    QUERY("delete from lastreceived where senderObj='$senderObj' and function='$functionStr' limit 1");
+    QUERY("INSERT into lastreceived (time,type, function, functionData, senderObj) values('$time','$messageType','$functionStr','$functionDataSql','$senderObj')");
     
-    MYSQL_QUERY("INSERT into udpCommandLog (time, type, messageCounter,  sender,  receiver,  function,  params, functionData, senderSubscriberData,  receiverSubscriberData, udpDataLogId,senderObj,fktId) values('$time','$messageType','$messageCounter','$senderSubscriberDataDebugStr','$receiverSubscriberDataDebugStr','$functionStr','$paramsStr','$functionDataSql', '$senderSubscriberData','$receiverSubscriberData','$udpDataLogId','$senderObj','$fktId')") or die(MYSQL_ERROR());
-    $commandId = mysql_insert_id();
+    QUERY("INSERT into udpCommandLog (time, type, messageCounter,  sender,  receiver,  function,  params, functionData, senderSubscriberData,  receiverSubscriberData, udpDataLogId,senderObj,fktId) values('$time','$messageType','$messageCounter','$senderSubscriberDataDebugStr','$receiverSubscriberDataDebugStr','$functionStr','$paramsStr','$functionDataSql', '$senderSubscriberData','$receiverSubscriberData','$udpDataLogId','$senderObj','$fktId')");
+    $commandId = query_insert_id();
     
     // Server
     if ($SERVER_ACTIVE==1) checkServerFunction($receiver, $sender, $functionData, $commandId);
@@ -238,33 +239,33 @@ function updateControllerData($sender, $functionData)
   if (getInstanceId($sender) == $BOOTLOADER_INSTANCE_ID)
   {
     $parentObjectId = getObjectId(getDeviceId($sender), getClassId($sender), $FIRMWARE_INSTANCE_ID);
-    $erg = MYSQL_QUERY("select SQL_CACHE id,name from controller where objectId='$parentObjectId' limit 1") or die(MYSQL_ERROR());
-    if ($obj=MYSQL_FETCH_OBJECT($erg)) $controllerName=$obj->name."_Bootloader";
+    $erg = QUERY("select SQL_CACHE id,name from controller where objectId='$parentObjectId' limit 1");
+    if ($obj=mysqli_fetch_OBJECT($erg)) $controllerName=$obj->name."_Bootloader";
     else $controllerName = $controllerType."_Bootloader $deviceId";
      
-    $erg = MYSQL_QUERY("select SQL_CACHE id from controller where objectId='$sender' limit 1") or die(MYSQL_ERROR());
-    if ($row=MYSQL_FETCH_ROW($erg)) MYSQL_QUERY("update controller set name='$controllerName',bootloader='1' where objectId='$sender' limit 1") or die(MYSQL_ERROR());
-    else MYSQL_QUERY("INSERT into controller (objectId,name,bootloader) values ('$sender','$controllerName','1')") or die(MYSQL_ERROR());
+    $erg = QUERY("select SQL_CACHE id from controller where objectId='$sender' limit 1");
+    if ($row=mysqli_fetch_ROW($erg)) QUERY("update controller set name='$controllerName',bootloader='1' where objectId='$sender' limit 1");
+    else QUERY("INSERT into controller (objectId,name,bootloader) values ('$sender','$controllerName','1')");
   }
   else
   {
     // Bootloader offline nehmen, sobald Firmware sich wieder meldet
     $bootloaderObjectId = getObjectId(getDeviceId($sender), getClassId($sender), $BOOTLOADER_INSTANCE_ID);
-    MYSQL_QUERY("UPDATE controller set online='0' where objectId='$bootloaderObjectId' limit 1") or die(MYSQL_ERROR());
+    QUERY("UPDATE controller set online='0' where objectId='$bootloaderObjectId' limit 1");
     
-    $erg = MYSQL_QUERY("select SQL_CACHE id from controller where objectId='$sender' limit 1") or die(MYSQL_ERROR());
-    if ($row=MYSQL_FETCH_ROW($erg)){}
+    $erg = QUERY("select SQL_CACHE id from controller where objectId='$sender' limit 1");
+    if ($row=mysqli_fetch_ROW($erg)){}
     else
     {
       $controllerName = $controllerType." $deviceId";
-      MYSQL_QUERY("INSERT into controller (objectId,name) values ('$sender','$controllerName')") or die(MYSQL_ERROR());
+      QUERY("INSERT into controller (objectId,name) values ('$sender','$controllerName')");
       readSonoffIds();
     }
   }
 
  
-  $erg = MYSQL_QUERY("select SQL_CACHE * from controller where objectId='$sender' limit 1") or die(MYSQL_ERROR());
-  if ($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select SQL_CACHE * from controller where objectId='$sender' limit 1");
+  if ($obj=mysqli_fetch_OBJECT($erg))
   {
     $update="online='1'";
     foreach ($obj as $key => $value)
@@ -279,13 +280,13 @@ function updateControllerData($sender, $functionData)
       		if ($key=="booterMajor" && $paramObject->name=="majorRelease")
       		{
             if ($update!="") $update.=",";
-            $update.="booterMajor='".mysql_real_escape_string($paramObject->dataValue)."'";
+            $update.="booterMajor='".query_real_escape_string($paramObject->dataValue)."'";
       			continue;
       		}
       		if ($key=="booterMinor" && $paramObject->name=="minorRelease")
       		{
             if ($update!="") $update.=",";
-            $update.="booterMinor='".mysql_real_escape_string($paramObject->dataValue)."'";
+            $update.="booterMinor='".query_real_escape_string($paramObject->dataValue)."'";
       			continue;
       		}
       	}
@@ -293,13 +294,13 @@ function updateControllerData($sender, $functionData)
         if ($paramObject->name==$key)
         {
           if ($update!="") $update.=",";
-          $update.=$key."='".mysql_real_escape_string($paramObject->dataValue)."'";
+          $update.=$key."='".query_real_escape_string($paramObject->dataValue)."'";
         }
       }
     }
 
     $sql = "UPDATE controller set $update where objectId='$sender' limit 1";
-    MYSQL_QUERY($sql) or die(MYSQL_ERROR());
+    QUERY($sql);
   }
 }
 
@@ -332,29 +333,29 @@ function updateRemoteObjects($sender, $functionData)
       $parts = explode(",",$value);
       $objectId = getObjectId($deviceId, $parts[1], $parts[0]);
 
-      $erg = MYSQL_QUERY("select id from featureinstances where objectId='$objectId' order by id limit 1") or die(MYSQL_ERROR());
-      if ($row=MYSQL_FETCH_ROW($erg))
+      $erg = QUERY("select id from featureinstances where objectId='$objectId' order by id limit 1");
+      if ($row=mysqli_fetch_ROW($erg))
       {
       	//echo "checked ".$row[0]."\n";
-      	MYSQL_QUERY("update featureinstances set checked='1' where id='$row[0]'") or die(MYSQL_ERROR());
+      	QUERY("update featureinstances set checked='1' where id='$row[0]'");
       }
       else
       {
         $featureClassesId = getFeatureClassesId($objectId);
         $featureName = $featureClasses[$featureClassesId]->name." ".getInstanceId($objectId);
-        MYSQL_QUERY("INSERT into featureinstances (controllerId,featureClassesId,objectId,name,checked) values ('$controllerId','$featureClassesId','$objectId','$featureName','1')") or die(MYSQL_ERROR());
+        QUERY("INSERT into featureinstances (controllerId,featureClassesId,objectId,name,checked) values ('$controllerId','$featureClassesId','$objectId','$featureName','1')");
         echo "Neues Feature angelegt: ControllerId = $controllerId , FeatureClassId = $featureClassesId , ObjectId = $objectId , Name = $featureName \n";
-        $featureInstanceId = mysql_insert_id();
-        MYSQL_QUERY("INSERT into groups (single) values ('1')") or die(MYSQL_ERROR());
-        $groupId = mysql_insert_id();
-        MYSQL_QUERY("INSERT into groupFeatures (groupId, featureInstanceId) values ('$groupId','$featureInstanceId')") or die(MYSQL_ERROR());
+        $featureInstanceId = query_insert_id();
+        QUERY("INSERT into groups (single) values ('1')");
+        $groupId = query_insert_id();
+        QUERY("INSERT into groupFeatures (groupId, featureInstanceId) values ('$groupId','$featureInstanceId')");
         
      		$basicStateNames = getBasicStateNames($featureClassesId);
 		    $offName=$basicStateNames->offName;
 		    $onName=$basicStateNames->onName;
 
-        MYSQL_QUERY("INSERT into groupStates (groupId,name, value,basics) values ('$groupId','$offName','1','1')") or die(MYSQL_ERROR());
-        MYSQL_QUERY("INSERT into groupStates (groupId,name, value,basics) values ('$groupId','$onName','2','2')") or die(MYSQL_ERROR());
+        QUERY("INSERT into groupStates (groupId,name, value,basics) values ('$groupId','$offName','1','1')");
+        QUERY("INSERT into groupStates (groupId,name, value,basics) values ('$groupId','$onName','2','2')");
       }
     }
   }
@@ -362,31 +363,31 @@ function updateRemoteObjects($sender, $functionData)
   // Controller selbst auch als Instanz eintragen
   $controllerId = getControllerId($sender);
   $objectId=$sender;
-  $erg = MYSQL_QUERY("select id from featureinstances where objectId='$objectId' limit 1") or die(MYSQL_ERROR());
-  if ($row=MYSQL_FETCH_ROW($erg)) MYSQL_QUERY("update featureinstances set checked='1' where id='$row[0]'") or die(MYSQL_ERROR());
+  $erg = QUERY("select id from featureinstances where objectId='$objectId' limit 1");
+  if ($row=mysqli_fetch_ROW($erg)) QUERY("update featureinstances set checked='1' where id='$row[0]'");
   else
   {
     $featureClassesId = $CONTROLLER_CLASSES_ID;
     $featureName = $featureClasses[$featureClassesId]->name;
-    MYSQL_QUERY("INSERT into featureinstances (controllerId,featureClassesId,objectId,name,checked) values ('$controllerId ','$featureClassesId','$objectId','$featureName','1')") or die(MYSQL_ERROR());
+    QUERY("INSERT into featureinstances (controllerId,featureClassesId,objectId,name,checked) values ('$controllerId ','$featureClassesId','$objectId','$featureName','1')");
     echo "Neues Feature angelegt: ControllerId = $controllerId , FeatureClassId = $featureClassesId , ObjectId = $objectId , Name = $featureName \n";
-    $featureInstanceId = mysql_insert_id();
-    MYSQL_QUERY("INSERT into groups (single) values ('1')") or die(MYSQL_ERROR());
-    $groupId = mysql_insert_id();
-    MYSQL_QUERY("INSERT into groupFeatures (groupId, featureInstanceId) values ('$groupId','$featureInstanceId')") or die(MYSQL_ERROR());
+    $featureInstanceId = query_insert_id();
+    QUERY("INSERT into groups (single) values ('1')");
+    $groupId = query_insert_id();
+    QUERY("INSERT into groupFeatures (groupId, featureInstanceId) values ('$groupId','$featureInstanceId')");
  		
  		$basicStateNames = getBasicStateNames($featureClassesId);
     $offName=$basicStateNames->offName;
 	  $onName=$basicStateNames->onName;
 
-    MYSQL_QUERY("INSERT into groupStates (groupId,name, value,basics) values ('$groupId','$offName','1','1')") or die(MYSQL_ERROR());
-    MYSQL_QUERY("INSERT into groupStates (groupId,name, value,basics) values ('$groupId','$onName','2','2')") or die(MYSQL_ERROR());
+    QUERY("INSERT into groupStates (groupId,name, value,basics) values ('$groupId','$offName','1','1')");
+    QUERY("INSERT into groupStates (groupId,name, value,basics) values ('$groupId','$onName','2','2')");
   }
   
 
   /*
-  $erg = MYSQL_QUERY("select * from featureinstances where controllerId='$controllerId' and checked='0'") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select * from featureinstances where controllerId='$controllerId' and checked='0'");
+  while($obj=mysqli_fetch_OBJECT($erg))
   {
     //echo "=================================================\n";
     echo "Achtung FEATURE ".$obj->name." wurde gel?scht von controllerId = $controllerId - objectId sender = $sender \n";

@@ -5,8 +5,8 @@ if ($submitted!="")
 {
   if($id=="")
   {
-    MYSQL_QUERY("INSERT into featureClasses (name,classId,guiControl,smoketest,view) values('$name','$classId','$guiControl','$smoketest','$view')") or die(MYSQL_ERROR());
-    $id = mysql_insert_id();
+    QUERY("INSERT into featureClasses (name,classId,guiControl,smoketest,view) values('$name','$classId','$guiControl','$smoketest','$view')");
+    $id = query_insert_id();
     header("Location: editFeatureClass.php?id=$id");
     exit;
   }
@@ -18,7 +18,7 @@ if ($submitted!="")
       header("Location: editFeatureClass.php");
       exit;
     }
-    else MYSQL_QUERY("UPDATE featureClasses set name='$name',classId='$classId',guiControl='$guiControl',smoketest='$smoketest',view='$view' where id='$id' limit 1") or die(MYSQL_ERROR());
+    else QUERY("UPDATE featureClasses set name='$name',classId='$classId',guiControl='$guiControl',smoketest='$smoketest',view='$view' where id='$id' limit 1");
     $message="Einstellungen gespeichert";
   }
 }
@@ -43,7 +43,7 @@ else
 {
   $html = str_replace("%ID%",$id, $html);
   $html = str_replace("%TITLE%","Featureklasse bearbeiten", $html);
-  $html = str_replace("%SUBMIT_TITLE%","Ändern", $html);
+  $html = str_replace("%SUBMIT_TITLE%","Ã„ndern", $html);
   chooseTag("%ENTRIES%",$html);
   chooseTag("%DELETE%",$html);
 

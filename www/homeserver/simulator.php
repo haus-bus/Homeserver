@@ -127,8 +127,8 @@ function sendRemoteObjects($sender)
   $result="";
   if ($bootloaderActive==0)
   {
-    $erg = MYSQL_QUERY("select classId from featureClasses where classId!='$CONTROLLER_CLASS_ID' order by id") or die(MYSQL_ERROR());
-    while($obj=MYSQL_FETCH_OBJECT($erg))
+    $erg = QUERY("select classId from featureClasses where classId!='$CONTROLLER_CLASS_ID' order by id");
+    while($obj=mysqli_fetch_OBJECT($erg))
     {
       if ($result!="") $result.=";";
       $result.="1,".$obj->classId;

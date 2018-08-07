@@ -2,8 +2,8 @@
 include $_SERVER["DOCUMENT_ROOT"].'/homeserver/include/all.php';
 include 'smoketest.inc.php';
 
-$erg = MYSQL_QUERY("select id, featureClassesId, objectId, name, port from featureInstances where id='$featureInstanceId' limit 1") or die(MYSQL_ERROR());
-if ($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id, featureClassesId, objectId, name, port from featureInstances where id='$featureInstanceId' limit 1");
+if ($obj=MYSQLi_FETCH_OBJECT($erg))
 {
   $obj->objectId = $obj->objectId;
   echo "Smoketest - Schalter - ".$obj->name." - ".getFormatedObjectId($obj->objectId)."<hr>";

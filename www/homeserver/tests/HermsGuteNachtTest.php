@@ -30,7 +30,7 @@ if ($test!="")
 function testLastActorEvent( $objectId, $event, $logId )
 {
  	$erg = QUERY("select name from featureinstances where objectId=$objectId limit 1");
-  if ($obj = MYSQL_FETCH_ROW($erg))
+  if ($obj = MYSQLi_FETCH_ROW($erg))
   {
   	
   	if( -1 == waitForObjectEventByName( $objectId, 5, $event, $logId, "senderData", 0 ) )

@@ -1,5 +1,50 @@
 <?php
 
+print_r(getWeather());
+
+function getWeather() 
+{
+	$lat= "51.7177"; 
+	$lng = "8.7527";
+	$apiKey = "2f88e986e72c9e592cd6698340c0aabd";
+  $data = new stdClass();
+
+  try 
+  {
+    $url = 'http://api.openweathermap.org/data/2.5/weather?lat='.$lat.'&lon='.$lng.'&APPID='.$apiKey;
+    $ch = curl_init();
+    $timeout = 5;
+    curl_setopt($ch,CURLOPT_URL,$url);
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+    curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+    $data = curl_exec($ch);
+
+    $data = json_decode(utf8_encode($data));
+
+    if($data->cod != "200") $data->error = "Failed retrieving weather data.";
+    else 
+    {
+        $res = $data->current_condition;
+        $main = $data->main;
+        $wind = $data->wind;
+        $data->tempC = round(($main->temp -273.15), 0);
+        $data->tempF = round(((($data->tempC * 9 ) / 5) + 32) ,0);
+        $data->pressure = $main->pressure;
+        $data->ws_miles = $wind->speed;
+        $data->ws_kts = round($data->ws_miles * 0.868976242, 0);
+        $data->winddirDegree = round($wind->deg);
+        $data->visibility = $res->visibility; // In Kilometer
+    }
+  } 
+  catch(Exception $ex) 
+  {
+    $data->error = $ex->getMessage();
+  }
+  
+  return $data;
+}
+
+exit;
 
 include("include/all.php");
 $MAX_LOG_ENTRIES=100000;
@@ -8,6 +53,19 @@ cleanUp();
 die("5:test");
 
 die("A".getSonoffWatt("192.168.178.117")."A");
+
+function _detectFileEncoding($filepath) 
+{
+    // VALIDATE $filepath !!!
+    $output = array();
+    exec('file -i ' . $filepath, $output);
+    if (isset($output[0]))
+    {
+        $ex = explode('charset=', $output[0]);
+        return isset($ex[1]) ? $ex[1] : null;
+    }
+    return null;
+}
 
 function getSonoffWatt($ip)
 {
@@ -163,8 +221,8 @@ for ($i=0;$i<10000;$i++)
 
 exit;
 $min = time()-25*60*60;
-$erg = MYSQL_QUERY("select time,functionData from udpcommandlog where senderObj='6511105' and time>'$min' order by id") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select time,functionData from udpcommandlog where senderObj='6511105' and time>'$min' order by id");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	 $data = unserialize($obj->functionData);
 	 if ($data->name=="evSignal")
@@ -262,11 +320,11 @@ echo "B".$debug."<br>";
 
 exit;
 
-$erg = MYSQL_QUERY("select id, udpDataLogId from udpcommandlog where senderObj='6511105'") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id, udpDataLogId from udpcommandlog where senderObj='6511105'");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
-	MYSQL_QUERY("delete from udpdatalog where id='$obj->udpDataLogId' limit 1") or die(MYSQL_ERROR());
-	MYSQL_QUERY("delete from udpcommandlog where id='$obj->id' limit 1") or die(MYSQL_ERROR());
+	QUERY("delete from udpdatalog where id='$obj->udpDataLogId' limit 1");
+	QUERY("delete from udpcommandlog where id='$obj->id' limit 1");
 	
 }
 
@@ -311,12 +369,12 @@ recoverDb();
 function dbUpdate($dbUpdate, $table)
 {
   $pos = strpos ( $dbUpdate, "INSERT INTO `$table`" );
-  if ($pos===FALSE) liveOut ( "Fehler! Eintrag für Tabelle $table nicht gefunden" );
+  if ($pos===FALSE) liveOut ( "Fehler! Eintrag fÃ¼r Tabelle $table nicht gefunden" );
   else
   {
     $sql = "TRUNCATE table $table";
     echo $sql."<br>";
-    //MYSQL_QUERY ( $sql ) or die ( MYSQL_ERROR () );
+    //QUERY ( $sql );
 
     $errorCount=0;
     while($pos !== FALSE && $errorCounter<50)
@@ -326,7 +384,7 @@ function dbUpdate($dbUpdate, $table)
       $pos2 = strpos ( $dbUpdate, ";", $pos );
       $sql = trim ( substr ( $dbUpdate, $pos, $pos2 - $pos ) );
        echo $sql."<br>";
-      //MYSQL_QUERY ( $sql ) or die ( MYSQL_ERROR () );
+      //QUERY ( $sql );
       
       $pos = strpos ( $dbUpdate, "INSERT INTO `$table`",$pos+10);
     }
@@ -355,15 +413,15 @@ function download($src, $dest)
 
 exit;
 
-$erg = MYSQL_QUERY("select classesId from functiontemplates where name=''") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg)) $existingTemplates[$obj->classesId]=1;
+$erg = QUERY("select classesId from functiontemplates where name=''");
+while($obj=mysqli_fetch_OBJECT($erg)) $existingTemplates[$obj->classesId]=1;
 
-if ($existingTemplates[9]!=1) MYSQL_QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (9, 5, '', ''),(9, 4, 'doubleClick', ''),(9, 3, 'hold', ''),(9, 2, 'click', ''),(9, 1, 'click', '')");
-if ($existingTemplates[14]!=1) MYSQL_QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (14, 5, 'doubleClick', ''),(14, 4, '-', ''),(14, 3, '-', ''),(14, 2, 'hold', ''),(14, 1, 'click', '')");
-if ($existingTemplates[18]!=1) MYSQL_QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (18, 4, 'doubleClick', ''),(18, 3, '', ''),(18, 2, 'covered', ''),(18, 1, 'covered', ''),(18, 5, '', '')");
-if ($existingTemplates[8]!=1) MYSQL_QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (8, 5, '', ''),(8, 4, 'hold', ''),(8, 3, '', ''),(8, 2, 'covered', ''),(8, 1, 'covered', '')");
-if ($existingTemplates[17]!=1) MYSQL_QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (17, 1, 'covered', ''),(17, 2, 'covered', ''),(17, 3, '', ''),(17, 4, 'hold', ''),(17, 5, '', '')");
-if ($existingTemplates[1]!=1) MYSQL_QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (1, 5, '', ''),(1, 4, '', ''),(1, 3, '', ''),(1, 2, '-', ''),(1, 1, '-', '')");
+if ($existingTemplates[9]!=1) QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (9, 5, '', ''),(9, 4, 'doubleClick', ''),(9, 3, 'hold', ''),(9, 2, 'click', ''),(9, 1, 'click', '')");
+if ($existingTemplates[14]!=1) QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (14, 5, 'doubleClick', ''),(14, 4, '-', ''),(14, 3, '-', ''),(14, 2, 'hold', ''),(14, 1, 'click', '')");
+if ($existingTemplates[18]!=1) QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (18, 4, 'doubleClick', ''),(18, 3, '', ''),(18, 2, 'covered', ''),(18, 1, 'covered', ''),(18, 5, '', '')");
+if ($existingTemplates[8]!=1) QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (8, 5, '', ''),(8, 4, 'hold', ''),(8, 3, '', ''),(8, 2, 'covered', ''),(8, 1, 'covered', '')");
+if ($existingTemplates[17]!=1) QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (17, 1, 'covered', ''),(17, 2, 'covered', ''),(17, 3, '', ''),(17, 4, 'hold', ''),(17, 5, '', '')");
+if ($existingTemplates[1]!=1) QUERY("INSERT INTO functiontemplates (`classesId`, `function`, `signal`, `name`) VALUES (1, 5, '', ''),(1, 4, '', ''),(1, 3, '', ''),(1, 2, '-', ''),(1, 1, '-', '')");
 
 die("ende");
 $schalterOnFunctionId = getFunctionsIdByNameForClassName("Schalter", "on");
@@ -373,8 +431,8 @@ $schalterEvOffunctionId = getFunctionsIdByNameForClassName("Schalter", "evOff");
 
 die($schalterOnFunctionId."-".$schalterOffFunctionId."-".$schalterEvOnFunctionId."-".$schalterEvOffunctionId);
 
-$erg = MYSQL_QUERY("select paramValue,paramKey from basicConfig where paramKey = 'locationZipCode' or paramKey='locationCountry' or paramKey='latitude' or paramKey='longitude'") or die(MYSQL_ERROR());
-while($row=MYSQL_FETCH_ROW($erg))
+$erg = QUERY("select paramValue,paramKey from basicConfig where paramKey = 'locationZipCode' or paramKey='locationCountry' or paramKey='latitude' or paramKey='longitude'");
+while($row=mysqli_fetch_ROW($erg))
 {
 	 $vals[$row[1]]=$row[0];
 }

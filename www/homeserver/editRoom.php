@@ -22,8 +22,8 @@ if ($submitted!="")
 
     if($id=="")
     {
-      MYSQL_QUERY("INSERT into rooms (name,picture) values('$name','$picture')") or die(MYSQL_ERROR());
-      $id = mysql_insert_id();
+      QUERY("INSERT into rooms (name,picture) values('$name','$picture')");
+      $id = query_insert_id();
       header("Location: editRoom.php?id=$id");
       exit;
     }
@@ -31,7 +31,7 @@ if ($submitted!="")
     {
       if ($picture!="") $pic=",picture='$picture'";
 
-      MYSQL_QUERY("UPDATE rooms set name='$name'$pic where id='$id' limit 1") or die(MYSQL_ERROR());
+      QUERY("UPDATE rooms set name='$name'$pic where id='$id' limit 1");
       $message="Einstellungen gespeichert";
     }
   }
@@ -52,19 +52,19 @@ else
 {
   $html = str_replace("%ID%",$id, $html);
   $html = str_replace("%TITLE%","Raum bearbeiten", $html);
-  $html = str_replace("%SUBMIT_TITLE%","Ändern", $html);
+  $html = str_replace("%SUBMIT_TITLE%","Ã„ndern", $html);
   chooseTag("%FEATURES%",$html);
 
-  $erg = MYSQL_QUERY("select id, name,picture from rooms where id='$id' limit 1") or die(MYSQL_ERROR());
-  if ($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select id, name,picture from rooms where id='$id' limit 1");
+  if ($obj=mysqli_fetch_OBJECT($erg))
   {
     $html = str_replace("%ROOM_NAME%",$obj->name, $html);
     if ($obj->picture=="") removeTag("%IMAGE%",$html);
     else $html = str_replace("%IMAGE%","userpics/".$obj->picture,$html);
 
     $where="1=2 ";
-    $erg = MYSQL_QUERY("select featureInstanceId from roomFeatures where roomId='$id'") or die(MYSQL_ERROR());
-    while($obj=MYSQL_FETCH_OBJECT($erg))
+    $erg = QUERY("select featureInstanceId from roomFeatures where roomId='$id'");
+    while($obj=mysqli_fetch_OBJECT($erg))
     {
       $where.=" or id='$obj->featureInstanceId'";
     }
@@ -75,8 +75,8 @@ else
     $featuresTag = getTag("%CONTROLLER_FEATURE%",$controllerTag);
     $content="";
     $last="";
-    $erg = MYSQL_QUERY("select id,controllerId, featureClassesId,name from featureInstances where $where order by controllerId,featureClassesId,name") or die(MYSQL_ERROR());
-    while($obj=MYSQL_FETCH_OBJECT($erg))
+    $erg = QUERY("select id,controllerId, featureClassesId,name from featureInstances where $where order by controllerId,featureClassesId,name");
+    while($obj=mysqli_fetch_OBJECT($erg))
     {
       $actController = $allControllers[$obj->controllerId];
        
@@ -106,7 +106,7 @@ else
     $content.=$actTag;
     $html = str_replace("%CONTROLLER%",$content,$html);
   }
-  else die("FEHLER! Ungültige ID $id");
+  else die("FEHLER! UngÃ¼ltige ID $id");
 }
 
 

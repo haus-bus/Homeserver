@@ -1,17 +1,17 @@
 <?php
 /*
-Mit dieser Klasse lassen sich eigene Plugins für das Bussystem schreiben.
-Man wird über alle eintreffenden Nachrichten informiert und kann beliebige Aktionen auslösen.
-Zusätzlich gibt es Hilfsfunktionen, mit denen man sich Zustände merken kann.
+Mit dieser Klasse lassen sich eigene Plugins fÃ¼r das Bussystem schreiben.
+Man wird Ã¼ber alle eintreffenden Nachrichten informiert und kann beliebige Aktionen auslÃ¶sen.
+ZusÃ¤tzlich gibt es Hilfsfunktionen, mit denen man sich ZustÃ¤nde merken kann.
 
 ACHTUNG: Das userPlugin muss einmalig aktiviert werden:
 1. per SSH einloggen
 2. sudo php /var/www/homeserver/activateUserPlugin.php
 
-ACHTUNG: Nicht diese Datei ändern, sondern die Datei myUserPlugin.php, da diese Datei mit jedem Update überschrieben wird !!
+ACHTUNG: Nicht diese Datei Ã¤ndern, sondern die Datei myUserPlugin.php, da diese Datei mit jedem Update Ã¼berschrieben wird !!
 
-ACHTUNG: Jedes mal, wenn dieses Skript geändert wird, muss es einmal neu eingelesen werden.
-Dies kann man erledigen, indem in der Homeserveroberfläche beim Raspberry -> Executor die Funktion reloadUserPlugin aufgerufen wird
+ACHTUNG: Jedes mal, wenn dieses Skript geÃ¤ndert wird, muss es einmal neu eingelesen werden.
+Dies kann man erledigen, indem in der HomeserveroberflÃ¤che beim Raspberry -> Executor die Funktion reloadUserPlugin aufgerufen wird
 
 */
 
@@ -20,7 +20,7 @@ include_once("/var/www/homeserver/user/myUserPlugin.php");
 
 /*
  Wird bei jedem eintreffenden Event aufgerufen.
- Achtung: Funktion läuft im Prozess, der die UDP Daten verarbeitet. Bitte keine Langlaufaktionen oder sleeps verwenden.
+ Achtung: Funktion lÃ¤uft im Prozess, der die UDP Daten verarbeitet. Bitte keine Langlaufaktionen oder sleeps verwenden.
 */
 function eventOccured($senderData, $receiverData, $functionData)
 {
@@ -30,23 +30,23 @@ function eventOccured($senderData, $receiverData, $functionData)
 	ACHTUNG: Wenn es sich bei dem Event um einen Broadcast handelt, ist in $receiverData instanceObjectId=0 und der Rest leer!
 	stdClass Object
   (
-    [instanceObjectId] => 1493181016          // ObjektId des Eventsenders bzw. Empfängers (Bei Broadcast ist der Empfänger 0)
-    [instanceDbId] => 10275                   // DatenbankId des Eventsenders bzw. Empfängers (intern)
-    [instanceName] => Feuchtesensor Küche     // Vom Benutzer vergebener Name des Eventsenders bzw. Empfängers
-    [classId] => 34                           // ClassId der Kasse des Eventsenders bzw. Empfängers
-    [classDbId] => 23                         // DatenbankId der Klasse des Eventsenders bzw. Empfängers (intern)
-    [className] => Feuchtesensor              // Name der Klasse des Eventsenders bzw. Empfängers
-    [controllerObjectId] => 1493172225        // ObjektId des versendenden bzw. empfangenden Controllers (Also der Controller auf dem die Sender- oder Empfängerinstanz läuft)
+    [instanceObjectId] => 1493181016          // ObjektId des Eventsenders bzw. EmpfÃ¤ngers (Bei Broadcast ist der EmpfÃ¤nger 0)
+    [instanceDbId] => 10275                   // DatenbankId des Eventsenders bzw. EmpfÃ¤ngers (intern)
+    [instanceName] => Feuchtesensor KÃ¼che     // Vom Benutzer vergebener Name des Eventsenders bzw. EmpfÃ¤ngers
+    [classId] => 34                           // ClassId der Kasse des Eventsenders bzw. EmpfÃ¤ngers
+    [classDbId] => 23                         // DatenbankId der Klasse des Eventsenders bzw. EmpfÃ¤ngers (intern)
+    [className] => Feuchtesensor              // Name der Klasse des Eventsenders bzw. EmpfÃ¤ngers
+    [controllerObjectId] => 1493172225        // ObjektId des versendenden bzw. empfangenden Controllers (Also der Controller auf dem die Sender- oder EmpfÃ¤ngerinstanz lÃ¤uft)
     [controllerDbId] => 3                     // DatenbankId des versendenden bzw. empfangenden Controllers (intern)
     [controllerName] => Herms Ecke            // Vom Benutzer vergebener Name des versendenden bzw. empfangenden Controllers
-    [roomDbId] => 8                           // DatenbankId des ersten Raums, dem der Sender bzw. Empfängers oder leer, wenn keinem Raum zugeordnet
-    [roomName] => Küche                       // Vom Benutzer vergebener Name des ersten Raums, dem der Sender bzw. Empfängers oder leer, wenn keinem Raum zugeordnet
+    [roomDbId] => 8                           // DatenbankId des ersten Raums, dem der Sender bzw. EmpfÃ¤ngers oder leer, wenn keinem Raum zugeordnet
+    [roomName] => KÃ¼che                       // Vom Benutzer vergebener Name des ersten Raums, dem der Sender bzw. EmpfÃ¤ngers oder leer, wenn keinem Raum zugeordnet
  )
  
  Beschreibung $functionData
  stdClass Object
  ( 
-    [functionId] => 129                       // Beim Eventtyp ACTION oder FUNCTION (siehe type) ist dies die FunktionsId der Funktion, die beim Empfänger aufgerufen wird
+    [functionId] => 129                       // Beim Eventtyp ACTION oder FUNCTION (siehe type) ist dies die FunktionsId der Funktion, die beim EmpfÃ¤nger aufgerufen wird
                                               // Beim Eventtyp RESULT oder EVENT    (siehe type) ist dies die FunktionsId des Events oder Ergebnisses wie vom Sender verschickt
     [functionDbId] => 187                     // DatenbankId der Funktion  (intern)
     [classId] => 34                           // ClassId der Klasse der Funktion
@@ -68,8 +68,8 @@ function eventOccured($senderData, $receiverData, $functionData)
                     [id] => 423               // DatenbankId dieses Parameters (intern)
                     [name] => lastEvent       // Name dieses Paramters
                     [type] => ENUM            // Datentyp dieses Parameters 
-                    [dataName] => CONFORTABLE // Beim Datentyp ENUM zusätzliche Info zum Namen des Parameterwertes. Wert 201 entspricht also CONFORTABLE
-                    [dataValue] => 201        // Wert dieses Parameter (Hier der Enumwert für CONFORTABLE)
+                    [dataName] => CONFORTABLE // Beim Datentyp ENUM zusÃ¤tzliche Info zum Namen des Parameterwertes. Wert 201 entspricht also CONFORTABLE
+                    [dataValue] => 201        // Wert dieses Parameter (Hier der Enumwert fÃ¼r CONFORTABLE)
                 )
         )
  )
@@ -89,7 +89,7 @@ function eventOccured($senderData, $receiverData, $functionData)
 }
 
 /*
-Wird einmal pro Minute aufgerufen und kann verwendet werden um regelmäß Dinge zu prüfen oder Aktionen auszulösen.
+Wird einmal pro Minute aufgerufen und kann verwendet werden um regelmÃ¤ÃŸ Dinge zu prÃ¼fen oder Aktionen auszulÃ¶sen.
 */
 function timeTrigger()
 {
@@ -104,19 +104,19 @@ Alle Funktions- und Parameternamen finden man unter System -> Einstellungen -> F
 #############################################################################################################################################
 Funktion executeCommand
 Sendet einen beliebigen Befehl an das Bussystem
-$objectId        ObjectId des Empfängers oder 0 für Broadcast an alle Teilnehmer. Es ist auch möglich an eine bestimmte Teilnehmerklasse zu senden, indem mit der Funktion getObjectId einfach die deviceId und instanceid auf 0 und die classId auf die gewünschte Teilnehmerklasse gesetzt wird
-$functionName    Name der Function oder Action die beim Teilnehmer aufgerufen werden soll. Es können aber auch Events oder Results verschickt werden
+$objectId        ObjectId des EmpfÃ¤ngers oder 0 fÃ¼r Broadcast an alle Teilnehmer. Es ist auch mÃ¶glich an eine bestimmte Teilnehmerklasse zu senden, indem mit der Funktion getObjectId einfach die deviceId und instanceid auf 0 und die classId auf die gewÃ¼nschte Teilnehmerklasse gesetzt wird
+$functionName    Name der Function oder Action die beim Teilnehmer aufgerufen werden soll. Es kÃ¶nnen aber auch Events oder Results verschickt werden
 $paramArray      Assoziatives Array. Key ist die Names des Funktionsparameters und Value der Aufrufwert. Ist der Datentyp eine Enum entspricht der Value dem Namen des Enumwertes!
-                 Wenn eine Funktion keine Parameter benötigt, kann ein Leerstring übergeben werden
+                 Wenn eine Funktion keine Parameter benÃ¶tigt, kann ein Leerstring Ã¼bergeben werden
                  Beispiel:
                  $paramArray["offset"] = 4;
                  $paramArray["data"] = 10;
-$resultName      Soll die Funktion ein zugehöriges Ergebnis liefert, muss hier der Name des Ergebnisses angegeben werden oder Leerstring, wenn auf kein Ergebnis gewartet werden soll.
+$resultName      Soll die Funktion ein zugehÃ¶riges Ergebnis liefert, muss hier der Name des Ergebnisses angegeben werden oder Leerstring, wenn auf kein Ergebnis gewartet werden soll.
                  Beispiel: Ergebnis des Befehls "Ping" ist "Pong"
 
 return           -1 Timeout beim warten auf das Ergebnos
-                 "" Ergebnis wurde Erfolgreich empfangen, aber Ergebnis enthält keine Daten oder es wurde kein Ergebnis erwartet
-                 Array mit dem Ergebnis entsprechend vielen Einträgen
+                 "" Ergebnis wurde Erfolgreich empfangen, aber Ergebnis enthÃ¤lt keine Daten oder es wurde kein Ergebnis erwartet
+                 Array mit dem Ergebnis entsprechend vielen EintrÃ¤gen
                  [0] => stdClass Object            // Element 0
                  (
                     [id] => 369               // DatenbankId dieses Parameters (intern)
@@ -130,8 +130,8 @@ return           -1 Timeout beim warten auf das Ergebnos
                     [id] => 423               // DatenbankId dieses Parameters (intern)
                     [name] => lastEvent       // Name dieses Paramters
                     [type] => ENUM            // Datentyp dieses Parameters 
-                    [dataValueName] => CONFORTABLE // Beim Datentyp ENUM zusätzliche Info zum Namen des Parameterwertes. Wert 201 entspricht also CONFORTABLE
-                    [dataValue] => 201        // Wert dieses Parameter (Hier der Enumwert für CONFORTABLE)
+                    [dataValueName] => CONFORTABLE // Beim Datentyp ENUM zusÃ¤tzliche Info zum Namen des Parameterwertes. Wert 201 entspricht also CONFORTABLE
+                    [dataValue] => 201        // Wert dieses Parameter (Hier der Enumwert fÃ¼r CONFORTABLE)
                  )
 
 function executeCommand($objectId, $functionName, $paramArray="", $resultName="")
@@ -144,18 +144,18 @@ $result = executeCommand("1681719297", "Ping", "", "Pong");
 ---> Ergebnis ist im Erfolgsfall ein Leerstring, weil Pong keine Daten beinhaltet oder -1 wenn keine Antwort kam
 
 $result = executeCommand("1681719297", "getModuleId", array("index" => "INSTALLED"), "ModuleId");
----> Ruft Funktion "getModuleId" auf Controller mit ObjectId 1681719297 und übergibt als Parameter mit Namen "index" den Wert "INSTALLED" (Hier ist der Datentyp von index eine Enum, weshalb der Value der Enumwert als String ist und wartet auf das Ergebnis vom Typ ModuleId
+---> Ruft Funktion "getModuleId" auf Controller mit ObjectId 1681719297 und Ã¼bergibt als Parameter mit Namen "index" den Wert "INSTALLED" (Hier ist der Datentyp von index eine Enum, weshalb der Value der Enumwert als String ist und wartet auf das Ergebnis vom Typ ModuleId
 ---> Ergebnis Array ( [name] => $MOD$ Booter [size] => 8192 [majorRelease] => 0 [minorRelease] => 75 [firmwareId] => AR8 ) 
 
 $result = executeCommand(0, "ping");
 ---> verschickt ein Broadcase ping an alle Busteilnehmer und wartet auf kein Ergebnis
 ---> Alle Controller antworten mit PONG
----> Die letzten beiden Parameter können weggelassen werden, da sie optional sind
+---> Die letzten beiden Parameter kÃ¶nnen weggelassen werden, da sie optional sind
 
 
 #############################################################################################################################################
 Funktion setUserData
-Mit dieser Funktion kann man sich beliebige Key/Value Paare in der Datenbank merken und damit z.b. Zustände abbilden.
+Mit dieser Funktion kann man sich beliebige Key/Value Paare in der Datenbank merken und damit z.b. ZustÃ¤nde abbilden.
 $key			Indentifier/Key des Datensatzes. Maximal 50 Zeichen
 $value		Zu speichernder Wert Des Datensatzes. Maximal 255 Zeichen. 		
 
@@ -164,7 +164,7 @@ function setUserData($key, $value);
 
 Beispiel:  setUserData("TemperaturImWohnzimmer","ganz kalt");
 
-Alle in der Datenbank gespeicherten Daten können mit dem Skript editUserPluginData.php angezeigt und gelöscht werden
+Alle in der Datenbank gespeicherten Daten kÃ¶nnen mit dem Skript editUserPluginData.php angezeigt und gelÃ¶scht werden
 
 #############################################################################################################################################
 Funktion getUserData
@@ -177,7 +177,7 @@ function getUserData($key);
 
 Beispiel:  getUserData("TemperaturImWohnzimmer"); -> return "ganz kalt"
 
-Alle in der Datenbank gespeicherten Daten können mit dem Skript editUserPluginData.php angezeigt und gelöscht werden
+Alle in der Datenbank gespeicherten Daten kÃ¶nnen mit dem Skript editUserPluginData.php angezeigt und gelÃ¶scht werden
 
 #############################################################################################################################################
 Funktion getLastReceivedData
@@ -187,7 +187,7 @@ D.h. hier findet keine neue Kommunikation zum Teilnehmer statt, sondern der zule
 $objectId        ObjectId des Senders
 $functionName    Name des Results oder des Events zu dem die zuletzt empfangenen Daten geliefert werden sollen
 
-return	  Array mit dem Ergebnis entsprechend vielen Einträgen
+return	  Array mit dem Ergebnis entsprechend vielen EintrÃ¤gen
                  [0] => stdClass Object            // Element 0
                  (
                     [id] => 369               // DatenbankId dieses Parameters (intern)
@@ -201,8 +201,8 @@ return	  Array mit dem Ergebnis entsprechend vielen Einträgen
                     [id] => 423               // DatenbankId dieses Parameters (intern)
                     [name] => lastEvent       // Name dieses Paramters
                     [type] => ENUM            // Datentyp dieses Parameters 
-                    [dataValueName] => CONFORTABLE // Beim Datentyp ENUM zusätzliche Info zum Namen des Parameterwertes. Wert 201 entspricht also CONFORTABLE
-                    [dataValue] => 201        // Wert dieses Parameter (Hier der Enumwert für CONFORTABLE)
+                    [dataValueName] => CONFORTABLE // Beim Datentyp ENUM zusÃ¤tzliche Info zum Namen des Parameterwertes. Wert 201 entspricht also CONFORTABLE
+                    [dataValue] => 201        // Wert dieses Parameter (Hier der Enumwert fÃ¼r CONFORTABLE)
                  )
 
 
@@ -216,14 +216,14 @@ Array
 
 #############################################################################################################################################
 Funktion whichIsLastReceivedEvent
-Mit dieser Funktion kann man erfragen, welches der übergebenen Events das zuletzt empfangene und in der Datenbank gespeicherte Event eines Senders ist.
-Dadurch kann man z.b. rausfinden, ob das aktuelle Zustand eines Aktors gemäß Datenbank z.b. an oder aus sein müsste. (Siehe Beispiel)
+Mit dieser Funktion kann man erfragen, welches der Ã¼bergebenen Events das zuletzt empfangene und in der Datenbank gespeicherte Event eines Senders ist.
+Dadurch kann man z.b. rausfinden, ob das aktuelle Zustand eines Aktors gemÃ¤ÃŸ Datenbank z.b. an oder aus sein mÃ¼sste. (Siehe Beispiel)
 Es findet keine neue Kommunikation zum Teilnehmer statt, sondern der zuletzt empfangene Wert geliefert.
 
 $objectId        ObjectId des Senders
-$eventNames      Kommaseparierte Liste von Events von denen das jüngst empfangene gemeldet werden soll
+$eventNames      Kommaseparierte Liste von Events von denen das jÃ¼ngst empfangene gemeldet werden soll
 
-return	         Jüngstes Event aus übergebener Liste oder "" falls kein Event gespeichert ist
+return	         JÃ¼ngstes Event aus Ã¼bergebener Liste oder "" falls kein Event gespeichert ist
 
 function whichIsLastReceivedEvent($objectId, $eventNames);
 
@@ -241,9 +241,9 @@ function userJournal($message, $parameter)
 #############################################################################################################################################
 Funktion sendEmail
 Mit dieser Funktion kann man Emails aus den eigenen Skripten verschicken.
-ACHTUNG: Damit die Funktion Emails verschicken kann, muss zunächst ssmtp installiert werden. Siehe http://www.haus-bus.de/install.pdf
+ACHTUNG: Damit die Funktion Emails verschicken kann, muss zunÃ¤chst ssmtp installiert werden. Siehe http://www.haus-bus.de/install.pdf
 
-$receiver				Empfängeremailadresse
+$receiver				EmpfÃ¤ngeremailadresse
 $subject				Betreff der Email
 $message				Nachricht (Darf HTML sein)
 $from						Absenderemailadresse
@@ -269,7 +269,7 @@ Beispiel: getClassId(1948061779) liefert 16 = Klasse des Tasters (Siehe System -
 
 */
 
-// Nicht ändern. Wird vom Cronjob benötigt
+// Nicht Ã¤ndern. Wird vom Cronjob benÃ¶tigt
 if ($argv[1]=="cron")
 {
 	$_SERVER["DOCUMENT_ROOT"]="../";

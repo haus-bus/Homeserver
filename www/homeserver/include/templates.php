@@ -53,7 +53,7 @@ function removeTag($tag, &$html)
   return $html;
 }
 
-// Bei optionalen Teilen, kann man hiermit den Tag entfernen, wenn er gewählt werden soll
+// Bei optionalen Teilen, kann man hiermit den Tag entfernen, wenn er gewÃ¤hlt werden soll
 function chooseTag($tag, &$html)
 {
   $content=getTag($tag,$html);
@@ -63,7 +63,7 @@ function chooseTag($tag, &$html)
 
 function showErrorLink()
 {
-  showMessage("Fehler","Der gewählte Link ist ungültig. Sollte der Fehler dauerhaft bestehen, schicken Sie bitte eine Email an info@eventing-network.de","","");
+  showMessage("Fehler","Der gewÃ¤hlte Link ist ungÃ¼ltig. Sollte der Fehler dauerhaft bestehen, schicken Sie bitte eine Email an info@eventing-network.de","","");
 }
 
 ?>

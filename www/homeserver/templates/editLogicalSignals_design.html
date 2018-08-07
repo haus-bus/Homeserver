@@ -1,13 +1,13 @@
 Logische Signale bearbeiten
 <hr>
-Hier können Zustände ergänzt und Events zum aktivieren bzw. deaktivieren zugeordnet werden:
+Hier kÃ¶nnen ZustÃ¤nde ergÃ¤nzt und Events zum aktivieren bzw. deaktivieren zugeordnet werden:
 <br><br><br>
 <%STATES%>
-<b>Zustand %NR%</b> <a href="editLogicalSignals.php?action=removeState&groupId=%GROUP_ID%&nr=%NR%"><img src="img/removeSmall.gif" title="Zustand löschen" border="0"></a>
+<b>Zustand %NR%</b> <a href="editLogicalSignals.php?action=removeState&groupId=%GROUP_ID%&nr=%NR%"><img src="img/removeSmall.gif" title="Zustand lÃ¶schen" border="0"></a>
 <table class="basic">
 <tr>
 	<td valign=top align=right width=100><nobr>Aktivierung: <a href="editRules.php?action=addSignal&groupId=%GROUP_ID%&ruleId=%ACTIVE_RULE_ID%&logicalGroupMode=1"><img src="img/add.gif" title="Signal hinzuf&uuml;gen" border=0></a></td>
-  <td><nobr><%ACTIVE%><a href="editRules.php?action=removeSignal&groupId=%GROUP_ID%&ruleId=%RULE_ID%&signalId=%SIGNAL_ID%&logicalGroupMode=1"><img src="img/removeSmall.gif" border="0"></a> <a href="editRules.php?action=editSignalParams&groupId=%GROUP_ID%&ruleId=%RULE_ID%&ruleSignalId=%SIGNAL_ID%&featureFunctionId=%FEATURE_FUNCTION_ID%&logicalGroupMode=1">%SIGNAL_ROOM% » %SIGNAL_NAME% » %SIGNAL_FUNCTION%</a><br></%ACTIVE%> </td>
+  <td><nobr><%ACTIVE%><a href="editRules.php?action=removeSignal&groupId=%GROUP_ID%&ruleId=%RULE_ID%&signalId=%SIGNAL_ID%&logicalGroupMode=1"><img src="img/removeSmall.gif" border="0"></a> <a href="editRules.php?action=editSignalParams&groupId=%GROUP_ID%&ruleId=%RULE_ID%&ruleSignalId=%SIGNAL_ID%&featureFunctionId=%FEATURE_FUNCTION_ID%&logicalGroupMode=1">%SIGNAL_ROOM% Â» %SIGNAL_NAME% Â» %SIGNAL_FUNCTION%</a><br></%ACTIVE%> </td>
 </tr>
 <tr>
 	<td valign=top align=right width=100><nobr>Deaktivierung: <a href="editRules.php?action=addSignal&groupId=%GROUP_ID%&ruleId=%DEACTIVE_RULE_ID%&logicalGroupMode=1"><img src="img/add.gif" title="Signal hinzuf&uuml;gen" border=0></a></td>

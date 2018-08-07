@@ -64,7 +64,7 @@ function setupTreeAndContent($content = "")
   global $showGeneratedGroups;
   global $tree;
   
-  // Welcher Knoten soll geöffnet sein
+  // Welcher Knoten soll geÃ¶ffnet sein
   if ($lastOpen == "")
     $lastOpen = $_SESSION["lastOpened"];
   if ($isFolder == "")
@@ -85,24 +85,24 @@ function setupTreeAndContent($content = "")
     $free = readFreeDiskSpace();
     $html = str_replace("%PLATZ%", "Server: ".$free->prozent."% voll - ".$free->rest."MB frei", $html);
 
-    // Cache für FeatureInstances und deren Gruppe
+    // Cache fÃ¼r FeatureInstances und deren Gruppe
     unset($featureInstances);
-    $erg = MYSQL_QUERY("select 
+    $erg = QUERY("select 
     featureInstances.id,featureInstances.controllerId,featureInstances.featureClassesId,featureInstances.objectId,featureInstances.name,featureInstances.checked,featureInstances.parentInstanceId,
     groups.id as groupId
     from featureInstances 
     left join groupFeatures on (groupFeatures.featureInstanceId=featureInstances.id) 
     left join groups on (groupFeatures.groupId=groups.id)
-    where groups.single='1'") or die(MYSQL_ERROR());
-    while($obj=MYSQL_FETCH_OBJECT($erg))
+    where groups.single='1'");
+    while($obj=mysqli_fetch_OBJECT($erg))
     {
     	$featureInstances[$obj->id]=$obj;
     }
     
-    // Cache für FeatureClasses und deren Funktionstypen
+    // Cache fÃ¼r FeatureClasses und deren Funktionstypen
     unset($featureClassesOrderedByName);
     $erg = QUERY("select featureClasses.*,group_concat(distinct featureFunctions.type) as functionTypes from featureClasses left join featureFunctions on (featureFunctions.featureClassesId=featureClasses.id) group by featureClasses.id order by featureClasses.name");
-    while ($obj = MYSQL_FETCH_OBJECT($erg))
+    while ($obj = mysqli_fetch_OBJECT($erg))
     {
     	 $featureClassesOrderedByName[$obj->id]=$obj;
     }
@@ -114,7 +114,7 @@ function setupTreeAndContent($content = "")
                   join featureClasses ON ( featureClasses.id = featureInstances.featureClassesId)
                   where parentInstanceId>0 and featureClassesId!='$CONTROLLER_CLASSES_ID'
                   order by parentInstanceId,featureClasses.name, featureInstances.name");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
     	$featureInstanceObj = $featureInstances[$obj->featureInstanceId];
     	$parentInstanceId = $featureInstanceObj->parentInstanceId;
@@ -150,7 +150,7 @@ function setupTreeAndContent($content = "")
         $children[$parentInstanceId] .= addToTree("Basisregeln", 0, "editBaseConfig.php?groupId=$myGroup");
         $children[$parentInstanceId] .= addToTree("Zusatzregeln", 1, "editRules.php?groupId=$myGroup");
         $_SESSION["groupLinkNr" . $myGroup] = $treeElementCount;
-        $children[$parentInstanceId] .= addToTree("Zustände", 0, "editGroupStates.php?groupId=$myGroup");
+        $children[$parentInstanceId] .= addToTree("ZustÃ¤nde", 0, "editGroupStates.php?groupId=$myGroup");
         $children[$parentInstanceId] .= $closeTreeFolder;
       }
       
@@ -192,7 +192,7 @@ function setupTreeAndContent($content = "")
                         LEFT join featureClasses ON ( featureClasses.id = featureInstances.featureClassesId)
                         where parentInstanceId=0 and featureClassesId!='$CONTROLLER_CLASSES_ID'
                         order by controllerName, featureClasses.name, featureInstances.name");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
     	$featureInstanceObj = $featureInstances[$obj->featureInstanceId];
     	$featureClassesId = $featureInstanceObj->featureClassesId;
@@ -236,7 +236,7 @@ function setupTreeAndContent($content = "")
         $treeElements .= addToTree("Basisregeln", 0, "editBaseConfig.php?groupId=$myGroup");
         $treeElements .= addToTree("Zusatzregeln", 1, "editRules.php?groupId=$myGroup");
         $_SESSION["groupLinkNr" . $myGroup] = $treeElementCount;
-        $treeElements .= addToTree("Zustände", 0, "editGroupStates.php?groupId=$myGroup");
+        $treeElements .= addToTree("ZustÃ¤nde", 0, "editGroupStates.php?groupId=$myGroup");
         $treeElements .= $closeTreeFolder;
       }
 
@@ -263,7 +263,7 @@ function setupTreeAndContent($content = "")
 
     // Bootloader ?
     $erg = QUERY("select SQL_CACHE controller.id as controllerId,controller.name as controllerName,online from controller where bootloader='1' and online='1' order by controllerName");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       $treeElements .= addToTree($obj->controllerName, 0, "editController.php?id=$obj->controllerId", "", $obj->online);
       $nrControllers++;
@@ -274,10 +274,10 @@ function setupTreeAndContent($content = "")
     $treeElements = str_replace("%NR_CONTROLLERS%", $nrControllers, $treeElements);
     
     $treeElements .= addToTree("Webapplikation", 1);
-    $treeElements .= addToTree("Tabellarische Oberfläche", 0, "editWebPage.php");
-    $treeElements .= addToTree("Grafische Oberfläche", 1, "editButtonPage.php");
+    $treeElements .= addToTree("Tabellarische OberflÃ¤che", 0, "editWebPage.php");
+    $treeElements .= addToTree("Grafische OberflÃ¤che", 1, "editButtonPage.php");
     $erg = QUERY("select pos,name,id from webappPages order by pos,name");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       if ($obj->name=="") $obj->name="[leer]";
       $treeElements .= addToTree($obj->name, 0, "editButtonPage.php?pageId=" . $obj->id);
@@ -286,14 +286,30 @@ function setupTreeAndContent($content = "")
     
     $treeElements .= addToTree("Diagramme", 1, "editGraphs.php");
     $erg = QUERY("select id,title from graphs order by title");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       $treeElements .= addToTree($obj->title, 0, "editGraphs.php?id=" . $obj->id);
     }
     $treeElements .= $closeTreeFolder;
     $treeElements .= $closeTreeFolder;
+    
+    $erg = QUERY("select count(*) from plugins");
+    $row = mysqli_fetch_row($erg);
+    $pluginCount = $row[0];
+    if ($pluginCount==0) $treeElements .= addToTree("Plugins", 0, "editPlugin.php");
+    else
+    {
+    	$treeElements .= addToTree("Plugins", 1, "editPlugin.php");
+    	$erg = QUERY("select id, title,url from plugins order by title");
+      while ( $obj = mysqli_fetch_OBJECT($erg) )
+      {
+        if ($obj->title=="") $obj->title="[leer]";
+        $treeElements .= addToTree($obj->title, 0, $obj->url);
+      }
+      $treeElements .= $closeTreeFolder;
+    }
 
-    $treeElements .= addToTree("Regelübersicht", 1);
+    $treeElements .= addToTree("RegelÃ¼bersicht", 1);
     $treeElements .= addToTree("Alle Regeln nach Aktor anzeigen", 0, "showAllRules.php?byRoom=1");
     $treeElements .= addToTree("Alle Regeln nach Taster anzeigen", 0, "showAllRules.php?byRoom=1&bySensor=1");
     $treeElements .= addToTree("Alle Zeitsteuerungen", 0, "showAllRules.php?byRoom=1&withTime=1");
@@ -345,7 +361,7 @@ function setupTreeAndContent($content = "")
     $treeElements .= addToTree("Online Backup", 0, "editOnlineBackup.php");
     
     if ($ansicht=="Experte" || $ansicht=="Entwickler") $treeElements .= addToTree("Erstinbetriebnahme", 0, "firstInstall.php");
-    $treeElements .= addToTree("Alte Objekte löschen", 0, "deleteObjects.php");
+    $treeElements .= addToTree("Alte Objekte lÃ¶schen", 0, "deleteObjects.php");
     $treeElements .= addToTree("Wiederherstellung", 0, "recovery.php");
     $treeElements .= addToTree("Busdiagnose", 0, "i2cNetwork.php");
     
@@ -357,7 +373,7 @@ function setupTreeAndContent($content = "")
 
     $treeElements .= $closeTreeFolder;
     
-    $treeElements .= addToTree("Räume", 1, "editRoom.php");
+    $treeElements .= addToTree("RÃ¤ume", 1, "editRoom.php");
     $lastRoom = "";
     $erg = QUERY("select SQL_CACHE rooms.id as roomId, rooms.name as roomName,featureInstanceId
                                from rooms 
@@ -366,7 +382,7 @@ function setupTreeAndContent($content = "")
                                LEFT join featureClasses ON ( featureClasses.id = featureInstances.featureClassesId)
                                where (parentInstanceId=0 or parentInstanceId is null) and (featureClassesId!='$CONTROLLER_CLASSES_ID' or featureClassesId is null)
                                order by roomName,featureClasses.name, featureInstances.name");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
     	$featureInstanceObj = $featureInstances[$obj->featureInstanceId];
     	$featureClassesId = $featureInstanceObj->featureClassesId;
@@ -412,7 +428,7 @@ function setupTreeAndContent($content = "")
         $treeElements .= addToTree("Basisregeln", 0, "editBaseConfig.php?groupId=$myGroup");
         $treeElements .= addToTree("Zusatzregeln", 1, "editRules.php?groupId=$myGroup");
         $_SESSION["groupLinkNr" . $myGroup] = $treeElementCount;
-        $treeElements .= addToTree("Zustände", 0, "editGroupStates.php?groupId=$myGroup");
+        $treeElements .= addToTree("ZustÃ¤nde", 0, "editGroupStates.php?groupId=$myGroup");
         $treeElements .= $closeTreeFolder;
       }
       
@@ -431,12 +447,12 @@ function setupTreeAndContent($content = "")
     }
     if ($classAdded == 1) $treeElements .= $closeTreeFolder; // letzte class
     if ($lastRoom != "") $treeElements .= $closeTreeFolder; // letzter raum
-    $treeElements .= $closeTreeFolder; // räume ende
+    $treeElements .= $closeTreeFolder; // rÃ¤ume ende
 
     $treeElements .= addToTree("Gruppen", 1, "editGroup.php");
     
     $erg = QUERY("select id,name,subOf from groups where subOf>0 order by name");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       $subs[$obj->id] = $obj;
       $hasSub[$obj->subOf] = 1;
@@ -445,7 +461,7 @@ function setupTreeAndContent($content = "")
     if ($showGeneratedGroups == 0 && $viewMode != "Entwickler") $and = "and generated!='1'";
     
     $erg = QUERY("select id,name,groupType from groups where single!='1' and subOf='0' $and order by name");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       $treeElements .= addToTree($obj->name, 1, "editGroup.php?id=" . $obj->id);
       
@@ -454,7 +470,7 @@ function setupTreeAndContent($content = "")
         $treeElements .= addToTree("Basisregeln", 0, "editBaseConfig.php?groupId=" . $obj->id);
         $treeElements .= addToTree("Zusatzregeln", 1, "editRules.php?groupId=" . $obj->id);
         $_SESSION["groupLinkNr" . $obj->id] = $treeElementCount;
-        $treeElements .= addToTree("Zustände", 0, "editGroupStates.php?groupId=" . $obj->id);
+        $treeElements .= addToTree("ZustÃ¤nde", 0, "editGroupStates.php?groupId=" . $obj->id);
         $treeElements .= $closeTreeFolder;
         
         if ($hasSub[$obj->id] == 1)
@@ -467,7 +483,7 @@ function setupTreeAndContent($content = "")
               $treeElements .= addToTree("Basisregeln", 0, "editBaseConfig.php?groupId=" . $groupObj->id);
               $treeElements .= addToTree("Zusatzregeln", 1, "editRules.php?groupId=" . $groupObj->id);
               $_SESSION["groupLinkNr" . $groupObj->id] = $treeElementCount;
-              $treeElements .= addToTree("Zustände", 0, "editGroupStates.php?groupId=" . $groupObj->id);
+              $treeElements .= addToTree("ZustÃ¤nde", 0, "editGroupStates.php?groupId=" . $groupObj->id);
               $treeElements .= $closeTreeFolder;
               $treeElements .= $closeTreeFolder;
             }
@@ -511,7 +527,7 @@ function checkUniqueName($name)
   if ($usedNames[$name] == 1)
   {
     $rand = rand(0, 10000);
-    return checkUniqueName($name . "Bitte ändern" . $rand);
+    return checkUniqueName($name . "Bitte Ã¤ndern" . $rand);
   }
   return $name;
 }
@@ -531,7 +547,7 @@ function addToTree($label, $isFolder, $link = "", $target = "", $isControllerOnl
   if ($isControllerOnline == 1) $result .= "<img src='img/online2.gif' title='online'> ";
   else if ($isControllerOnline == 0) $result .= "<img src='img/offline2.gif' title='offline'> ";
   
-  if ($checked == 0) $result .= "<img src='img/removeSmall.gif' title='Zum Löschen markiert'> ";
+  if ($checked == 0) $result .= "<img src='img/removeSmall.gif' title='Zum LÃ¶schen markiert'> ";
   
   if ($link != "")
   {
@@ -557,7 +573,7 @@ function addToTree($label, $isFolder, $link = "", $target = "", $isControllerOnl
 function readViewMode()
 {
 	$erg = QUERY("select paramValue from basicconfig where paramKey='view' limit 1");
-  if ($row = MYSQL_FETCH_ROW($erg)) $ansicht = $row[0];
+  if ($row = mysqli_fetch_ROW($erg)) $ansicht = $row[0];
   else
   {
     QUERY("INSERT into basicconfig (paramKey,paramValue) values('view','Standard')");

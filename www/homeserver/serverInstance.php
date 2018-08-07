@@ -4,12 +4,12 @@ $PC_SERVER_DEVICE_ID=12222;
 require($_SERVER["DOCUMENT_ROOT"]."/homeserver/APcServer.php");
 
 $WETTER_OBJECT_ID = getObjectId($PC_SERVER_DEVICE_ID, getClassIdByName("Wetter"), 1);
-$POWER_OBJECT_ID = getObjectId($PC_SERVER_DEVICE_ID, getClassIdByName("StromzählServer"), 1);
+$POWER_OBJECT_ID = getObjectId($PC_SERVER_DEVICE_ID, getClassIdByName("StromzÃ¤hlServer"), 1);
 $setUnitGroupStateFunctionId = getObjectFunctionIdByName($SERVER_OBJECT_ID, "setUnitGroupState");
 $reloadUserPluginFunctionId = getObjectFunctionIdByName($EXECUTOR_OBJECT_ID, "reloadUserPlugin");
 $getWeatherFunctionId = getObjectFunctionIdByName($WETTER_OBJECT_ID, "getWeather");
 $schalterClassId = getClassIdByName("Schalter");
-readSonoffIds();
+//readSonoffIds();
 
 function initServer()
 {
@@ -29,8 +29,8 @@ function initServer()
 function readSonoffIds()
 {
 	global $sonoffs;
-	$erg = MYSQL_QUERY("select objectId from controller where firmwareId='5'") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+	$erg = QUERY("select objectId from controller where firmwareId='5'");
+  while($obj=mysqli_fetch_OBJECT($erg))
   {
 	  $sonoffs[getDeviceId($obj->objectId)]=1;
   }
@@ -71,7 +71,7 @@ function checkServerFunction($receiver, $sender, $functionData, $commandId=0)
   {
   	if ($functionData->functionId == $reloadUserPluginFunctionId) reloadUdpClientServer();
   }
-  else if ($sonoffs[$receiverDeviceId]==1) monitorSonoffCommands($receiver, $sender, $functionData, $commandId);
+  //else if ($sonoffs[$receiverDeviceId]==1) monitorSonoffCommands($receiver, $sender, $functionData, $commandId);
 }
 
 function monitorSonoffCommands($receiver, $sender, $functionData, $commandId)

@@ -10,7 +10,7 @@ if ($submitted==1)
 setupTreeAndContent("showView_design.html", $message);
 
 $erg = QUERY("select paramValue from basicconfig where paramKey='view' limit 1");
-if ($row=MYSQL_FETCH_ROW($erg)) $ansicht=$row[0];
+if ($row=mysqli_fetch_ROW($erg)) $ansicht=$row[0];
 else
 {
   QUERY("INSERT into basicconfig (paramKey,paramValue) values('view','Standard')");

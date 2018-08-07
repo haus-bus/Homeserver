@@ -1,12 +1,12 @@
 Google Kalender Integration *BETA*
 <hr>
-Mit der Google Kalender Integration kann das Bussystem komfortabel über Kalenderenträge gesteuert werden.<br>
-Regeln können Sie für das ganze Jahr um Vorraus geplant werden (Urlaub, Feiertage, usw).<br><br>
+Mit der Google Kalender Integration kann das Bussystem komfortabel Ã¼ber KalenderentrÃ¤ge gesteuert werden.<br>
+Regeln kÃ¶nnen Sie fÃ¼r das ganze Jahr um Vorraus geplant werden (Urlaub, Feiertage, usw).<br><br>
 
 <%OPT_NOT_INSTALLED%>
 <br><br><b>
 Die Google Calendar API ist bisher nicht installiert.<br>
-Für die Installation werden ca. 5.5MB  Speicherplatz benötigt.<br><br>
+FÃ¼r die Installation werden ca. 5.5MB  Speicherplatz benÃ¶tigt.<br><br>
 <a href="editGoogleCalendar.php?action=install"><u>Zum installieren der Google Calendar API hier klicken</a>
 </%OPT_NOT_INSTALLED%>
 <%OPT_INSTALLED%>
@@ -16,7 +16,7 @@ Neuen Kalender konfigurieren
 <hr>
 <form action="editGoogleCalendar.php" method="POST"><input type=hidden name="action" value="add">
 <table border=0>
-	<tr><td>Name:</td><td><input type=text name="calendarName" size=30 value="%CALENDAR_NAME%"> (frei wählbar)</td></tr>
+	<tr><td>Name:</td><td><input type=text name="calendarName" size=30 value="%CALENDAR_NAME%"> (frei wÃ¤hlbar)</td></tr>
 	<tr><td>Google Kalender-ID:</td><td><input type=text name="calendarId" size=60 value="%CALENDAR_ID%"></td></tr>
 	<tr><td></td><td><input type="submit" value="Eintragen"></td></tr>
 </table>
@@ -29,7 +29,7 @@ Konfigurierte Kalender
 <table cellspacing=5 cellpadding=5 border=0>
 <tr><td></td><td>Name</td><td>Kalender-ID</td></tr>
 <%CALENDAR%>
-<tr><td><nobr><a href="editGoogleCalendar.php?action=delete&id=%ID%">löschen</a></td><td><nobr>%NAME%</td><td><nobr>%ACT_CALENDAR_ID% (<a href="editGoogleCalendar.php?action=test&id=%ID%">testen</a>)</td></tr>
+<tr><td><nobr><a href="editGoogleCalendar.php?action=delete&id=%ID%">lÃ¶schen</a></td><td><nobr>%NAME%</td><td><nobr>%ACT_CALENDAR_ID% (<a href="editGoogleCalendar.php?action=test&id=%ID%">testen</a>)</td></tr>
 </%CALENDAR%>
 </table>
 </%OPT_INSTALLED%>
@@ -37,16 +37,16 @@ Konfigurierte Kalender
 <br><br><br>
 Anleitung<hr>
 <table>
-<tr><td valign=top><li></td><td>Zunächst legt man ein oder mehrere Kalender im Google Calendar Account an, mit denen das Bussystem gesteuert werden können soll.<br>Achtung: Der Kalender muss NICHT öffentlich sein.</td></tr>
-<tr><td valign=top><li></td><td>Anschließend muss der Zugriff durch das Bussystem auf den Kalender autorisiert werden.<br>
-Dazu in den Kalender gehen und oben auf das Symbol für Einstellungen klicken (Zahnrad) und ´Einstellungen´ wählen<br>
-Dann oben Reiter ´Kalender´ wählen und dann in Spalte Freigabe klicken auf ´Diesen Kalender freigeben´ bzw. ´Freigegeben: Einstellungen bearbeiten´ <br>
-Dann bei ´Für bestimmte Personen freigeben´ eintragen: <b>835303662489-6f3hjltkn8ahoe82rajcf9o9grbdh332@developer.gserviceaccount.com</b><br>
-Als Berechtigungseinstellung muss ´Alle Termindetails anzeigen´ ausgewählt sein.<br>
+<tr><td valign=top><li></td><td>ZunÃ¤chst legt man ein oder mehrere Kalender im Google Calendar Account an, mit denen das Bussystem gesteuert werden kÃ¶nnen soll.<br>Achtung: Der Kalender muss NICHT Ã¶ffentlich sein.</td></tr>
+<tr><td valign=top><li></td><td>AnschlieÃŸend muss der Zugriff durch das Bussystem auf den Kalender autorisiert werden.<br>
+Dazu in den Kalender gehen und oben auf das Symbol fÃ¼r Einstellungen klicken (Zahnrad) und Â´EinstellungenÂ´ wÃ¤hlen<br>
+Dann oben Reiter Â´KalenderÂ´ wÃ¤hlen und dann in Spalte Freigabe klicken auf Â´Diesen Kalender freigebenÂ´ bzw. Â´Freigegeben: Einstellungen bearbeitenÂ´ <br>
+Dann bei Â´FÃ¼r bestimmte Personen freigebenÂ´ eintragen: <b>835303662489-6f3hjltkn8ahoe82rajcf9o9grbdh332@developer.gserviceaccount.com</b><br>
+Als Berechtigungseinstellung muss Â´Alle Termindetails anzeigenÂ´ ausgewÃ¤hlt sein.<br>
 </td></tr>
 <tr><td valign=top><li></td><td>Zuletzt die Kalender ID auslesen<br>
-Dazu oben Reiter ´Kalenderdetails´ wählen. (Falls Seite nicht mehr offen, bitte einfach Punkt 2 wiederholen)<br>
+Dazu oben Reiter Â´KalenderdetailsÂ´ wÃ¤hlen. (Falls Seite nicht mehr offen, bitte einfach Punkt 2 wiederholen)<br>
 Unten findet man bei Kalenderadresse die Kalender-ID (Format xxxxx@group.calendar.google.com)<br>
-Diese ID oben eingeben, um den Kalender für das Bussystem verwenden zu können
+Diese ID oben eingeben, um den Kalender fÃ¼r das Bussystem verwenden zu kÃ¶nnen
 </td></tr>
 </table>

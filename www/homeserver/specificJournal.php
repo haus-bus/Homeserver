@@ -12,8 +12,8 @@ $start=time();
 while(time()-$start<$CONTROLLER_READ_TIMEOUT)
 {
 	sleepMs(100);
-  $erg = MYSQL_QUERY("select id,time,type,messageCounter,sender,receiver,function,params, senderSubscriberData,receiverSubscriberData  from udpCommandLog where id>'$minId' order by id") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select id,time,type,messageCounter,sender,receiver,function,params, senderSubscriberData,receiverSubscriberData  from udpCommandLog where id>'$minId' order by id");
+  while($obj=mysqli_fetch_OBJECT($erg))
   {
     $minId=$obj->id;
     $senderSubscriberData=unserialize($obj->senderSubscriberData);
@@ -28,8 +28,8 @@ while(time()-$start<$CONTROLLER_READ_TIMEOUT)
     $actTag = str_replace("%ID%",$obj->id,$actTag);
     $actTag = str_replace("%TIME%",date("d.m.y H:i:s",$obj->time),$actTag);
     
-    if ($obj->type=="FUNCTION" || $obj->type=="ACTION") $directionSenderReceiver="»";
-    else  $directionSenderReceiver="«";
+    if ($obj->type=="FUNCTION" || $obj->type=="ACTION") $directionSenderReceiver="Â»";
+    else  $directionSenderReceiver="Â«";
     
     $actTag = str_replace("%DIRECTION_SENDER_RECEIVER%",$directionSenderReceiver,$actTag);
     $actTag = str_replace("%TYP%",$obj->type,$actTag);

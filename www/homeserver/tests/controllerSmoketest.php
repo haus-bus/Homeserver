@@ -2,8 +2,8 @@
 include $_SERVER["DOCUMENT_ROOT"].'/homeserver/include/all.php';
 include 'smoketest.inc.php';
 
-$erg = MYSQL_QUERY("select id, objectId, name from controller where id='$featureInstanceId' limit 1") or die(MYSQL_ERROR());
-if ($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id, objectId, name from controller where id='$featureInstanceId' limit 1");
+if ($obj=MYSQLi_FETCH_OBJECT($erg))
 {
   echo "Smoketest - Controller - ".$obj->name." - ".getFormatedObjectId($obj->objectId)."<hr>";
   $receiverObjectId = $obj->objectId;
@@ -39,8 +39,8 @@ if ($test!="")
 
     sleep(2);
     
-    $erg = MYSQL_QUERY("select count(*) from udpcommandlog where id>'$lastId' and senderObj='$receiverObjectId' and function='pong'") or die(MYSQL_ERROR());
-    $row=MYSQL_FETCH_row($erg);
+    $erg = QUERY("select count(*) from udpcommandlog where id>'$lastId' and senderObj='$receiverObjectId' and function='pong'");
+    $row=MYSQLi_FETCH_row($erg);
     $receivedPongs = $row[0];
     
     if ($receivedPongs!=$nrPings) die("Fehler: Nur $receivedPongs von $nrPings empfangen");

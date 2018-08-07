@@ -9,15 +9,15 @@ if ($submitted == 1)
   $data["IP_2"] = 2;
   $data["IP_3"] = 200;
   
-  $erg = MYSQL_QUERY("select objectId from controller where id='$id' limit 1") or die(MYSQL_ERROR());
-  if ($row = MYSQL_FETCH_ROW($erg))
+  $erg = QUERY("select objectId from controller where id='$id' limit 1");
+  if ($row = mysqli_fetch_ROW($erg))
   {
     $oldObjectId = $row[0];
     $oldDeviceId = getDeviceId($oldObjectId);
     $data["deviceId"] = $oldDeviceId;
     
     $erg = QUERY("select functionData from lastReceived where function='Configuration' and senderObj='$oldObjectId' order by id desc limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = mysqli_fetch_ROW($erg))
     {
       $config = unserialize($row[0])->paramData;
       foreach ( $config as $obj )
@@ -30,8 +30,8 @@ if ($submitted == 1)
     die("Altern controller $id nicht gefunden");
   
   
-  $erg = MYSQL_QUERY("select objectId from controller where id='$newController' limit 1") or die(MYSQL_ERROR());
-  if ($row = MYSQL_FETCH_ROW($erg))
+  $erg = QUERY("select objectId from controller where id='$newController' limit 1");
+  if ($row = mysqli_fetch_ROW($erg))
   {
     $newObjectId = $row[0];
     
@@ -74,7 +74,7 @@ foreach ( $allController as $obj )
 
 $html = str_replace("%CONTROLLER_OPTIONS%", $options, $html);
 if ($objectId == "")
-  die("FEHLER! Ungültige ID $id");
+  die("FEHLER! UngÃ¼ltige ID $id");
 
 show();
 

@@ -6,8 +6,8 @@ $featureFunctionId=getClassesIdFunctionsIdByName($id, "setConfiguration");
 
 if ($submitted!="")
 {
-  $erg = MYSQL_QUERY("select id,name from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select id,name from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
+  while($obj=mysqli_fetch_OBJECT($erg))
   {
     if ($obj->type=="WEEKTIME")
     {
@@ -27,15 +27,15 @@ if ($submitted!="")
     }
   }
   
-  /*$erg = MYSQL_QUERY("select classId from featureClasses where id='$id' limit 1") or die(MYSQL_ERROR());
-  $row=MYSQL_FETCH_ROW($erg);
+  /*$erg = QUERY("select classId from featureClasses where id='$id' limit 1");
+  $row=mysqli_fetch_ROW($erg);
   $myClassId=$row[0];
   $broadCastWithClassId = getObjectId(0, $myClassId, 0);
   callInstanceMethodForObjectId($broadCastWithClassId, $featureFunctionId, $paramData);
   */
   
-  $erg = MYSQL_QUERY("select id, controllerId, objectId from featureInstances where featureClassesId='$id' order by name") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select id, controllerId, objectId from featureInstances where featureClassesId='$id' order by name");
+  while($obj=mysqli_fetch_OBJECT($erg))
   {
     if ($controllers[$obj->controllerId]->online!=1) continue;
     $actFeature = "instance".$obj->id;
@@ -45,15 +45,15 @@ if ($submitted!="")
     }
   }
 
-  $message="Konfiguration wurde durchgeführt";
+  $message="Konfiguration wurde durchgefÃ¼hrt";
 }
 
 setupTreeAndContent("globalConfig_design.html", $message);
 
 $html = str_replace("%ID%",$id, $html);
 
-$erg = MYSQL_QUERY("select name from featureClasses where id='$id' limit 1") or die(MYSQL_ERROR());
-if ($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select name from featureClasses where id='$id' limit 1");
+if ($obj=mysqli_fetch_OBJECT($erg))
 {
   $html = str_replace("%TITLE%","Feature ".$obj->name." global konfigurieren", $html);
 }
@@ -61,8 +61,8 @@ else die("FeatureClass $id nicht gefunden");
 
 $instanceTag = getTag("%INSTANCES%",$html);
 $instances="";
-$erg = MYSQL_QUERY("select id, controllerId, name from featureInstances where featureClassesId='$id' order by name") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id, controllerId, name from featureInstances where featureClassesId='$id' order by name");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
   $actTag = $instanceTag;
   if ($controllers[$obj->controllerId]->online!=1) continue;
@@ -86,8 +86,8 @@ else
   
   $paramTag = getTag("%PARAM%", $html);
   $params="";
-  $erg2 = MYSQL_QUERY("select id,name,type,comment from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id") or die(MYSQL_ERROR());
-  while($obj2=MYSQL_FETCH_OBJECT($erg2))
+  $erg2 = QUERY("select id,name,type,comment from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
+  while($obj2=mysqli_fetch_OBJECT($erg2))
   {
     $actTag = $paramTag;
     $actTag = str_replace("%PARAM_NAME%",$obj2->name,$actTag);

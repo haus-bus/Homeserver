@@ -9,11 +9,11 @@ generateGraphData();
 $start = time();
 
 $erg = QUERY("select * from graphs where id='$id' limit 1");
-if ($graphObj = MYSQL_FETCH_OBJECT($erg)) {}
+if ($graphObj = mysqli_fetch_OBJECT($erg)) {}
 else die("ID $id nicht gefunden");
 
 $erg = QUERY("select * from graphSignals where graphId='$id' order by id");
-while($obj=MYSQL_FETCH_OBJECT($erg))
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	 $signals[$obj->id]=$obj;
 }
@@ -41,7 +41,7 @@ else  if ($graphObj->distType=="d") $minDist = $graphObj->distValue*86400;
 
 $sql = "select signalId,time,value from graphData where graphId='$id' and $and order by id";
 $erg = QUERY($sql);
-while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+while ( $obj = mysqli_fetch_OBJECT($erg) )
 {
 	if ($lastTime[$obj->signalId]=="") $lastTime[$obj->signalId]=0;
 	if ($lastTime[$obj->signalId] > 0 && $minDist > 0 && ($obj->time-$lastTime[$obj->signalId]) < $minDist ) continue;

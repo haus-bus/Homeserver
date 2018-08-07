@@ -1,8 +1,8 @@
 <?php
 include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 
-MYSQL_QUERY("TRUNCATE table udpCommandLogImport") or die(MYSQL_ERROR());
-MYSQL_QUERY("TRUNCATE table udpDataLogImport") or die(MYSQL_ERROR());
+QUERY("TRUNCATE table udpCommandLogImport");
+QUERY("TRUNCATE table udpDataLogImport");
 
 $file = $_FILES['inputFile']['tmp_name'];
 $file=file_get_contents($file);
@@ -10,16 +10,16 @@ $commandPars = explode("XYZ",$file);
 foreach($commandPars as $obj)
 {
 	 $obj = unserialize($obj);
-	 $obj->sender=mysql_real_escape_string($obj->sender);
-	 $obj->receiver=mysql_real_escape_string($obj->receiver);
-	 $obj->functionData=mysql_real_escape_string($obj->functionData);
-	 $obj->senderSubscriberData=mysql_real_escape_string($obj->senderSubscriberData);
-	 $obj->receiverSubscriberData=mysql_real_escape_string($obj->receiverSubscriberData);
+	 $obj->sender=query_real_escape_string($obj->sender);
+	 $obj->receiver=query_real_escape_string($obj->receiver);
+	 $obj->functionData=query_real_escape_string($obj->functionData);
+	 $obj->senderSubscriberData=query_real_escape_string($obj->senderSubscriberData);
+	 $obj->receiverSubscriberData=query_real_escape_string($obj->receiverSubscriberData);
 	 
-	 MYSQL_QUERY("INSERT into udpCommandLogImport (time,type,messageCounter,sender,receiver,function,params,functionData,senderSubscriberData,receiverSubscriberData,udpDataLogId,senderObj,fktId)
-	                               values ('$obj->time','$obj->type','$obj->messageCounter','$obj->sender','$obj->receiver','$obj->function','$obj->params','$obj->functionData','$obj->senderSubscriberData','$obj->receiverSubscriberData','$obj->udpDataLogId','$obj->senderObj','$obj->fktId')") or die(MYSQL_ERROR());
+	 QUERY("INSERT into udpCommandLogImport (time,type,messageCounter,sender,receiver,function,params,functionData,senderSubscriberData,receiverSubscriberData,udpDataLogId,senderObj,fktId)
+	                               values ('$obj->time','$obj->type','$obj->messageCounter','$obj->sender','$obj->receiver','$obj->function','$obj->params','$obj->functionData','$obj->senderSubscriberData','$obj->receiverSubscriberData','$obj->udpDataLogId','$obj->senderObj','$obj->fktId')");
 
-   MYSQL_QUERY("INSERT into udpdatalogimport (id, time, data) values('$obj->udpDataLogId','$obj->time','$obj->data')") or die(MYSQL_ERROR());
+   QUERY("INSERT into udpdatalogimport (id, time, data) values('$obj->udpDataLogId','$obj->time','$obj->data')");
 }
 
 
@@ -29,8 +29,8 @@ $entryTag=getTag("%ENTRY%",$html);
 $entries="";
 $c=0;
 
-$erg = MYSQL_QUERY("select id,time,type,messageCounter,sender,receiver,function,params from udpCommandLogImport order by id limit 5000") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id,time,type,messageCounter,sender,receiver,function,params from udpCommandLogImport order by id limit 5000");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
   $c++;
   $actTag = $entryTag;

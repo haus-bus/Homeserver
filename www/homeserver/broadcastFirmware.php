@@ -19,8 +19,8 @@ if ($submitted!="")
   show(0);
   
   $blockSize=0;
-  $erg = MYSQL_QUERY("select id, objectId,name,size from controller order by name") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select id, objectId,name,size from controller order by name");
+  while($obj=mysqli_fetch_OBJECT($erg))
   {
     if ($controllers[$obj->id]->online!=1) continue;
     if ($obj->size=="999") continue;
@@ -94,7 +94,7 @@ if ($submitted!="")
           }
        }
        closedir($handle);
-     	 if ($newestFirmware=="") die("Fehler: Keine Datei gewählt und keine Defaultfirmware vorhanden -> $neededFirmware");
+     	 if ($newestFirmware=="") die("Fehler: Keine Datei gewÃ¤hlt und keine Defaultfirmware vorhanden -> $neededFirmware");
        
        $fwfile = "../firmware/".$newestFirmware;
        $show = $newestFirmware;
@@ -110,8 +110,8 @@ if ($submitted!="")
   liveOut('');
   liveOut("<b>Firmware Update ...($show)</b>");
   $fileSize = filesize($fwfile);
-  liveOut("Dateigröße: $fileSize Bytes");
-  liveOut("Daten Blockgröße: ".$blockSize." Bytes");
+  liveOut("DateigrÃ¶ÃŸe: $fileSize Bytes");
+  liveOut("Daten BlockgrÃ¶ÃŸe: ".$blockSize." Bytes");
   liveOut('');
   liveOut("<div id=\"status\">Updatestatus: 0/$fileSize Bytes - 0%</div>",0);
 
@@ -153,7 +153,7 @@ if ($submitted!="")
    }
    fclose($fd);
 
-   liveOut("Übertragung erfolgreich beendet");
+   liveOut("Ãœbertragung erfolgreich beendet");
    liveOut("");
    liveOut("<b>Starte Controller neu...</b>");
    
@@ -174,8 +174,8 @@ $ms6Tag = getTag("%TASTER_INSTANCES%",$html);
 $sd6Tag = getTag("%TASTER_SD6_INSTANCES%",$html);
 
 $instances="";
-$erg = MYSQL_QUERY("select id, name from controller where firmwareId=1 order by name") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id, name from controller where firmwareId=1 order by name");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
   $actTag = $ar8Tag;
   if ($controllers[$obj->id]->online!=1) continue;
@@ -186,8 +186,8 @@ while($obj=MYSQL_FETCH_OBJECT($erg))
 $html = str_replace("%INSTANCES%", $instances, $html);
 
 $instances="";
-$erg = MYSQL_QUERY("select id, name from controller where firmwareId=2 order by name") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id, name from controller where firmwareId=2 order by name");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
   $actTag = $ms6Tag;
   if ($controllers[$obj->id]->online!=1) continue;
@@ -198,8 +198,8 @@ while($obj=MYSQL_FETCH_OBJECT($erg))
 $html = str_replace("%TASTER_INSTANCES%", $instances, $html);
 
 $instances="";
-$erg = MYSQL_QUERY("select id, name from controller where firmwareId=3 order by name") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id, name from controller where firmwareId=3 order by name");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
   $actTag = $sd6Tag;
   if ($controllers[$obj->id]->online!=1) continue;

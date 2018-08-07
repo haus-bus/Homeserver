@@ -12,8 +12,8 @@ if ($action=="generateDeviceIds")
      $ok=1;
      $nrController=0;
      $myFunctionId = getObjectFunctionIdByName($BROADCAST_OBJECT_ID, "Configuration");
-     $erg = MYSQL_QUERY("select functionData,senderSubscriberData from udpCommandLog where type='RESULT' and id>'$lastLogId'") or die(MYSQL_ERROR());
-     while($obj=MYSQL_FETCH_OBJECT($erg))
+     $erg = QUERY("select functionData,senderSubscriberData from udpCommandLog where type='RESULT' and id>'$lastLogId'");
+     while($obj=mysqli_fetch_OBJECT($erg))
      {
         $functionData = unserialize($obj->functionData);
         if ($functionData->functionId==$myFunctionId)
@@ -30,7 +30,7 @@ if ($action=="generateDeviceIds")
      updateControllerStatus();
      if ($ok==1) $message="DeviceIDs erfolgreich neu vergeben. Anzahl erkannter Controller: ".$nrController."<br><br>";
   }
-  else showMessage("Nachdem die Controller Device IDs neu vergeben wurden, müssen die Controller, Features und Regeln neu zugeordnet werden.<br>Die Aktion kann nicht rückgängig gemacht werden !","Achtung!","firstInstall.php?action=generateDeviceIds&confirm=1","Ja, IDs neu vergeben","firstInstall.php","Abbruch");
+  else showMessage("Nachdem die Controller Device IDs neu vergeben wurden, mÃ¼ssen die Controller, Features und Regeln neu zugeordnet werden.<br>Die Aktion kann nicht rÃ¼ckgÃ¤ngig gemacht werden !","Achtung!","firstInstall.php?action=generateDeviceIds&confirm=1","Ja, IDs neu vergeben","firstInstall.php","Abbruch");
 }
 
 setupTreeAndContent("firstInstall_design.html", $message);
@@ -39,8 +39,8 @@ if ($exit==1) show();
 $statusOk=1;
 $someOffline=0;
 $lastDeviceId="";
-$erg = MYSQL_QUERY("select objectId,online from controller where bootloader!='1' order by objectId") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select objectId,online from controller where bootloader!='1' order by objectId");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
    $obj->objectId = $obj->objectId;
    if ($obj->online==0) $someOffline=1;

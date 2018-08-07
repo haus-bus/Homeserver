@@ -3,7 +3,7 @@ include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 
 if ($submitted!="")
 {
-   MYSQL_QUERY("UPDATE featureinstances set checked='0'") or die(MYSQL_ERROR());
+   QUERY("UPDATE featureinstances set checked='0'");
    updateControllerStatus();
    sleep($CONTROLLER_READ_TIMEOUT);
    $message="Controllerstatus wurde aktualisiert"; 
@@ -15,7 +15,7 @@ else if ($broadcastSetTime==1)
 {
 	$data["weekTime"]=toWeekTime(date("N")-1,date("H"),date("i"));
 	callObjectMethodByName($BROADCAST_OBJECT_ID, "setTime", $data);
-	$message="Zeit wurde gem‰ﬂ Serverzeit gestellt";
+	$message="Zeit wurde gem√§√ü Serverzeit gestellt";
 }
 
 setupTreeAndContent("controller_design.html", $message);

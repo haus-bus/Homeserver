@@ -6,7 +6,7 @@ $id = str_replace('"',"",$id);
 $id=trim($id);
 
 $erg=QUERY("select paramValue from ruleActionParams where id='$id' limit 1");
-$row=MYSQL_FETCH_ROW($erg);
+$row=mysqli_fetch_ROW($erg);
 $command=$row[0];
 $command = fillVariables($command);
 echo "<pre>";
@@ -27,7 +27,7 @@ function fillVariables($command)
 	 	  if ($pos2===FALSE) $pos2=strlen($command);
 	 	  $name = substr($command,$pos+1,$pos2-$pos-1);
       $erg=QUERY("select value from serverVariables where name='$name' limit 1");
-      if ($row=MYSQL_FETCH_ROW($erg))
+      if ($row=mysqli_fetch_ROW($erg))
    	  {
    	  	 if (strpos($command,"nircmdc")!==FALSE && $row[0]==1) $row[0]=65536;
    	  	 
@@ -35,7 +35,7 @@ function fillVariables($command)
    	  }
    	  else
    	  {
-   	  	traceToJournal("Variable $name nicht gefunden für Befehl: $command","evError");
+   	  	traceToJournal("Variable $name nicht gefunden fÃ¼r Befehl: $command","evError");
    	  	$command = str_replace('$'.$name,"0",$command);
    	  }
 	 }
@@ -49,9 +49,9 @@ function traceToJournal($message, $functionStr="")
 	  $messageCounter="0";
 	  $senderSubscriberDataDebugStr="PC-Executor";
 	  $receiverSubscriberDataDebugStr="PC-Executor";
-	  $paramsStr=mysql_real_escape_string($message);
+	  $paramsStr=query_real_escape_string($message);
 	  
-	  MYSQL_QUERY("INSERT into udpCommandLog (time, type, messageCounter,  sender,  receiver,  function,  params, functionData, senderSubscriberData,  receiverSubscriberData, udpDataLogId,senderObj,fktId) 
-        values('$time','$messageType','$messageCounter','$senderSubscriberDataDebugStr','$receiverSubscriberDataDebugStr','$functionStr','$paramsStr','$functionData', '$senderSubscriberData','$receiverSubscriberData','$udpDataLogId','$senderObj','$fktId')") or die(MYSQL_ERROR());
+	  QUERY("INSERT into udpCommandLog (time, type, messageCounter,  sender,  receiver,  function,  params, functionData, senderSubscriberData,  receiverSubscriberData, udpDataLogId,senderObj,fktId) 
+        values('$time','$messageType','$messageCounter','$senderSubscriberDataDebugStr','$receiverSubscriberDataDebugStr','$functionStr','$paramsStr','$functionData', '$senderSubscriberData','$receiverSubscriberData','$udpDataLogId','$senderObj','$fktId')");
 }
 ?>

@@ -1,9 +1,8 @@
 <?php
 include ($_SERVER ["DOCUMENT_ROOT"] . "/homeserver/include/all.php");
-header ( 'Content-Encoding: none; ' ); // disable apache compressed
+//header ( 'Content-Encoding: none; ' ); // disable apache compressed
 
-if ($action == "recoverDb")
-  recoverDb ();
+if ($action == "recoverDb") recoverDb();
   
 if ($forward==1)
 {
@@ -69,8 +68,8 @@ if ($proceed == 1)
     
     if (file_exists("my.cnf")) $dbConfigUpdate=1;
     
-    $erg = MYSQL_QUERY("select id from featureInstances where objectId='800981249' limit 1") or die(MYSQL_ERROR());
-    if ($obj=MYSQL_FETCH_OBJECT($erg)) callObjectMethodByName ( 800981249, "quit", "" );
+    $erg = QUERY("select id from featureInstances where objectId='800981249' limit 1");
+    if ($obj=MYSQLi_FETCH_OBJECT($erg)) callObjectMethodByName ( 800981249, "quit", "" );
     else echo "WARNUNG: Der Raspberry wurde noch nicht im System gefunden, vor dem Einspielen eines Backups muss der Controllerstatus aktualisiert und der Raspberry neu gestartet werden! <br>";
     
     if ($dbConfigUpdate==1) echo "<li> Konfiguration der Datenbank wird aktualisiert";
@@ -85,12 +84,12 @@ if ($proceed == 1)
     ob_start ();
     
     $firmwareIdFunctionId = getObjectFunctionsIdByName ( $BROADCAST_OBJECT_ID, "ModuleId" );
-    $erg = MYSQL_QUERY ( "select id from featureFunctionParams where featureFunctionId='$firmwareIdFunctionId' and name='firmwareId' limit 1" ) or die ( MYSQL_ERROR () );
-    if ($row = MYSQL_FETCH_ROW ( $erg ))
+    $erg = QUERY ( "select id from featureFunctionParams where featureFunctionId='$firmwareIdFunctionId' and name='firmwareId' limit 1" );
+    if ($row = MYSQLi_FETCH_ROW ( $erg ))
     {
       $paramId = $row [0];
-      $erg = MYSQL_QUERY ( "select name from featureFunctionEnums where paramId='$paramId' and value='$firmwareId' limit 1" ) or die ( MYSQL_ERROR () );
-      if ($row = MYSQL_FETCH_ROW ( $erg )) $firmwareName = $row [0];
+      $erg = QUERY ( "select name from featureFunctionEnums where paramId='$paramId' and value='$firmwareId' limit 1" );
+      if ($row = MYSQLi_FETCH_ROW ( $erg )) $firmwareName = $row [0];
       else die ( "Fehler paramId $paramId und firmwareId $firmwareId nicht gefunden" );
     } else die ( "Fehler featureFunctionId $firmwareIdFunctionId nicht gefunden" );
     
@@ -103,8 +102,8 @@ if ($proceed == 1)
           recoverDb ();
       }
       
-      $erg = MYSQL_QUERY ( "select objectId,id,majorRelease, minorRelease,firmwareId,name from controller where id>'$actUpdateId' and size != '999' and online='1' and firmwareId='$firmwareId' order by id limit 1" ) or die ( MYSQL_ERROR () );
-      if ($obj = MYSQL_FETCH_OBJECT ( $erg ))
+      $erg = QUERY ( "select objectId,id,majorRelease, minorRelease,firmwareId,name from controller where id>'$actUpdateId' and size != '999' and online='1' and firmwareId='$firmwareId' order by id limit 1" );
+      if ($obj = MYSQLi_FETCH_OBJECT ( $erg ))
       {
         $objectId = $obj->objectId;
         $actUpdateId = $obj->id;
@@ -226,14 +225,13 @@ if ($proceed == 1)
             exit ();
           }
           $ready += strlen ( $buffer );
-          if ($round % 5 == 0 || ($fileSize - $ready < 1500))
-            statusOut ( $ready, $fileSize, $blockSize );
+          if ($round % 5 == 0 || ($fileSize - $ready < 1500)) statusOut ( $ready, $fileSize, $blockSize );
           
           $round ++;
           $i ++;
           flushIt ();
           
-          sleepMS(10000); //TODO warum hilft das ?
+          sleepMS(5); //TODO warum hilft das ?
         }
         fclose ( $fd );
         
@@ -243,8 +241,8 @@ if ($proceed == 1)
         if ($verify == 1)
         {
           liveOut ( "<b>Firmware wird verifiziert...</b>" );
-          $erg = MYSQL_QUERY ( "select functionData,receiverSubscriberData from udpCommandLog where function='writeMemory' and id>'$firstWriteId' order by id" ) or die ( MYSQL_ERROR () );
-          while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+          $erg = QUERY ( "select functionData,receiverSubscriberData from udpCommandLog where function='writeMemory' and id>'$firstWriteId' order by id" );
+          while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
           {
             if (unserialize ( $row [1] )->objectId != $objectId)
               continue;
@@ -296,7 +294,7 @@ if ($proceed == 1)
         if ($isBooter != 1)
         {
            $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $BOOTLOADER_INSTANCE_ID );
-           MYSQL_QUERY("update controller set online='0' where objectId='$receiverObjectId' limit 1") or die(MYSQL_ERROR());
+           QUERY("update controller set online='0' where objectId='$receiverObjectId' limit 1");
         }
         
         liveOut ( "Firmwareupdate erfolgreich beendet." );
@@ -334,12 +332,12 @@ if ($proceed == 1)
   } else if ($action == "updateBooter")
   {
     $firmwareIdFunctionId = getObjectFunctionsIdByName ( $BROADCAST_OBJECT_ID, "ModuleId" );
-    $erg = MYSQL_QUERY ( "select id from featureFunctionParams where featureFunctionId='$firmwareIdFunctionId' and name='firmwareId' limit 1" ) or die ( MYSQL_ERROR () );
-    if ($row = MYSQL_FETCH_ROW ( $erg ))
+    $erg = QUERY ( "select id from featureFunctionParams where featureFunctionId='$firmwareIdFunctionId' and name='firmwareId' limit 1" );
+    if ($row = MYSQLi_FETCH_ROW ( $erg ))
     {
       $paramId = $row [0];
-      $erg = MYSQL_QUERY ( "select name from featureFunctionEnums where paramId='$paramId' and value='$firmwareId' limit 1" ) or die ( MYSQL_ERROR () );
-      if ($row = MYSQL_FETCH_ROW ( $erg )) $firmwareName = $row [0] . "_BOOTER";
+      $erg = QUERY ( "select name from featureFunctionEnums where paramId='$paramId' and value='$firmwareId' limit 1" );
+      if ($row = MYSQLi_FETCH_ROW ( $erg )) $firmwareName = $row [0] . "_BOOTER";
       else die ( "Fehler paramId $paramId und firmwareId $firmwareId nicht gefunden" );
     } else die ( "Fehler featureFunctionId $firmwareIdFunctionId nicht gefunden" );
     
@@ -352,8 +350,8 @@ if ($proceed == 1)
       if (isset($_SESSION["controllerWithEthernetSkipp"]))
       {
       	$andSkip = $_SESSION["controllerWithEthernetSkipp"];
-        $erg = MYSQL_QUERY ( "select objectId,id,booterMajor, booterMinor,firmwareId,name from controller where id>'$actUpdateId' and size != '999' and online='1' and firmwareId='$firmwareId' $andSkip  order by id limit 1" ) or die ( MYSQL_ERROR () );
-        if ($obj = MYSQL_FETCH_OBJECT ( $erg )){}
+        $erg = QUERY ( "select objectId,id,booterMajor, booterMinor,firmwareId,name from controller where id>'$actUpdateId' and size != '999' and online='1' and firmwareId='$firmwareId' $andSkip  order by id limit 1" );
+        if ($obj = MYSQLi_FETCH_OBJECT ( $erg )){}
         else
         {
         	unset($_SESSION["controllerWithEthernetSkipp"]);
@@ -367,8 +365,8 @@ if ($proceed == 1)
 
       echo "select objectId,id,booterMajor, booterMinor,firmwareId,name from controller where id>'$actUpdateId' and size != '999' and online='1' and firmwareId='$firmwareId' $andSkip $andDone  order by id limit 1 <br>";
       
-      $erg = MYSQL_QUERY ( "select objectId,id,booterMajor, booterMinor,firmwareId,name from controller where id>'$actUpdateId' and size != '999' and online='1' and firmwareId='$firmwareId' $andSkip $andDone  order by id limit 1" ) or die ( MYSQL_ERROR () );
-      if ($obj = MYSQL_FETCH_OBJECT ( $erg ))
+      $erg = QUERY ( "select objectId,id,booterMajor, booterMinor,firmwareId,name from controller where id>'$actUpdateId' and size != '999' and online='1' and firmwareId='$firmwareId' $andSkip $andDone  order by id limit 1" );
+      if ($obj = MYSQLi_FETCH_OBJECT ( $erg ))
       {
         $objectId = $obj->objectId;
         $actUpdateId = $obj->id;
@@ -518,8 +516,8 @@ if ($proceed == 1)
         if ($verify == 1)
         {
           liveOut ( "<b>Booter wird verifiziert...</b>" );
-          $erg = MYSQL_QUERY ( "select functionData,receiverSubscriberData from udpCommandLog where function='writeMemory' and id>'$firstWriteId' order by id" ) or die ( MYSQL_ERROR () );
-          while ( $row = MYSQL_FETCH_ROW ( $erg ) )
+          $erg = QUERY ( "select functionData,receiverSubscriberData from udpCommandLog where function='writeMemory' and id>'$firstWriteId' order by id" );
+          while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
           {
             if (unserialize ( $row [1] )->objectId != $objectId)
               continue;
@@ -568,7 +566,7 @@ if ($proceed == 1)
         
         // Anschließend nehmen wir die normale Firmware offline, damit die nicht nochmal geladen wird
         $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $FIRMWARE_INSTANCE_ID);
-        MYSQL_QUERY("update controller set online='0' where objectId='$receiverObjectId' limit 1") or die(MYSQL_ERROR());
+        QUERY("update controller set online='0' where objectId='$receiverObjectId' limit 1");
         
         liveOut ( "Booterupdate erfolgreich beendet." );
         //updateControllerStatus (1);
@@ -599,8 +597,8 @@ if ($proceed == 1)
 
     $andSkipped="";    
     $andAfterSkip="";
-   	$erg = MYSQL_QUERY("select controller.id from controller left join featureInstances on (featureInstances.controllerId=controller.id) where featureClassesId=21") or die(MYSQL_ERROR());
-  	while($obj=MYSQL_FETCH_OBJECT($erg))
+   	$erg = QUERY("select controller.id from controller left join featureInstances on (featureInstances.controllerId=controller.id) where featureClassesId=21");
+  	while($obj=MYSQLi_FETCH_OBJECT($erg))
   	{
   		 $andSkipped.="and controller.id!='$obj->id' ";
   		 $andAfterSkip.="or controller.id='$obj->id' ";
@@ -618,8 +616,8 @@ if ($proceed == 1)
     	 $biggestMainBooterMajor="";
     	 $biggestMainBooterMinor="";
     	 $biggestMainBooterModul="";
-       $erg = MYSQL_QUERY("select name,firmwareId,majorRelease,minorRelease,booterMajor,booterMinor,online from controller where not (bootloader=1 and online!=1) and firmwareId='1'") or die(MYSQL_ERROR());
-       while($obj=MYSQL_FETCH_OBJECT($erg))
+       $erg = QUERY("select name,firmwareId,majorRelease,minorRelease,booterMajor,booterMinor,online from controller where not (bootloader=1 and online!=1) and firmwareId='1'");
+       while($obj=MYSQLi_FETCH_OBJECT($erg))
        {
        	  if ($biggestMainBooterMajor=="" || $obj->booterMajor>$biggestMainBooterMajor || ($obj->booterMajor==$biggestMainBooterMajor && $obj->booterMinor>$biggestMainBooterMinor))
        	  {
@@ -631,8 +629,8 @@ if ($proceed == 1)
        
        if ($biggestMainBooterMajor!="")
        {
-         $erg = MYSQL_QUERY("select name,firmwareId,majorRelease,minorRelease,booterMajor,booterMinor,online from controller where not (bootloader=1 and online!=1) and firmwareId!=1 and firmwareId!=5") or die(MYSQL_ERROR());
-         while($obj=MYSQL_FETCH_OBJECT($erg))
+         $erg = QUERY("select name,firmwareId,majorRelease,minorRelease,booterMajor,booterMinor,online from controller where not (bootloader=1 and online!=1) and firmwareId!=1 and firmwareId!=5");
+         while($obj=MYSQLi_FETCH_OBJECT($erg))
          {
        	   if ($obj->booterMajor<$biggestMainBooterMajor || ($obj->booterMajor==$biggestMainBooterMajor && $obj->booterMinor<=$biggestMainBooterMinor))
        	   {
@@ -659,8 +657,8 @@ if ($proceed == 1)
     {
       if ($actUpdateId == "") $actUpdateId = 0;
       
-      $erg = MYSQL_QUERY ( "select objectId,id,majorRelease, minorRelease,firmwareId,name from controller where id>'$actUpdateId'  and online='1' and firmwareId='$firmwareId' order by id limit 1" ) or die ( MYSQL_ERROR () );
-      if ($obj = MYSQL_FETCH_OBJECT ( $erg ))
+      $erg = QUERY ( "select objectId,id,majorRelease, minorRelease,firmwareId,name from controller where id>'$actUpdateId'  and online='1' and firmwareId='$firmwareId' order by id limit 1" );
+      if ($obj = MYSQLi_FETCH_OBJECT ( $erg ))
       {
         $objectId = $obj->objectId;
         $actUpdateId = $obj->id;
@@ -873,7 +871,7 @@ function dbUpdate($dbUpdate, $table)
   {
     $sql = "TRUNCATE table $table";
     //echo $sql."<br>";
-    MYSQL_QUERY ( $sql ) or die ( MYSQL_ERROR () );
+    QUERY ( $sql );
 
     $errorCount=0;
     while($pos !== FALSE && $errorCounter<50)
@@ -883,7 +881,7 @@ function dbUpdate($dbUpdate, $table)
       $pos2 = strpos ( $dbUpdate, ";", $pos );
       $sql = trim ( substr ( $dbUpdate, $pos, $pos2 - $pos ) );
       //echo $sql."<br>";
-      MYSQL_QUERY ( $sql ) or die ( MYSQL_ERROR () );
+      QUERY ( $sql );
       
       $pos = strpos ( $dbUpdate, "INSERT INTO `$table`",$pos+10);
     }

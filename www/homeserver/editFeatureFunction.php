@@ -11,19 +11,19 @@ if ($submitted!="")
   }
   else
   {
-    if (($type=="RESULT" || $type=="EVENT") && $functionId<100) $message="FEHLER! Funktionsids für Events und Results müssen >= 100 sein";
+    if (($type=="RESULT" || $type=="EVENT") && $functionId<100) $message="FEHLER! Funktionsids fÃ¼r Events und Results mÃ¼ssen >= 100 sein";
     else
     {
       $name=trim($name);
       if($id=="")
       {
       	$wasNew=1;
-        MYSQL_QUERY("INSERT into featureFunctions (featureClassesId,type,name,functionId,view) values('$featureClassesId','$type', '$name','$functionId','$view')") or die(MYSQL_ERROR());
-        $id = mysql_insert_id();
+        QUERY("INSERT into featureFunctions (featureClassesId,type,name,functionId,view) values('$featureClassesId','$type', '$name','$functionId','$view')");
+        $id = query_insert_id();
       }
       else
       {
-        MYSQL_QUERY("UPDATE featureFunctions set type='$type',name='$name',functionId='$functionId',view='$view' where id='$id' limit 1") or die(MYSQL_ERROR());
+        QUERY("UPDATE featureFunctions set type='$type',name='$name',functionId='$functionId',view='$view' where id='$id' limit 1");
       }
        
       $parts = explode(",",$paramIds);
@@ -38,17 +38,17 @@ if ($submitted!="")
         $view = "view$actId";
         $view=$$view;
          
-        $erg = MYSQL_QUERY("select id from featureFunctionParams where id='$actId' limit 1") or die(MYSQL_ERROR());
-        if ($row=MYSQL_FETCH_ROW($erg))
+        $erg = QUERY("select id from featureFunctionParams where id='$actId' limit 1");
+        if ($row=mysqli_fetch_ROW($erg))
         {
         	if ($name=="")
         	{
         		if ($wasNew!=1) deleteFeatureFunctionParam($actId);
         	}
-        	else MYSQL_QUERY("UPDATE featureFunctionParams set name='$name',type='$type', comment='$comment',view='$view' where id='$actId' limit 1") or die(MYSQL_ERROR());
+        	else QUERY("UPDATE featureFunctionParams set name='$name',type='$type', comment='$comment',view='$view' where id='$actId' limit 1");
         }
         else if ($name!="")
-        	MYSQL_QUERY("INSERT into featureFunctionParams (featureFunctionId, name, type, comment,view) values('$id','$name','$type', '$comment','$view')") or die(MYSQL_ERROR());
+        	QUERY("INSERT into featureFunctionParams (featureFunctionId, name, type, comment,view) values('$id','$name','$type', '$comment','$view')");
 
         if ($name!="")
         {
@@ -64,8 +64,8 @@ if ($submitted!="")
               $paramEnumValue="paramEnumValue".$actId."_".$enumId;
               $paramEnumValue = $$paramEnumValue;
                
-                $erg = MYSQL_QUERY("select id from featureFunctionEnums where id='$enumId' limit 1") or die(MYSQL_ERROR());
-                if ($row=MYSQL_FETCH_ROW($erg))
+                $erg = QUERY("select id from featureFunctionEnums where id='$enumId' limit 1");
+                if ($row=mysqli_fetch_ROW($erg))
                 {
                 	if ($paramEnumName=="")
                 	{
@@ -73,11 +73,11 @@ if ($submitted!="")
                 	}
                 	else
                 	{
-                		MYSQL_QUERY("UPDATE featureFunctionEnums set name='$paramEnumName',value='$paramEnumValue' where id='$enumId' limit 1") or die(MYSQL_ERROR());
+                		QUERY("UPDATE featureFunctionEnums set name='$paramEnumName',value='$paramEnumValue' where id='$enumId' limit 1");
                 	}
                 }
                 else if ($paramEnumName!="")
-                	MYSQL_QUERY("INSERT into featureFunctionEnums (featureFunctionId, paramId, name,value) values('$id','$actId','$paramEnumName', '$paramEnumValue')") or die(MYSQL_ERROR());
+                	QUERY("INSERT into featureFunctionEnums (featureFunctionId, paramId, name,value) values('$id','$actId','$paramEnumName', '$paramEnumValue')");
             }
           }
           else if ($type=="BITMASK")
@@ -87,14 +87,14 @@ if ($submitted!="")
               $paramBitName="paramBitName".$actId."_".$bitPos;
               $paramBitName = trim($$paramBitName);
                
-              $erg = MYSQL_QUERY("select id from featureFunctionBitmasks where featureFunctionId='$id' and paramId='$actId' and bit='$bitPos' limit 1") or die(MYSQL_ERROR());
-              if ($row=MYSQL_FETCH_ROW($erg)) MYSQL_QUERY("UPDATE featureFunctionBitmasks set name='$paramBitName' where id='$row[0]' limit 1") or die(MYSQL_ERROR());
-              else MYSQL_QUERY("INSERT into featureFunctionBitmasks (featureFunctionId, paramId, name,bit) values('$id','$actId','$paramBitName', '$bitPos')") or die(MYSQL_ERROR());
+              $erg = QUERY("select id from featureFunctionBitmasks where featureFunctionId='$id' and paramId='$actId' and bit='$bitPos' limit 1");
+              if ($row=mysqli_fetch_ROW($erg)) QUERY("UPDATE featureFunctionBitmasks set name='$paramBitName' where id='$row[0]' limit 1");
+              else QUERY("INSERT into featureFunctionBitmasks (featureFunctionId, paramId, name,bit) values('$id','$actId','$paramBitName', '$bitPos')");
             }
           }
         }
       }
-      header("Location: editFeatureFunction.php?id=$id&featureClassesId=$featureClassesId&message=".urlencode("Die Änderungen wurden gespeichert"));
+      header("Location: editFeatureFunction.php?id=$id&featureClassesId=$featureClassesId&message=".urlencode("Die Ã„nderungen wurden gespeichert"));
       exit;
     }
   }
@@ -141,7 +141,7 @@ else
 {
   $html = str_replace("%ID%",$id, $html);
   $html = str_replace("%TITLE%","Featurefunktion bearbeiten", $html);
-  $html = str_replace("%SUBMIT_TITLE%","Featurefunktion ändern", $html);
+  $html = str_replace("%SUBMIT_TITLE%","Featurefunktion Ã¤ndern", $html);
   chooseTag("%DELETE%",$html);
 
   $allFeatureFunctions = readFeatureFunctions();
@@ -269,8 +269,8 @@ else
        }
      }
 
-     $erg = MYSQL_QUERY("select max(id) from featureFunctionParams") or die(MYSQL_ERROR());
-     if ($row=MYSQL_FETCH_ROW($erg)) $nextId=$row[0]+1;
+     $erg = QUERY("select max(id) from featureFunctionParams");
+     if ($row=mysqli_fetch_ROW($erg)) $nextId=$row[0]+1;
      else $nextId=1;
 
      if ($paramIds!="") $paramIds.=",";

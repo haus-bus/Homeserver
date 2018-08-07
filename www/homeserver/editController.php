@@ -1,25 +1,25 @@
 <?php
 include ($_SERVER["DOCUMENT_ROOT"] . "/homeserver/include/all.php");
 
-header( 'Content-Encoding: none; ' );//disable apache compressed
+//header( 'Content-Encoding: none; ' );//disable apache compressed
 ini_set('max_execution_time', 300);
 
 // Methodenaufrufe
 if ($action == "callMethod")
 {
   $erg = QUERY("select max(id) from udpCommandLog");
-  $row = MYSQL_FETCH_ROW($erg);
+  $row = mysqli_fetch_ROW($erg);
   $minId = $row[0];
   
   $erg = QUERY("select objectId from controller where id='$id' limit 1");
-  if ($obj = MYSQL_FETCH_OBJECT($erg))
+  if ($obj = mysqli_fetch_OBJECT($erg))
   {
     $obj->objectId = $obj->objectId;
     $message = "<script>document.write(\"<iframe style='position:relative;left:0px;top:0px' src='specificJournal.php?objectId=$obj->objectId&minId=$minId' width='97%' height='55' frameborder=0 border=0></iframe>\");</script>";
   }
   
   $erg = QUERY("select id,name,type from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
     $param = "param" . $obj->id;
     
@@ -36,7 +36,7 @@ if ($action == "callMethod")
     else
       $paramData[trim($obj->name)] = $$param;
     if ($obj->name == "deviceId" && ($$param > 32767))
-      showMessage("Fehler: Die DeviceID darf nicht größer als 32767 sein");
+      showMessage("Fehler: Die DeviceID darf nicht grÃ¶ÃŸer als 32767 sein");
   }
   
   callInstanceMethodForObjectId($objectId, $featureFunctionId, $paramData);
@@ -44,7 +44,7 @@ if ($action == "callMethod")
   
   // Nach dem Setzen der Konfiguration lesen wir direkt die Konfiguration neu aus, damit sie in lastReceived steht
   $erg = QUERY("select name from featureFunctions where id='$featureFunctionId' limit 1");
-  $row = MYSQL_FETCH_ROW($erg);
+  $row = mysqli_fetch_ROW($erg);
   if ($row[0] == "setConfiguration")
   {
     sleepMs(300);
@@ -55,7 +55,7 @@ if ($action == "callMethod")
   
   if ($featureFunctionId == getObjectFunctionsIdByName($BROADCAST_OBJECT_ID, "reset"))
   {
-    /*showMessageNonExit("Reset wird durchgeführt und Controllerstatus aktualisiert....");
+    /*showMessageNonExit("Reset wird durchgefÃ¼hrt und Controllerstatus aktualisiert....");
     
     flushIt();
     sleep(3);
@@ -72,22 +72,22 @@ else if ($action == "recover")
   $debugMe = 1;
   
   $erg = QUERY("select id from featureFunctions where featureClassesId='$CONTROLLER_CLASSES_ID' and name='getConfiguration' limit 1");
-  $row = MYSQL_FETCH_ROW($erg);
+  $row = mysqli_fetch_ROW($erg);
   $controllerConfigFktId = $row[0];
   
   $digitalPortClassesId = getClassesIdByName("DigitalPort");
   
   $erg = QUERY("select objectId from controller where id='$id' limit 1");
-  if ($row = MYSQL_FETCH_ROW($erg))
+  if ($row = mysqli_fetch_ROW($erg))
   {
     $controllerObjectId = $row[0];
     
     $erg = QUERY("select configuration from recovery where objectId='$controllerObjectId' limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = mysqli_fetch_ROW($erg))
     {
       $obj = unserialize($row[0]);
       
-      // Zuerst schauen ob sich an der Controllerconfiguration was geändert hat
+      // Zuerst schauen ob sich an der Controllerconfiguration was geÃ¤ndert hat
       $resetRelevantChanges = 0;
       
       callObjectMethodByName($controllerObjectId, "getConfiguration");
@@ -121,11 +121,11 @@ else if ($action == "recover")
       else
         $message = "getConfiguration nicht erfolgreich";
       
-      $erg = QUERY("select * from featureInstances where controllerId='$id' and featureClassesId='$digitalPortClassesId'") or die(MYSQL_ERROR());
-      while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+      $erg = QUERY("select * from featureInstances where controllerId='$id' and featureClassesId='$digitalPortClassesId'");
+      while ( $obj = mysqli_fetch_OBJECT($erg) )
       {
         $erg2 = QUERY("select configuration from recovery where objectId='$obj->objectId' limit 1");
-        if ($row2 = MYSQL_FETCH_ROW($erg2))
+        if ($row2 = mysqli_fetch_ROW($erg2))
         {
           $configObj = unserialize($row2[0]);
           
@@ -164,7 +164,7 @@ else if ($action == "recover")
           "Keine gespeicherte Konfiguration zu " . $obj->name . "<br>";
       }
       
-      // bei zuvoriger Änderung -> Reset 
+      // bei zuvoriger Ã„nderung -> Reset 
       if ($resetRelevantChanges == 1)
       {
         callObjectMethodByName($controllerObjectId, "reset");
@@ -179,11 +179,11 @@ else if ($action == "recover")
       }
       
       // Dann der Rest
-      $erg = QUERY("select * from featureInstances where controllerId='$id' and featureClassesId!='$digitalPortClassesId'") or die(MYSQL_ERROR());
-      while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+      $erg = QUERY("select * from featureInstances where controllerId='$id' and featureClassesId!='$digitalPortClassesId'");
+      while ( $obj = mysqli_fetch_OBJECT($erg) )
       {
         $erg2 = QUERY("select configuration from recovery where objectId='$obj->objectId' limit 1");
-        if ($row2 = MYSQL_FETCH_ROW($erg2))
+        if ($row2 = mysqli_fetch_ROW($erg2))
         {
           $configObj = unserialize($row2[0]);
           
@@ -244,7 +244,7 @@ else if ($action == "restoreFactorySettings")
     
     $UNUSED = 255;
     $erg = QUERY("select objectId from controller where id='$id' limit 1");
-    if ($row = MYSQL_FETCH_ROW($erg))
+    if ($row = mysqli_fetch_ROW($erg))
     {
       $controllerObjectId = $row[0];
       callObjectMethodByName($controllerObjectId, "getModuleId");
@@ -267,8 +267,8 @@ else if ($action == "restoreFactorySettings")
           if ($moduleId["firmwareId"] == getFunctionParamEnumValueByName($controllerObjectId, "ModuleId", "firmwareId", "AR8"))
           {
             $message = "AR8";
-            $erg = QUERY("select * from featureInstances where controllerId='$id'") or die(MYSQL_ERROR());
-            while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+            $erg = QUERY("select * from featureInstances where controllerId='$id'");
+            while ( $obj = mysqli_fetch_OBJECT($erg) )
             {
               if ($obj->featureClassesId == getClassesIdByName("DigitalPort"))
               {
@@ -327,8 +327,8 @@ else if ($action == "restoreFactorySettings")
 			      callObjectMethodByName($controllerObjectId, "getRemoteObjects");
             waitForObjectResultByName($controllerObjectId, 5, "RemoteObjects", $lastLogId);
 			
-            $erg = QUERY("select * from featureInstances where controllerId='$id'") or die(MYSQL_ERROR());
-            while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+            $erg = QUERY("select * from featureInstances where controllerId='$id'");
+            while ( $obj = mysqli_fetch_OBJECT($erg) )
             {
               if ($obj->featureClassesId == getClassesIdByName("Taster"))
               {
@@ -370,8 +370,8 @@ else if ($action == "restoreFactorySettings")
             $configuration["logicalButtonMask"] = 1;
             callObjectMethodByName($controllerObjectId, "setConfiguration", $configuration);
             
-            $erg = QUERY("select * from featureInstances where controllerId='$id'") or die(MYSQL_ERROR());
-            while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+            $erg = QUERY("select * from featureInstances where controllerId='$id'");
+            while ( $obj = mysqli_fetch_OBJECT($erg) )
             {
               if ($obj->featureClassesId == getClassesIdByName("DigitalPort"))
               {
@@ -428,8 +428,8 @@ else if ($action == "restoreFactorySettings")
 			callObjectMethodByName($controllerObjectId, "getRemoteObjects");
             waitForObjectResultByName($controllerObjectId, 5, "RemoteObjects", $lastLogId);
             
-            $erg = QUERY("select * from featureInstances where controllerId='$id'") or die(MYSQL_ERROR());
-            while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+            $erg = QUERY("select * from featureInstances where controllerId='$id'");
+            while ( $obj = mysqli_fetch_OBJECT($erg) )
             {
               if ($obj->featureClassesId == getClassesIdByName("LogicalButton"))
               {
@@ -499,8 +499,8 @@ else if ($action == "restoreFactorySettings")
             
             if ($logicalButtonInstanceId > 0)
             {
-              $erg = MYSQL_QUERY("select classId,name from featureClasses where name='Taster' or name='Led' limit 2") or die(MYSQL_ERROR());
-              while ( $row = MYSQL_FETCH_ROW($erg) )
+              $erg = QUERY("select classId,name from featureClasses where name='Taster' or name='Led' limit 2");
+              while ( $row = mysqli_fetch_ROW($erg) )
               {
                 if ($row[1] == "Taster")
                   $tasterClassId = $row[0];
@@ -508,34 +508,34 @@ else if ($action == "restoreFactorySettings")
                   $ledClassId = $row[0];
               }
               
-              // zugehörige featureInstances neufinden
-              MYSQL_QUERY("update featureInstances set parentInstanceId='0' where parentInstanceId='$logicalButtonInstanceId'") or die(MYSQL_ERROR());
+              // zugehÃ¶rige featureInstances neufinden
+              QUERY("update featureInstances set parentInstanceId='0' where parentInstanceId='$logicalButtonInstanceId'");
               
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 36);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 23);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 35);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 24);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 34);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 33);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 53);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 54);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 52);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 49);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 51);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 50);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
             }
           }
 		  else if ($moduleId["firmwareId"] == getFunctionParamEnumValueByName($controllerObjectId, "ModuleId", "firmwareId", "SD6"))
@@ -544,8 +544,8 @@ else if ($action == "restoreFactorySettings")
             $configuration["logicalButtonMask"] = 1;
             callObjectMethodByName($controllerObjectId, "setConfiguration", $configuration);
             
-            $erg = QUERY("select * from featureInstances where controllerId='$id'") or die(MYSQL_ERROR());
-            while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+            $erg = QUERY("select * from featureInstances where controllerId='$id'");
+            while ( $obj = mysqli_fetch_OBJECT($erg) )
             {
               if ($obj->featureClassesId == getClassesIdByName("DigitalPort"))
               {
@@ -602,8 +602,8 @@ else if ($action == "restoreFactorySettings")
 			callObjectMethodByName($controllerObjectId, "getRemoteObjects");
             waitForObjectResultByName($controllerObjectId, 5, "RemoteObjects", $lastLogId);
             
-            $erg = QUERY("select * from featureInstances where controllerId='$id'") or die(MYSQL_ERROR());
-            while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+            $erg = QUERY("select * from featureInstances where controllerId='$id'");
+            while ( $obj = mysqli_fetch_OBJECT($erg) )
             {
               if ($obj->featureClassesId == getClassesIdByName("LogicalButton"))
               {
@@ -670,8 +670,8 @@ else if ($action == "restoreFactorySettings")
             
             if ($logicalButtonInstanceId > 0)
             {
-              $erg = MYSQL_QUERY("select classId,name from featureClasses where name='Taster' or name='Led' limit 2") or die(MYSQL_ERROR());
-              while ( $row = MYSQL_FETCH_ROW($erg) )
+              $erg = QUERY("select classId,name from featureClasses where name='Taster' or name='Led' limit 2");
+              while ( $row = mysqli_fetch_ROW($erg) )
               {
                 if ($row[1] == "Taster")
                   $tasterClassId = $row[0];
@@ -679,34 +679,34 @@ else if ($action == "restoreFactorySettings")
                   $ledClassId = $row[0];
               }
               
-              // zugehörige featureInstances neufinden
-              MYSQL_QUERY("update featureInstances set parentInstanceId='0' where parentInstanceId='$logicalButtonInstanceId'") or die(MYSQL_ERROR());
+              // zugehÃ¶rige featureInstances neufinden
+              QUERY("update featureInstances set parentInstanceId='0' where parentInstanceId='$logicalButtonInstanceId'");
               
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 17);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 18);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 19);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 20);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 21);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $tasterClassId, 22);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 49);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 50);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 51);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 52);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 53);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
               $childObjectId = getObjectId(getDeviceId($controllerObjectId), $ledClassId, 54);
-              MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+              QUERY("UPDATE featureInstances set parentInstanceId='$logicalButtonInstanceId' where objectId='$childObjectId' limit 1");
             }
           }
           else
@@ -722,14 +722,14 @@ else if ($action == "restoreFactorySettings")
       $message = "Fehler ObjectID nicht gefunden";
   }
   else
-    showMessage("Alle Einstellungen und Regeln werden auf den Auslieferzustand gesetzt.<br>Die Aktion kann nur über einen Wiederherstellungspunkt rückgängig gemacht werden !", "Achtung!", "editController.php?id=$id&action=restoreFactorySettings&confirm=1", "Zurücksetzen", "editController.php?id=$id", "Abbruch");
+    showMessage("Alle Einstellungen und Regeln werden auf den Auslieferzustand gesetzt.<br>Die Aktion kann nur Ã¼ber einen Wiederherstellungspunkt rÃ¼ckgÃ¤ngig gemacht werden !", "Achtung!", "editController.php?id=$id&action=restoreFactorySettings&confirm=1", "ZurÃ¼cksetzen", "editController.php?id=$id", "Abbruch");
 }
 else if ($action == "loadConfigTemplate")
 {
   if ($confirm == 1)
   {
     $erg = QUERY("select objectId from controller where id='$id' limit 1");
-    $row = MYSQL_FETCH_ROW($erg);
+    $row = mysqli_fetch_ROW($erg);
     $controllerObjectId = $row[0];
     $deviceId = getDeviceId($controllerObjectId);
     $digitalPortClassId = getClassIdByName("DigitalPort");
@@ -829,7 +829,7 @@ function addDefaultGroupRuleData($triggerObjectId, $triggerEvent, $actorObjectId
   $rulesData[$dataPos++] = 255; // Zeitraum immer
   
 
-  // triggerId einfügen
+  // triggerId einfÃ¼gen
   $bytes = dWordToBytes($triggerObjectId);
   foreach ( (array)$bytes as $value )
   {
@@ -839,13 +839,13 @@ function addDefaultGroupRuleData($triggerObjectId, $triggerEvent, $actorObjectId
   // triggerEvent setzen
   $rulesData[$dataPos++] = getFunctionIdByName($triggerObjectId, $triggerEvent);
   
-  // trigger auffüllen      
+  // trigger auffÃ¼llen      
   for($i = 0; $i < 5; $i++)
   {
     $rulesData[$dataPos++] = 0;
   }
   
-  // actorId einfügen
+  // actorId einfÃ¼gen
   $bytes = dWordToBytes($actorObjectId);
   foreach ( (array)$bytes as $value )
   {
@@ -896,7 +896,7 @@ if ($action == "activateBootloader" || $action == "fwUpdate")
   ob_start();
   
   $erg = QUERY("select objectId from controller where id='$id' limit 1");
-  if ($obj = MYSQL_FETCH_OBJECT($erg))
+  if ($obj = mysqli_fetch_OBJECT($erg))
   {
     $objectId = $obj->objectId;
     
@@ -934,16 +934,16 @@ if ($action == "activateBootloader" || $action == "fwUpdate")
     }
     
       $erg = QUERY("select firmwareId from controller where id='$id' limit 1");
-      if ($row = MYSQL_FETCH_ROW($erg))
+      if ($row = mysqli_fetch_ROW($erg))
       {
         $firmwareId = $row[0];
         $firmwareIdFunctionId = getObjectFunctionsIdByName($BROADCAST_OBJECT_ID, "ModuleId");
         $erg = QUERY("select id from featureFunctionParams where featureFunctionId='$firmwareIdFunctionId' and name='firmwareId' limit 1");
-        if ($row = MYSQL_FETCH_ROW($erg))
+        if ($row = mysqli_fetch_ROW($erg))
         {
           $paramId = $row[0];
           $erg = QUERY("select name from featureFunctionEnums where paramId='$paramId' and value='$firmwareId' limit 1");
-          if ($row = MYSQL_FETCH_ROW($erg))
+          if ($row = mysqli_fetch_ROW($erg))
             $neededFirmware = $row[0]; //.".bin";
           else
             die("Fehler, unbekannte FirmwareID");
@@ -971,7 +971,7 @@ if ($action == "activateBootloader" || $action == "fwUpdate")
       }
       closedir($handle);
       if ($newestFirmware == "")
-        die("Fehler: Keine Datei gewählt und keine Defaultfirmware vorhanden -> $neededFirmware");
+        die("Fehler: Keine Datei gewÃ¤hlt und keine Defaultfirmware vorhanden -> $neededFirmware");
       $neededFirmware = $newestFirmware;
     }
     
@@ -994,15 +994,15 @@ if ($action == "activateBootloader" || $action == "fwUpdate")
       $isBooter = 0;
     
     liveOut("<b>Firmware Update ...($show)</b>");
-    liveOut("Während des Updates den Controller und den PC NICHT AUSSCHALTEN!");
+    liveOut("WÃ¤hrend des Updates den Controller und den PC NICHT AUSSCHALTEN!");
     liveOut('');
     $fileSize = filesize($fwfile);
-    liveOut("Dateigröße: $fileSize Bytes");
+    liveOut("DateigrÃ¶ÃŸe: $fileSize Bytes");
     
     $result = callObjectMethodByNameAndRecover($objectId, "getConfiguration","","Configuration",3,5,1);
     $blockSize = getResultDataValueByName("dataBlockSize", $result);
     
-    liveOut("Daten Blockgröße: " . $blockSize . " Bytes");
+    liveOut("Daten BlockgrÃ¶ÃŸe: " . $blockSize . " Bytes");
     liveOut('');
     liveOut("<div id=\"status\">Updatestatus: 0/$fileSize Bytes - 0%</div>", 0);
     
@@ -1039,10 +1039,10 @@ if ($action == "activateBootloader" || $action == "fwUpdate")
 		if($memoryStatus == $memoryStatusAborted) 
 		{
 		  liveOut("Bootloader hat die FW nicht akzeptiert!  ");
-		  liveOut("Mögliche Ursachen: ");
-          liveOut("- FW ist nicht für dieses Modul ");
+		  liveOut("MÃ¶gliche Ursachen: ");
+          liveOut("- FW ist nicht fÃ¼r dieses Modul ");
 		  liveOut("- FW Major-Release-Kennung ist vom Bootloader verschieden ");
-		  liveOut("- FW Minor-Kennung ist nicht größer als bereits installiert ");
+		  liveOut("- FW Minor-Kennung ist nicht grÃ¶ÃŸer als bereits installiert ");
 		  liveOut("- FW ist korrupt oder modifiziert ");
 		}
 		else
@@ -1061,14 +1061,14 @@ if ($action == "activateBootloader" || $action == "fwUpdate")
     }
     fclose($fd);
     
-    liveOut("Übertragung erfolgreich beendet");
+    liveOut("Ãœbertragung erfolgreich beendet");
     liveOut('');
     
     if ($verify == 1)
     {
       liveOut("<b>Firmware wird verifiziert...</b>");
       $erg = QUERY("select functionData,receiverSubscriberData from udpCommandLog where function='writeMemory' and id>'$firstWriteId' order by id");
-      while ( $row = MYSQL_FETCH_ROW($erg) )
+      while ( $row = mysqli_fetch_ROW($erg) )
       {
         if (unserialize($row[1])->objectId != $objectId)
           continue;
@@ -1176,7 +1176,7 @@ foreach ( $allController as $obj )
   }
 }
 if ($objectId == "")
-  die("FEHLER! Ungültige ID $id");
+  die("FEHLER! UngÃ¼ltige ID $id");
 
 $typeRound[0] = "EVENT";
 $typeRound[1] = "ACTION";
@@ -1192,7 +1192,7 @@ $allFeatureFunctionEnums = readFeatureFunctionEnums();
 
 // Zuletzt empfangene Daten von diesem Sender
 $erg = QUERY("select function,functionData,id from lastReceived  where senderObj='$objectId' order by id desc limit 50");
-while ( $row = MYSQL_FETCH_ROW($erg) )
+while ( $row = mysqli_fetch_ROW($erg) )
 {
   if (! isset($lastReceived[$row[0]]))
   {

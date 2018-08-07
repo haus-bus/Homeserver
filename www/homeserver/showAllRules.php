@@ -35,8 +35,8 @@ else
 
 $html=str_replace("%TITLE%",$title,$html);
 
-if ($byRoom==1) $title2.="Sortierung nach Räumen [<a href='showAllRules.php?withTime=$withTime&deactivated=$deactivated&bySensor=$bySensor&byRoom=0'>Nach Controller sortieren</a>]";
-else $title2="Sortierung nach Controllerm [<a href='showAllRules.php?withTime=$withTime&deactivated=$deactivated&bySensor=$bySensor&byRoom=1'>Nach Räumen sortieren</a>]";
+if ($byRoom==1) $title2.="Sortierung nach RÃ¤umen [<a href='showAllRules.php?withTime=$withTime&deactivated=$deactivated&bySensor=$bySensor&byRoom=0'>Nach Controller sortieren</a>]";
+else $title2="Sortierung nach Controllerm [<a href='showAllRules.php?withTime=$withTime&deactivated=$deactivated&bySensor=$bySensor&byRoom=1'>Nach RÃ¤umen sortieren</a>]";
 
 $html=str_replace("%TITLE2%",$title2,$html);
 
@@ -65,8 +65,8 @@ if ($byRoom==1)
     where featureClasses.id=1 and single=1
     ORDER BY roomName, featureClassName, signalName ";
     
-    $erg = MYSQL_QUERY($sql) or die(MYSQL_ERROR());
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    $erg = QUERY($sql);
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       if ($ready[$obj->roomId . "-" . $obj->featureInstanceId."-".$obj->aktorId] == 1) continue;
       $ready[$obj->roomId . "-" . $obj->featureInstanceId."-".$obj->aktorId] = 1;
@@ -82,7 +82,7 @@ if ($byRoom==1)
 
       $actTag = str_replace("%LAST_OPEN%", $_SESSION["groupLinkNr" . $obj->groupId] - 1, $actTag);
       $actTag = str_replace("%GROUP_ID%", $obj->groupId, $actTag);
-      $actTag = str_replace("%NAME%", $obj->signalName . " » " . $obj->aktorName, $actTag);
+      $actTag = str_replace("%NAME%", $obj->signalName . " Â» " . $obj->aktorName, $actTag);
       $elements .= $actTag;
     }
   }
@@ -102,8 +102,8 @@ if ($byRoom==1)
     where single=1 $and
     ORDER BY roomName, featureClassName, featureInstanceName ";
     
-    $erg = MYSQL_QUERY($sql) or die(MYSQL_ERROR());
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    $erg = QUERY($sql);
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       if ($ready[$obj->roomId . "-" . $obj->featureInstanceId] == 1) continue;
       $ready[$obj->roomId . "-" . $obj->featureInstanceId] = 1;
@@ -119,7 +119,7 @@ if ($byRoom==1)
       $actTag = str_replace("%LAST_OPEN%", $_SESSION["groupLinkNr" . $obj->groupId] - 1, $actTag);
       $actTag = str_replace("%GROUP_ID%", $obj->groupId, $actTag);
       
-      $actTag = str_replace("%NAME%", $obj->featureClassName . " » " . $obj->featureInstanceName, $actTag);
+      $actTag = str_replace("%NAME%", $obj->featureClassName . " Â» " . $obj->featureInstanceName, $actTag);
       $elements .= $actTag;
     }
   }
@@ -146,8 +146,8 @@ else
     where featureClasses.id=1 and single=1
     ORDER BY roomName, featureClassName, signalName ";
    
-    $erg = MYSQL_QUERY($sql) or die(MYSQL_ERROR());
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    $erg = QUERY($sql);
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       if ($ready[$obj->controllerId . "-" . $obj->featureInstanceId."-".$obj->aktorId] == 1) continue;
       $ready[$obj->controllerId . "-" . $obj->featureInstanceId."-".$obj->aktorId] = 1;
@@ -163,7 +163,7 @@ else
       $actTag = str_replace("%LAST_OPEN%", $_SESSION["groupLinkNr" . $obj->groupId] - 1, $actTag);
       $actTag = str_replace("%GROUP_ID%", $obj->groupId, $actTag);
       
-      $actTag = str_replace("%NAME%", $obj->signalName . " » " . $obj->aktorName, $actTag);
+      $actTag = str_replace("%NAME%", $obj->signalName . " Â» " . $obj->aktorName, $actTag);
       $elements .= $actTag;
     }
   }
@@ -182,8 +182,8 @@ else
     where single=1 $and
     ORDER BY controllerId, featureClassName, featureInstanceName ";
     
-    $erg = MYSQL_QUERY($sql) or die(MYSQL_ERROR());
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    $erg = QUERY($sql);
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       if ($ready[$obj->controllerId . "-" . $obj->featureInstanceId] == 1) continue;
       $ready[$obj->controllerId . "-" . $obj->featureInstanceId] = 1;
@@ -199,7 +199,7 @@ else
       $actTag = str_replace("%LAST_OPEN%", $_SESSION["groupLinkNr" . $obj->groupId] - 1, $actTag);
       $actTag = str_replace("%GROUP_ID%", $obj->groupId, $actTag);
       
-      $actTag = str_replace("%NAME%", $obj->featureClassName . " » " . $obj->featureInstanceName, $actTag);
+      $actTag = str_replace("%NAME%", $obj->featureClassName . " Â» " . $obj->featureInstanceName, $actTag);
       $elements .= $actTag;
     }
   }
@@ -216,8 +216,8 @@ if ($withTime!=1 && $deactivated!=1)
   where single=0 $and
   group by rules.groupId
   ORDER BY name";
-  $erg = MYSQL_QUERY($sql) or die(MYSQL_ERROR());
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  $erg = QUERY($sql);
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
     $actTag = $elementsTag;
     $actTag = str_replace("%LAST_OPEN%", $_SESSION["groupLinkNr" . $obj->groupId] - 1, $actTag);

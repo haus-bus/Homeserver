@@ -18,7 +18,7 @@
  //-->
  </script>
  <p class="content" align="center">
-  Alles <a href="javascript: d.openAll();">öffnen</a>|<a	href="javascript: d.closeAll();">schließen</a>
+  Alles <a href="javascript: d.openAll();">Ã¶ffnen</a>|<a	href="javascript: d.closeAll();">schlieÃŸen</a>
  </p>
 </div>
 </body>

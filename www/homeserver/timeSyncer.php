@@ -13,17 +13,17 @@ require($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 
 $now = time();
 
-$erg = MYSQL_QUERY("select paramValue from basicConfig where paramKey = 'timeSyncerPending' limit 1") or die(MYSQL_ERROR());
-if ($row = MYSQL_FETCH_ROW($erg))
+$erg = QUERY("select paramValue from basicConfig where paramKey = 'timeSyncerPending' limit 1");
+if ($row = mysqli_fetch_ROW($erg))
 {
 	if ($now-$row[0]<120 && $forceClean!=1)
 	{
 		echo "letzte runde <120 sec. abbruch \n";
 		exit;
 	}
-	MYSQL_QUERY("UPDATE basicConfig set paramValue='$now' where paramKey = 'timeSyncerPending' limit 1") or die(MYSQL_ERROR());
+	QUERY("UPDATE basicConfig set paramValue='$now' where paramKey = 'timeSyncerPending' limit 1");
 }
-else MYSQL_QUERY("INSERT into basicConfig (paramKey,paramValue) values('timeSyncerPending','$now')") or die(MYSQL_ERROR());
+else QUERY("INSERT into basicConfig (paramKey,paramValue) values('timeSyncerPending','$now')");
 
 checkAndSetTimeZone();
 
@@ -40,8 +40,8 @@ callObjectMethodByName($BROADCAST_OBJECT_ID, "setTime", $data);
 
 $latitude=-1;
 $longitude=-1;
-$erg = MYSQL_QUERY("select paramValue,paramKey from basicConfig where paramKey='latitude' or paramKey='longitude' limit 2") or die(MYSQL_ERROR());
-while($row=MYSQL_FETCH_ROW($erg))
+$erg = QUERY("select paramValue,paramKey from basicConfig where paramKey='latitude' or paramKey='longitude' limit 2");
+while($row=mysqli_fetch_ROW($erg))
 {
 	 if ($row[1]=="latitude") $latitude=$row[0];
 	 if ($row[1]=="longitude") $longitude=$row[0];
@@ -59,8 +59,8 @@ if ($latitude!=-1 && $longitude!=-1)
   $parts = explode(":",$sunset);
   $sunset = mktime ($parts[0], $parts[1]);
 
-  $erg = MYSQL_QUERY("select paramKey, paramValue from basicConfig where paramKey = 'offsetSunrise' or paramKey = 'offsetSunset' limit 2") or die(MYSQL_ERROR());
-  while($row = MYSQL_FETCH_ROW($erg))
+  $erg = QUERY("select paramKey, paramValue from basicConfig where paramKey = 'offsetSunrise' or paramKey = 'offsetSunset' limit 2");
+  while($row = mysqli_fetch_ROW($erg))
   {  
  	  if ($row[0]=="offsetSunrise") $sunrise+=$row[1]*60;
  	  else if ($row[0]=="offsetSunset") $sunset+=$row[1]*60;
@@ -78,7 +78,7 @@ if ($latitude!=-1 && $longitude!=-1)
   }
 }
 
-MYSQL_QUERY("UPDATE basicConfig set paramValue='0' where paramKey = 'timeSyncerPending' limit 1") or die(MYSQL_ERROR());
+QUERY("UPDATE basicConfig set paramValue='0' where paramKey = 'timeSyncerPending' limit 1");
 
 if ($noClean==1 || file_exists("/nocleanup.txt")) echo "no cleanup";
 else
@@ -86,7 +86,7 @@ else
   if (date("H")==4 || $forceClean==1)
   {
   	cleanUp();
-    echo "Räume Server auf... \n";
+    echo "RÃ¤ume Server auf... \n";
   }
 }
 

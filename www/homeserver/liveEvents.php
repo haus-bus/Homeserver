@@ -3,8 +3,8 @@ include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 
 if ($checkUpdate!="")
 {
-  $erg = MYSQL_QUERY("select id from udpCommandLog where (type='EVENT' or type='RESULT') and id>'$checkUpdate' order by id limit 1") or die(MYSQL_ERROR());
-  if ($row=MYSQL_FETCH_ROW($erg)) die("".($row[0]-1));
+  $erg = QUERY("select id from udpCommandLog where (type='EVENT' or type='RESULT') and id>'$checkUpdate' order by id limit 1");
+  if ($row=mysqli_fetch_ROW($erg)) die("".($row[0]-1));
   else die("");
 }
 
@@ -12,8 +12,8 @@ $html = loadTemplate("liveEvents_design.html");
 
 if ($lastId=="")
 {
-  $erg = MYSQL_QUERY("select max(id) from udpCommandLog") or die(MYSQL_ERROR());
-  if ($row=MYSQL_FETCH_ROW($erg)) $lastId=$row[0];
+  $erg = QUERY("select max(id) from udpCommandLog");
+  if ($row=mysqli_fetch_ROW($erg)) $lastId=$row[0];
   else $lastId=0;
   $firstId=$lastId;
 }
@@ -21,8 +21,8 @@ if ($lastId=="")
 $entryTag=getTag("%ENTRY%",$html);
 $entries="";
 $c=0;
-$erg = MYSQL_QUERY("select id,time,type,messageCounter,sender,receiver,function,params from udpCommandLog where id>'$firstId' order by id desc limit 50") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select id,time,type,messageCounter,sender,receiver,function,params from udpCommandLog where id>'$firstId' order by id desc limit 50");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
   if ($c==0) $lastId=$obj->id;
   $c++;

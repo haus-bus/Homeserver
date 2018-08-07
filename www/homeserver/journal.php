@@ -10,7 +10,7 @@ if ($action=="delete")
   	QUERY("TRUNCATE table udpCommandLog");
   	QUERY("TRUNCATE table udpdatalog");
   }
-  else showMessage("Soll das Journal wirklich gelöscht werden?","Journal löschen","journal.php?action=delete&confirm=1","Ja, löschen","journal.php","Nein, zurück");
+  else showMessage("Soll das Journal wirklich gelÃ¶scht werden?","Journal lÃ¶schen","journal.php?action=delete&confirm=1","Ja, lÃ¶schen","journal.php","Nein, zurÃ¼ck");
 }
 
 $order="desc";
@@ -42,8 +42,8 @@ setupTreeAndContent("journal_design.html");
 
 if ($submitted=="Exportieren")
 {
-	$erg = MYSQL_QUERY("select udpCommandLog.*,data from udpCommandLog join udpdatalog on (udpCommandLog.udpDataLogId=udpdatalog.id) $where order by id desc limit $nrElements") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+	$erg = QUERY("select udpCommandLog.*,data from udpCommandLog join udpdatalog on (udpCommandLog.udpDataLogId=udpdatalog.id) $where order by id desc limit $nrElements");
+  while($obj=mysqli_fetch_OBJECT($erg))
   {
   	 $export.=serialize($obj)."XYZ";
   }
@@ -62,8 +62,8 @@ if ($function=="") $selected="selected"; else $selected="";
 $functionOptions.="<option value='' $selected>";
 
 
-$erg = MYSQL_QUERY("select distinct(name) from featureFunctions order by name") or die(MYSQL_ERROR());
-while($row=MYSQL_FETCH_ROW($erg))
+$erg = QUERY("select distinct(name) from featureFunctions order by name");
+while($row=mysqli_fetch_ROW($erg))
 {
 	 $act = $row[0];
 	 
@@ -71,8 +71,8 @@ while($row=MYSQL_FETCH_ROW($erg))
 	 $functionOptions.="<option value='$act' $selected>$act";
 }
 
-/*$erg = MYSQL_QUERY("select distinct(function) from udpCommandLog order by function") or die(MYSQL_ERROR());
-while($row=MYSQL_FETCH_ROW($erg))
+/*$erg = QUERY("select distinct(function) from udpCommandLog order by function");
+while($row=mysqli_fetch_ROW($erg))
 {
 	 $act = $row[0];
 	 
@@ -87,8 +87,8 @@ $senderRaumOptions="<option value='' $selected>";
 	 
 if ($receiverRaum=="") $selected="selected"; else $selected="";
 $receiverRaumOptions.="<option value='' $selected>";
-$erg = MYSQL_QUERY("select distinct(name) from rooms order by name") or die(MYSQL_ERROR());
-while($row=MYSQL_FETCH_ROW($erg))
+$erg = QUERY("select distinct(name) from rooms order by name");
+while($row=mysqli_fetch_ROW($erg))
 {
 	 $act = $row[0];
 	 
@@ -114,7 +114,7 @@ $export="";
 //echo $where;
 
 $erg = QUERY("select id,time,type,messageCounter,sender,receiver,function,params from udpCommandLog $where order by id $order limit $nrElements");
-while($obj=MYSQL_FETCH_OBJECT($erg))
+while($obj=mysqli_fetch_OBJECT($erg))
 {
   $c++;
   $actTag = $entryTag;

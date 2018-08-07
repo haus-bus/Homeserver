@@ -46,7 +46,7 @@ $paramsId = getOrCreateFunctionParam($functionsId, "currentReportInterval", "WOR
 $functionId=200;
 $functionsId = getOrCreateFunction($classesId, "evSignal", $functionId, "EVENT", "Standard");
 $paramsId = getOrCreateFunctionParam($functionsId, "time", "DWORD", "Systemzeit des ESP zu Debugzwecken","Standard");
-$paramsId = getOrCreateFunctionParam($functionsId, "signalCount", "DWORD", "Anzahl gezählter S0 Signale seit dem letzten Zurücksetzen");
+$paramsId = getOrCreateFunctionParam($functionsId, "signalCount", "DWORD", "Anzahl gezÃ¤hlter S0 Signale seit dem letzten ZurÃ¼cksetzen");
 $paramsId = getOrCreateFunctionParam($functionsId, "power", "WORD", "Aktuelle Leistung in Watt","Standard");
 $paramsId = getOrCreateFunctionParam($functionsId, "signalDuration", "DWORD", "Dauer des gemessenen S0 Signals in ms","Standard");
 
@@ -71,7 +71,7 @@ $functionsId = getOrCreateFunction($classesId, "getSignalCount", $functionId, "F
 
 $functionId=131;
 $functionsId = getOrCreateFunction($classesId, "SignalCount", $functionId, "RESULT", "Standard");
-$paramsId = getOrCreateFunctionParam($functionsId, "signalCount", "DWORD", "Anzahl gezählter S0 Signale seit dem letzten Zurücksetzen","Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "signalCount", "DWORD", "Anzahl gezÃ¤hlter S0 Signale seit dem letzten ZurÃ¼cksetzen","Standard");
   
 $functionId=7;
 $functionsId = getOrCreateFunction($classesId, "clearSignalCount", $functionId, "FUNCTION", "Standard");
@@ -116,7 +116,7 @@ $functionsId = getOrCreateFunction($classesId, "ModuleId", $functionId, "RESULT"
 $paramsId = getOrCreateFunctionParam($functionsId, "firmwareId", "ENUM", "","Standard");
 getOrCreateFunctionEnum($functionsId, $paramsId, "SONOFF", 5);
 getOrCreateFunctionEnum($functionsId, $paramsId, "ESP Bridge", 6);
-MYSQL_QUERY("UPDATE featurefunctionenums set name='S0 Reader' where paramId='$paramsId' and name='ESP Bridge' limit 1") or die(MYSQL_ERROR());
+QUERY("UPDATE featurefunctionenums set name='S0 Reader' where paramId='$paramsId' and name='ESP Bridge' limit 1");
 
 
 
@@ -153,85 +153,85 @@ $functionId=200;
 $functionsId = getOrCreateFunction($classesId, "evWhoIsServer", $functionId, "EVENT", "Standard");
 
 
-MYSQL_QUERY("CREATE TABLE IF NOT EXISTS `appmessages` (`id` int(11) NOT NULL,  `time` int(11) NOT NULL,  `title` varchar(100) NOT NULL,  `message` varchar(255) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=latin1");
-MYSQL_QUERY("ALTER TABLE `appmessages` ADD PRIMARY KEY (`id`)");
-MYSQL_QUERY("ALTER TABLE `appmessages` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT");
+QUERY("CREATE TABLE IF NOT EXISTS `appmessages` (`id` int(11) NOT NULL,  `time` int(11) NOT NULL,  `title` varchar(100) NOT NULL,  `message` varchar(255) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=latin1");
+QUERY("ALTER TABLE `appmessages` ADD PRIMARY KEY (`id`)");
+QUERY("ALTER TABLE `appmessages` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT");
 
 function getOrCreateClass($classId, $className, $classesId, $view)
 {
-	$erg = MYSQL_QUERY("select id from featureclasses where name='$className' limit 1");
-  if ($row=MYSQL_FETCH_ROW($erg)) return $row[0];
+	$erg = QUERY("select id from featureclasses where name='$className' limit 1");
+  if ($row=mysqli_fetch_ROW($erg)) return $row[0];
   $sql = "INSERT into featureclasses (id,classId,name,view) values('$classesId','$classId','$className','$view')";
-  MYSQL_QUERY($sql);
-  return mysql_insert_id();
+  QUERY($sql);
+  return query_insert_id();
 }
 
 function getOrCreateFunction($classesId, $functionName, $functionId, $functionType, $view)
 {
-	$erg = MYSQL_QUERY("select id from featurefunctions where featureClassesId='$classesId' and name='$functionName' limit 1") or die(MYSQL_ERROR());
-  if ($row=MYSQL_FETCH_ROW($erg)) return $row[0];
+	$erg = QUERY("select id from featurefunctions where featureClassesId='$classesId' and name='$functionName' limit 1");
+  if ($row=mysqli_fetch_ROW($erg)) return $row[0];
 
   $sql = "INSERT into featurefunctions (featureClassesId,type,name,functionId, view) values('$classesId','$functionType','$functionName','$functionId', 'Standard')";
-  MYSQL_QUERY($sql);
-  return mysql_insert_id();
+  QUERY($sql);
+  return query_insert_id();
 }
 
 function deleteFunction($classesId, $functionName, $functionId, $functionType, $view)
 {
-	MYSQL_QUERY("delete from featurefunctions where featureClassesId='$classesId' and name='$functionName' and functionId='$functionId' limit 1") or die(MYSQL_ERROR());
+	QUERY("delete from featurefunctions where featureClassesId='$classesId' and name='$functionName' and functionId='$functionId' limit 1");
 }
 
 
 function getOrCreateFunctionParam($functionsId, $paramName, $paramType,$comment,$view)
 {
-	$erg = MYSQL_QUERY("select id from featurefunctionparams where featureFunctionId='$functionsId' and name='$paramName' limit 1") or die(MYSQL_ERROR());
-	if ($row=MYSQL_FETCH_ROW($erg)) return $row[0];
+	$erg = QUERY("select id from featurefunctionparams where featureFunctionId='$functionsId' and name='$paramName' limit 1");
+	if ($row=mysqli_fetch_ROW($erg)) return $row[0];
 	
-	$comment = mysql_real_escape_string($comment);
+	$comment = query_real_escape_string($comment);
 	
   $sql = "INSERT into featurefunctionparams (featureFunctionId,name,type,comment,view) values('$functionsId','$paramName','$paramType','$comment','$view')";
-  MYSQL_QUERY($sql);
-  return mysql_insert_id();
+  QUERY($sql);
+  return query_insert_id();
 }
 
 function getOrCreateFunctionEnum($functionsId, $functionParamsId, $functionParamName, $functionParamValue)
 {
-	$erg = MYSQL_QUERY("select id from featurefunctionenums where paramId='$functionParamsId' and name='$functionParamName' limit 1") or die(MYSQL_ERROR());
-  if ($row=MYSQL_FETCH_ROW($erg)) return $row[0];
+	$erg = QUERY("select id from featurefunctionenums where paramId='$functionParamsId' and name='$functionParamName' limit 1");
+  if ($row=mysqli_fetch_ROW($erg)) return $row[0];
 
   $sql = "INSERT into featurefunctionenums (featureFunctionId,paramId,name,value) values('$functionsId','$functionParamsId','$functionParamName','$functionParamValue')";
-  MYSQL_QUERY($sql);
-  return mysql_insert_id();
+  QUERY($sql);
+  return query_insert_id();
 }
 
 function getOrCreateFunctionBitMask($functionsId, $functionParamsId, $maskName, $maskBit)
 {
-  $erg = MYSQL_QUERY("select id,name from featurefunctionbitmasks where featureFunctionId='$functionsId' and paramId='$functionParamsId' and bit='$maskBit' limit 1") or die(MYSQL_ERROR());
-	if ($row=MYSQL_FETCH_ROW($erg))
+  $erg = QUERY("select id,name from featurefunctionbitmasks where featureFunctionId='$functionsId' and paramId='$functionParamsId' and bit='$maskBit' limit 1");
+	if ($row=mysqli_fetch_ROW($erg))
 	{
 		if ($row[1]!=$maskName)
 		{
-			$maskName = mysql_real_escape_string($maskName);
+			$maskName = query_real_escape_string($maskName);
 			$sql = "UPDATE featurefunctionbitmasks set name='$maskName' where id='$row[0]' limit 1";
-			MYSQL_QUERY($sql);
+			QUERY($sql);
 		}
 		return $row[0];
 	}
 	
-	$maskName = mysql_real_escape_string($maskName);
+	$maskName = query_real_escape_string($maskName);
   
   $sql = "INSERT into featurefunctionbitmasks (featureFunctionId,paramId,bit,name) values('$functionsId','$functionParamId','$maskBit','$maskName')";
-  MYSQL_QUERY($sql);
-  return mysql_insert_id();
+  QUERY($sql);
+  return query_insert_id();
 }
 
 function createConfigParam($paramKey, $paramValue)
 {
-  $erg = MYSQL_QUERY("select paramValue from basicConfig where paramKey='$paramKey' limit 1") or die(MYSQL_ERROR());
-  if ($obj=MYSQL_FETCH_OBJECT($erg)) return;
+  $erg = QUERY("select paramValue from basicConfig where paramKey='$paramKey' limit 1");
+  if ($obj=mysqli_fetch_OBJECT($erg)) return;
 
   $sql = "insert into basicConfig (paramKey,paramValue) values('$paramKey','$paramValue')";
-  MYSQL_QUERY($sql);
+  QUERY($sql);
 }
 
 ?>

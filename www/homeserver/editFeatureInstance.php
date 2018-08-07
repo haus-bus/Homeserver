@@ -5,13 +5,13 @@ if ($submitted!="")
 {
 	if ($delete==1)
 	{
-		$erg = MYSQL_QUERY("select featureClassesId,objectId from featureInstances where id='$id' limit 1") or die(MYSQL_ERROR());
-		if ($row=MYSQL_FETCH_ROW($erg))
+		$erg = QUERY("select featureClassesId,objectId from featureInstances where id='$id' limit 1");
+		if ($row=mysqli_fetch_ROW($erg))
 		{
 			 $featureClassesId=$row[0];
 			 $objectId=$row[1];
 		}
-		else die("ungültige instance $id");
+		else die("ungÃ¼ltige instance $id");
 		
   	$featureClassName = getNameForFeatureClass($featureClassesId);
     if ($featureClassName=="Led" || $featureClassName=="Taster" || $featureClassName=="LogicalButton")
@@ -37,7 +37,7 @@ if ($submitted!="")
 
          callObjectMethodByName($ledPortObjectId, "setConfiguration",$data);
 
-         $message="OK, Änderungen erst nach Reset sichtbar";
+         $message="OK, Ã„nderungen erst nach Reset sichtbar";
        }
        else if ($featureClassName=="LogicalButton")
     	 {
@@ -56,31 +56,31 @@ if ($submitted!="")
 
          callObjectMethodByName($controllerObjectId, "setConfiguration",$params);
          
-         MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='0' where parentInstanceId='$id'") or die(MYSQL_ERROR());
-         $message="OK, Änderungen erst nach Reset sichtbar";
+         QUERY("UPDATE featureInstances set parentInstanceId='0' where parentInstanceId='$id'");
+         $message="OK, Ã„nderungen erst nach Reset sichtbar";
     	 }
     }
 	}
 	else
 	{
-    $erg = MYSQL_QUERY("select featureClassesId from featureInstances where id='$id' limit 1") or die(MYSQL_ERROR());
-    $row=MYSQL_FETCH_ROW($erg);
+    $erg = QUERY("select featureClassesId from featureInstances where id='$id' limit 1");
+    $row=mysqli_fetch_ROW($erg);
     $featureClassesId=$row[0];
-    $erg = MYSQL_QUERY("select name from featureClasses where id='$featureClassesId' limit 1") or die(MYSQL_ERROR());
-    $row=MYSQL_FETCH_ROW($erg);
-    if ($row[0]==$name) $message="FEHLER! Ein Feature darf nicht so heißen wie sein Typ. Bitte anderen Namen wählen!";
+    $erg = QUERY("select name from featureClasses where id='$featureClassesId' limit 1");
+    $row=mysqli_fetch_ROW($erg);
+    if ($row[0]==$name) $message="FEHLER! Ein Feature darf nicht so heiÃŸen wie sein Typ. Bitte anderen Namen wÃ¤hlen!";
     else
     {
-      MYSQL_QUERY("UPDATE featureInstances set name='$name' where id='$id' limit 1") or die(MYSQL_ERROR());
+      QUERY("UPDATE featureInstances set name='$name' where id='$id' limit 1");
       $message="Einstellungen gespeichert";
     }
     
     //wetter
     /*if ($featureClassesId==25)
     {
-    	MYSQL_QUERY("delete from basicConfig where paramKey = 'offsetSunrise' or paramKey = 'offsetSunset' limit 2") or die(MYSQL_ERROR());
-    	MYSQL_QUERY("INSERT into basicConfig (paramKey,paramValue) values('offsetSunrise','$offsetSunrise')") or die(MYSQL_ERROR());
-    	MYSQL_QUERY("INSERT into basicConfig (paramKey,paramValue) values('offsetSunset','$offsetSunset')") or die(MYSQL_ERROR());
+    	QUERY("delete from basicConfig where paramKey = 'offsetSunrise' or paramKey = 'offsetSunset' limit 2");
+    	QUERY("INSERT into basicConfig (paramKey,paramValue) values('offsetSunrise','$offsetSunrise')");
+    	QUERY("INSERT into basicConfig (paramKey,paramValue) values('offsetSunset','$offsetSunset')");
     }*/
   }
 }
@@ -88,14 +88,14 @@ if ($submitted!="")
 // Methodenaufrufe
 if ($action=="callMethod")
 {
-  $erg = MYSQL_QUERY("select max(id) from udpCommandLog") or die(MYSQL_ERROR());
-  $row=MYSQL_FETCH_ROW($erg);
+  $erg = QUERY("select max(id) from udpCommandLog");
+  $row=mysqli_fetch_ROW($erg);
   $minId=$row[0];
 
   $message="<iframe style='position:relative;left:0px;top:0px' src='specificJournal.php?objectId=$objectId&minId=$minId' width='100%' height='55' frameborder=0 border=0></iframe>";
 
-  $erg = MYSQL_QUERY("select id,name,type from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id") or die(MYSQL_ERROR());
-  while($obj=MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select id,name,type from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
+  while($obj=mysqli_fetch_OBJECT($erg))
   {
     if ($obj->type=="WEEKTIME")
     {
@@ -116,22 +116,22 @@ if ($action=="callMethod")
   }
   
   $foundSetConfiguration=0;
-  $erg = MYSQL_QUERY("select featureFunctions.name as featureFunctionName, featureClasses.name as featureClassName
+  $erg = QUERY("select featureFunctions.name as featureFunctionName, featureClasses.name as featureClassName
                              from featureFunctions join featureClasses on (featureFunctions.featureClassesId = featureClasses.id)
-                             where featureFunctions.id='$featureFunctionId' limit 1") or die(MYSQL_ERROR());
-  $obj=MYSQL_FETCH_OBJECT($erg);
+                             where featureFunctions.id='$featureFunctionId' limit 1");
+  $obj=mysqli_fetch_OBJECT($erg);
   {
   	 if ($obj->featureClassName=="LogicalButton" && $obj->featureFunctionName=="setConfiguration")
   	 {
-  	 	   $erg = MYSQL_QUERY("select classId,name from featureClasses where name='Taster' or name='Led' limit 2") or die(MYSQL_ERROR());
-  	 	   while($row=MYSQL_FETCH_ROW($erg))
+  	 	   $erg = QUERY("select classId,name from featureClasses where name='Taster' or name='Led' limit 2");
+  	 	   while($row=mysqli_fetch_ROW($erg))
   	 	   {
   	 	   	  if ($row[1]=="Taster") $tasterClassId=$row[0];
   	 	   	  else if ($row[1]=="Led") $ledClassId=$row[0];
   	 	   }
   	 	   
-  	 	   // zugehörige featureInstances neufinden
-  	 	   MYSQL_QUERY("update featureInstances set parentInstanceId='0' where parentInstanceId='$id'") or die(MYSQL_ERROR());
+  	 	   // zugehÃ¶rige featureInstances neufinden
+  	 	   QUERY("update featureInstances set parentInstanceId='0' where parentInstanceId='$id'");
   	 	   
   	 	   for ($i=1;$i<=8;$i++)
   	 	   {
@@ -173,7 +173,7 @@ function setParentId($paramDataName, $childClassId)
 	if ($paramData[$paramDataName]>0)
   {
      $childObjectId = getObjectId(getDeviceId($objectId), $childClassId, $paramData[$paramDataName]);
-  	 MYSQL_QUERY("UPDATE featureInstances set parentInstanceId='$id' where objectId='$childObjectId' limit 1") or die(MYSQL_ERROR());
+  	 QUERY("UPDATE featureInstances set parentInstanceId='$id' where objectId='$childObjectId' limit 1");
   }
 }
 
@@ -213,13 +213,13 @@ foreach($allFeatureInstances as $obj)
     break;
   }
 }
-if ($objectId=="") die("FEHLER! Ungültige ID $id");
+if ($objectId=="") die("FEHLER! UngÃ¼ltige ID $id");
 
 if ($featureClassesId==25) //wetter
 {
 	chooseTag("%OPT_WEATHER%",$html);
-  $erg = MYSQL_QUERY("select paramKey, paramValue from basicConfig where paramKey = 'offsetSunrise' or paramKey = 'offsetSunset' limit 2") or die(MYSQL_ERROR());
-  while($row = MYSQL_FETCH_ROW($erg))
+  $erg = QUERY("select paramKey, paramValue from basicConfig where paramKey = 'offsetSunrise' or paramKey = 'offsetSunset' limit 2");
+  while($row = mysqli_fetch_ROW($erg))
   {
   	if ($row[0]=="offsetSunrise") $offsetSunrise=$row[1];
   	else if ($row[0]=="offsetSunset") $offsetSunset=$row[1];
@@ -232,7 +232,7 @@ else removeTag("%OPT_WEATHER%",$html);
 
 // Zuletzt empfangene Daten von diesem Sender
 $erg = QUERY("select function,functionData,id from lastReceived  where senderObj='$objectId' order by id desc limit 50");
-while ($row=MYSQL_FETCH_ROW($erg))
+while ($row=mysqli_fetch_ROW($erg))
 {
 	 if (!isset($lastReceived[$row[0]]))
 	 {
@@ -341,7 +341,7 @@ else removeTag("%OPT_DELETE%",$html);
 
 $myRooms="";
 $erg = QUERY("select rooms.name from rooms join roomFeatures on (rooms.id=roomfeatures.roomId) where roomFeatures.featureInstanceId='$id' order by rooms.name");
-while($row=MYSQL_FETCH_ROW($erg))
+while($row=mysqli_fetch_ROW($erg))
 {
 	if ($myRooms!="") $myRooms.=", ";
 	$myRooms.=$row[0];
@@ -350,7 +350,7 @@ $html = str_replace("%ROOMS%",$myRooms, $html);
 
 $myGroups="";
 $erg = QUERY("select groups.name from groups join groupFeatures on (groups.id=groupFeatures.groupId) where groupFeatures.featureInstanceId='$id' and single!=1 and groups.generated!=1 order by groups.name");
-while($row=MYSQL_FETCH_ROW($erg))
+while($row=mysqli_fetch_ROW($erg))
 {
   if ($myGroups!="") $myGroups.=", ";
   $myGroups.=$row[0];
@@ -360,7 +360,7 @@ $html = str_replace("%GROUPS%",$myGroups, $html);
 
 /*$directRules=0;
 $erg = QUERY("SELECT rules.id from rules join ruleActions on (rules.id=ruleActions.ruleId) join groups on (groups.id=rules.groupId) where single=1 and ruleActions.featureInstanceId='$id' limit 1");
-if (MYSQL_FETCH_ROW($erg)) $directRules=1;
+if (mysqli_fetch_ROW($erg)) $directRules=1;
 if ($directRules==1) $html = str_replace("%DIRECT%","Ja", $html);
 else $html = str_replace("%DIRECT%","Nein", $html);
 */

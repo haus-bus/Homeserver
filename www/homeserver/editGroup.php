@@ -8,7 +8,7 @@ if ($action == "addMember")
     QUERY("DELETE from groupFeatures where groupId='$id'");
     
     $erg = QUERY("select id from featureInstances");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       $act = "id" . $obj->id;
       $act = $$act;
@@ -16,7 +16,7 @@ if ($action == "addMember")
       {
         QUERY("INSERT into groupFeatures (groupId, featureInstanceId) values('$id','$obj->id')");
         /*$erg2 = QUERY("select id from featureInstances where parentInstanceId='$obj->id'");
-        	while($row2=mysql_fetch_row($erg2))
+        	while($row2=mysqli_fetch_row($erg2))
         	{
         		QUERY("INSERT into groupFeatures (groupId, featureInstanceId) values('$id','$row2[0]')") ;
         	}*/
@@ -34,7 +34,7 @@ if ($action == "addMember")
     $closeTreeFolder = "</ul></li> \n";
     
     $treeElements = "";
-    $treeElements .= addToTree("<a href='editGroup.php?id=$id'>Feature zur Gruppe hinzufügen</a>", 1);
+    $treeElements .= addToTree("<a href='editGroup.php?id=$id'>Feature zur Gruppe hinzufÃ¼gen</a>", 1);
     $html = str_replace("%INITIAL_ELEMENT2%", "expandToItem('tree2','$treeElementCount');", $html);
     
     $allActionClasses = readFeatureClassesThatSupportType("ACTION");
@@ -59,7 +59,7 @@ if ($action == "addMember")
                                  
                                  where featureFunctions.type='ACTION' 
                                  order by roomName,featureClassName,featureInstanceName"); // and featureInstances.featureClassesId !='$logicalButtonClass'
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       $ready[$obj->featureInstanceId] = 1;
       
@@ -124,7 +124,7 @@ if ($action == "addMember")
                                  
                                  where featureFunctions.type='ACTION'
                                  order by controllerName, featureClassName,featureInstanceName,featureFunctionName"); // and featureInstances.featureClassesId !='$logicalButtonClass'
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       if ($ready[$obj->featureInstanceId] == 1)
         continue;
@@ -197,7 +197,7 @@ else if ($action == "addSignal")
     QUERY("DELETE from groupFeatures where groupId='$id'");
     
     $erg = QUERY("select id from featureInstances");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       $act = "id" . $obj->id;
       $act = $$act;
@@ -218,7 +218,7 @@ else if ($action == "addSignal")
     $closeTreeFolder = "</ul></li> \n";
     
     $treeElements = "";
-    $treeElements .= addToTree("<a href='editGroup.php?id=$id'>Signale zur Gruppe hinzufügen</a>", 1);
+    $treeElements .= addToTree("<a href='editGroup.php?id=$id'>Signale zur Gruppe hinzufÃ¼gen</a>", 1);
     $html = str_replace("%INITIAL_ELEMENT2%", "expandToItem('tree2','$treeElementCount');", $html);
     $allMyGroupFeatures = readGroupFeatures($id);
     
@@ -237,7 +237,7 @@ else if ($action == "addSignal")
                                  join featureFunctions on (featureInstances.featureClassesId=featureFunctions.featureClassesId) 
                                  where featureFunctions.type='EVENT' 
                                  order by roomName,featureClassName,featureInstanceName"); // and featureInstances.featureClassesId !='$logicalButtonClass'
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       $ready[$obj->featureInstanceId] = 1;
       
@@ -299,7 +299,7 @@ else if ($action == "addSignal")
                                  
                                  where featureFunctions.type='ACTION'
                                  order by controllerName, featureClassName,featureInstanceName,featureFunctionName"); // and featureInstances.featureClassesId !='$logicalButtonClass'
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       if ($ready[$obj->featureInstanceId] == 1)
         continue;
@@ -371,41 +371,41 @@ else if ($action == "deleteMember")
 else if ($action == "copy")
 {
   $erg = QUERY("select name,groupType from groups where id='$id' limit 1");
-  if ($obj = MYSQL_FETCH_OBJECT($erg))
+  if ($obj = mysqli_fetch_OBJECT($erg))
   {
     $name = "Kopie von " . $obj->name;
     
     QUERY("INSERT into groups (name,single,groupType) values('$name','0','$obj->groupType')");
-    $newId = mysql_insert_id();
+    $newId = query_insert_id();
     
     $erg2 = QUERY("select name,value,basics from groupStates where groupId='$id'");
-    while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+    while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
     {
       QUERY("INSERT into groupStates (groupId,name, value,basics) values ('$newId','$obj2->name','$obj2->value','$obj2->basics')");
     }
     
     $erg = QUERY("select featureInstanceId from groupFeatures where groupId='$id'");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       QUERY("INSERT into groupFeatures (featureInstanceId, groupId) values('$obj->featureInstanceId','$newId')");
     }
     
     $erg = QUERY("select name,groupType from groups where subOf='$id' order by id");
-    while ($obj = MYSQL_FETCH_OBJECT($erg))
+    while ($obj = mysqli_fetch_OBJECT($erg))
     {
       $name = "Kopie von " . $obj->name;
       
       QUERY("INSERT into groups (name,single,groupType,subOf) values('$name','0','$obj->groupType','$newId')");
-      $innerNewId = mysql_insert_id();
+      $innerNewId = query_insert_id();
       
       $erg2 = QUERY("select name,value,basics from groupStates where groupId='$obj->id'");
-      while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+      while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
       {
         QUERY("INSERT into groupStates (groupId,name, value,basics) values ('$innerNewId','$obj2->name','$obj2->value','$obj2->basics')");
       }
       
       $erg3 = QUERY("select featureInstanceId from groupFeatures where groupId='$obj->id'");
-      while ( $obj3 = MYSQL_FETCH_OBJECT($erg3) )
+      while ( $obj3 = mysqli_fetch_OBJECT($erg3) )
       {
         QUERY("INSERT into groupFeatures (featureInstanceId, groupId) values('$obj3->featureInstanceId','$innerNewId')");
       }
@@ -415,14 +415,14 @@ else if ($action == "copy")
     exit();
   }
   else
-    die("FEHLER! Ungültige ID $id");
+    die("FEHLER! UngÃ¼ltige ID $id");
 }
 else if ($submitted != "")
 {
   if ($id == "")
   {
     QUERY("INSERT into groups (name,single,subOf,groupType) values('$name','0','$sub','$groupType')");
-    $id = mysql_insert_id();
+    $id = query_insert_id();
     
     $schalterClassesId = getClassesIdByName("Schalter");
     $basicStateNames = getBasicStateNames($schalterClassesId);
@@ -462,7 +462,7 @@ if ($id == "")
   $html = str_replace("%SUB%", "", $html);
   removeTag("%ENTRIES%", $html);
   removeTag("%DELETE%", $html);
-  $html = str_replace("%GROUP_TYPE_OPTIONS%", getSelect("", ",SIGNALS-AND,SIGNALS-OR", "Normal,Logische UND-Verknüpfung, Logische ODER-Verknüpfung"), $html);
+  $html = str_replace("%GROUP_TYPE_OPTIONS%", getSelect("", ",SIGNALS-AND,SIGNALS-OR", "Normal,Logische UND-VerknÃ¼pfung, Logische ODER-VerknÃ¼pfung"), $html);
   chooseTag("%OPT_NORMAL%", $html);
   removeTag("%OPT_SIGNALS_AND%", $html);
   removeTag("%OPT_SIGNALS_OR%", $html);
@@ -478,7 +478,7 @@ else if ($action == "createSub")
   removeTag("%ENTRIES%", $html);
   removeTag("%DELETE%", $html);
   
-  $html = str_replace("%GROUP_TYPE_OPTIONS%", getSelect("", ",SIGNALS-AND,SIGNALS-OR", "Normal,Logische UND-Verknüpfung, Logische ODER-Verknüpfung"), $html);
+  $html = str_replace("%GROUP_TYPE_OPTIONS%", getSelect("", ",SIGNALS-AND,SIGNALS-OR", "Normal,Logische UND-VerknÃ¼pfung, Logische ODER-VerknÃ¼pfung"), $html);
   chooseTag("%OPT_NORMAL%", $html);
   removeTag("%OPT_SIGNALS_AND%", $html);
   removeTag("%OPT_SIGNALS_OR%", $html);
@@ -487,15 +487,15 @@ else
 {
   $html = str_replace("%ID%", $id, $html);
   $html = str_replace("%TITLE%", "Gruppe bearbeiten", $html);
-  $html = str_replace("%SUBMIT_TITLE%", "Ändern", $html);
+  $html = str_replace("%SUBMIT_TITLE%", "Ã„ndern", $html);
   $html = str_replace("%SUB%", "", $html);
   chooseTag("%DELETE%", $html);
   
   $erg = QUERY("select * from groups where id='$id' limit 1");
-  if ($obj = MYSQL_FETCH_OBJECT($erg))
+  if ($obj = mysqli_fetch_OBJECT($erg))
   {
     $html = str_replace("%NAME%", $obj->name, $html);
-    $html = str_replace("%GROUP_TYPE_OPTIONS%", getSelect($obj->groupType, ",SIGNALS-AND,SIGNALS-OR", "Normal,Logische UND-Verknüpfung, Logische ODER-Verknüpfung"), $html);
+    $html = str_replace("%GROUP_TYPE_OPTIONS%", getSelect($obj->groupType, ",SIGNALS-AND,SIGNALS-OR", "Normal,Logische UND-VerknÃ¼pfung, Logische ODER-VerknÃ¼pfung"), $html);
     if ($obj->groupType == "")
     {
       chooseTag("%OPT_NORMAL%", $html);
@@ -535,14 +535,14 @@ else
     }
   }
   else
-    die("FEHLER! Ungültige ID $id");
+    die("FEHLER! UngÃ¼ltige ID $id");
   
   $allFeatureInstances = readFeatureInstances();
   $allFeatureClasses = readFeatureClasses();
   
   $membersTag = getTag("%MEMBERS%", $html);
   $erg = QUERY("select id,featureInstanceId from groupFeatures where groupId='$id' order by id");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
     $actTag = $membersTag;
     $actTag = str_replace("%MEMBER_ID%", $obj->id, $actTag);

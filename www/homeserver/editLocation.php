@@ -5,29 +5,29 @@ if ($submitted==1)
 {
 	if ($suntimes==1)
 	{
-  	MYSQL_QUERY("delete from basicConfig where paramKey = 'offsetSunrise' or paramKey = 'offsetSunset' limit 2") or die(MYSQL_ERROR());
-  	MYSQL_QUERY("INSERT into basicConfig (paramKey,paramValue) values('offsetSunrise','$offsetSunrise')") or die(MYSQL_ERROR());
-   	MYSQL_QUERY("INSERT into basicConfig (paramKey,paramValue) values('offsetSunset','$offsetSunset')") or die(MYSQL_ERROR());
+  	QUERY("delete from basicConfig where paramKey = 'offsetSunrise' or paramKey = 'offsetSunset' limit 2");
+  	QUERY("INSERT into basicConfig (paramKey,paramValue) values('offsetSunrise','$offsetSunrise')");
+   	QUERY("INSERT into basicConfig (paramKey,paramValue) values('offsetSunset','$offsetSunset')");
 	}
 	else
 	{
-    MYSQL_QUERY("DELETE from basicConfig where paramKey = 'locationZipCode' limit 1") or die(MYSQL_ERROR());
-    MYSQL_QUERY("INSERT into basicConfig (paramKey,paramValue) values('locationZipCode','$locationZipCode')") or die(MYSQL_ERROR());
+    QUERY("DELETE from basicConfig where paramKey = 'locationZipCode' limit 1");
+    QUERY("INSERT into basicConfig (paramKey,paramValue) values('locationZipCode','$locationZipCode')");
   
-    MYSQL_QUERY("DELETE from basicConfig where paramKey = 'locationCountry' limit 1") or die(MYSQL_ERROR());
-    MYSQL_QUERY("INSERT into basicConfig (paramKey,paramValue) values('locationCountry','$locationCountry')") or die(MYSQL_ERROR());
+    QUERY("DELETE from basicConfig where paramKey = 'locationCountry' limit 1");
+    QUERY("INSERT into basicConfig (paramKey,paramValue) values('locationCountry','$locationCountry')");
     
-    MYSQL_QUERY("DELETE from basicConfig where paramKey = 'timeZone' limit 1") or die(MYSQL_ERROR());
-    MYSQL_QUERY("INSERT into basicConfig (paramKey,paramValue) values('TimeZone','$timeZone')") or die(MYSQL_ERROR());
+    QUERY("DELETE from basicConfig where paramKey = 'timeZone' limit 1");
+    QUERY("INSERT into basicConfig (paramKey,paramValue) values('TimeZone','$timeZone')");
     
     $req = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20geo.places%20where%20text%3D%22" . $locationCountry . "%20" . $locationZipCode . "%22&format=xml";
     $api = simplexml_load_string ( utf8_encode ( file_get_contents ( $req, false, getStreamContext () ) ) );
     $latitude=$api->results->place->centroid->latitude;
     $longitude=$api->results->place->centroid->longitude;
   
-    MYSQL_QUERY("DELETE from basicConfig where paramKey = 'latitude' or paramKey='longitude' limit 2") or die(MYSQL_ERROR());
-    MYSQL_QUERY("INSERT into basicConfig (paramKey,paramValue) values('latitude','$latitude')") or die(MYSQL_ERROR());
-    MYSQL_QUERY("INSERT into basicConfig (paramKey,paramValue) values('longitude','$longitude')") or die(MYSQL_ERROR());
+    QUERY("DELETE from basicConfig where paramKey = 'latitude' or paramKey='longitude' limit 2");
+    QUERY("INSERT into basicConfig (paramKey,paramValue) values('latitude','$latitude')");
+    QUERY("INSERT into basicConfig (paramKey,paramValue) values('longitude','$longitude')");
   }
 
   
@@ -36,8 +36,8 @@ if ($submitted==1)
 
 setupTreeAndContent("editLocation_design.html", $message);
 
-$erg = MYSQL_QUERY("select paramValue,paramKey from basicConfig where paramKey = 'locationZipCode' or paramKey='locationCountry' or paramKey='TimeZone' or paramKey='latitude' or paramKey='longitude' or paramKey='offsetSunrise' or paramKey='offsetSunset' ") or die(MYSQL_ERROR());
-while($row=MYSQL_FETCH_ROW($erg))
+$erg = QUERY("select paramValue,paramKey from basicConfig where paramKey = 'locationZipCode' or paramKey='locationCountry' or paramKey='TimeZone' or paramKey='latitude' or paramKey='longitude' or paramKey='offsetSunrise' or paramKey='offsetSunset' ");
+while($row=mysqli_fetch_ROW($erg))
 {
 	 $vals[$row[1]]=$row[0];
 }

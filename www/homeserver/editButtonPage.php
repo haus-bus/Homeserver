@@ -17,7 +17,7 @@ if ($action == "linkPage")
     $pagesTag = getTag("%PAGES%", $html);
     $pages = "";
     $erg = QUERY("select id,name from webapppages where id!='$pageId' order by pos,name");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       $actTag = $pagesTag;
       $actTag = str_replace("%PAGE%", $obj->id, $actTag);
@@ -47,7 +47,7 @@ if ($action == "addObject")
   {
     $_SESSION["addObjects"]="";
     $erg = QUERY("select id from featureInstances");
-    while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+    while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
       $act = "id" . $obj->id;
       $act = $$act;
@@ -61,7 +61,7 @@ if ($action == "addObject")
     
     setupTreeAndContent("addObject_design.html");
     
-    $html = str_replace("Objekt zur Webpage hinzufügen","Nun das Objekt wählen von dem das Symbol übernommen werden soll",$html);
+    $html = str_replace("Objekt zur Webpage hinzufÃ¼gen","Nun das Objekt wÃ¤hlen von dem das Symbol Ã¼bernommen werden soll",$html);
     
     removeTag("%OPT_STEP1%",$html);
     
@@ -70,7 +70,7 @@ if ($action == "addObject")
     $closeTreeFolder = "</ul></li> \n";
     
     $treeElements = "";
-    $treeElements .= addToTree("<a href='editButtonPage.php?pageId=pageId'>Symbol von bestehendem Objekt wählen</a>", 1);
+    $treeElements .= addToTree("<a href='editButtonPage.php?pageId=pageId'>Symbol von bestehendem Objekt wÃ¤hlen</a>", 1);
     $html = str_replace("%INITIAL_ELEMENT2%", "expandToItem('tree2','$treeElementCount');", $html);
     
     $svgInfos = getSvgInfos($pageId);
@@ -94,7 +94,7 @@ if ($action == "addObject")
                  
                                  where featureFunctions.type='ACTION'
                                  order by roomName,featureClassName,featureInstanceName"); // and featureInstances.featureClassesId !='$logicalButtonClass'
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       if ($ready[$obj->featureInstanceId] == 1)
         continue;
@@ -165,7 +165,7 @@ if ($action == "addObject")
                  
                                  where featureFunctions.type='ACTION'
                                  order by controllerName, featureClassName,featureInstanceName,featureFunctionName"); // and featureInstances.featureClassesId !='$logicalButtonClass'
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       if ($ready[$obj->featureInstanceId] == 1)
         continue;
@@ -247,7 +247,7 @@ if ($action == "addObject")
     $closeTreeFolder = "</ul></li> \n";
     
     $treeElements = "";
-    $treeElements .= addToTree("<a href='editButtonPage.php?pageId=pageId'>Neues Objekt für Webpage auswählen</a>", 1);
+    $treeElements .= addToTree("<a href='editButtonPage.php?pageId=pageId'>Neues Objekt fÃ¼r Webpage auswÃ¤hlen</a>", 1);
     $html = str_replace("%INITIAL_ELEMENT2%", "expandToItem('tree2','$treeElementCount');", $html);
     
     $svgInfos = getSvgInfos($pageId);
@@ -271,7 +271,7 @@ if ($action == "addObject")
                                  
                                  where featureFunctions.type='ACTION' 
                                  order by roomName,featureClassName,featureInstanceName"); // and featureInstances.featureClassesId !='$logicalButtonClass'
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       if ($ready[$obj->featureInstanceId] == 1)
         continue;
@@ -342,7 +342,7 @@ if ($action == "addObject")
                                  
                                  where featureFunctions.type='ACTION'
                                  order by controllerName, featureClassName,featureInstanceName,featureFunctionName"); // and featureInstances.featureClassesId !='$logicalButtonClass'
-    while ( $obj = mysql_fetch_object($erg) )
+    while ( $obj = mysqli_fetch_object($erg) )
     {
       if ($ready[$obj->featureInstanceId] == 1)
         continue;
@@ -418,11 +418,11 @@ if ($action == "editLine")
   if ($lineId != "")
   {
     $erg = QUERY("select name,pos from webapppageszeilen where id='$lineId' limit 1");
-    $row = MYSQL_FETCH_ROW($erg);
+    $row = mysqli_fetch_ROW($erg);
     $lineName = $row[0];
     $pos = $row[1];
-    $title = "Absatz ändern";
-    $submitTitle = "Ändern";
+    $title = "Absatz Ã¤ndern";
+    $submitTitle = "Ã„ndern";
     chooseTag("%OPT_DELETE%", $html);
   }
   else
@@ -452,7 +452,7 @@ if ($action == "submitLine")
   else if ($lineId == "")
   {
     QUERY("INSERT into webapppageszeilen (pageId, name,pos) values('$pageId','$name','$pos')");
-    $lineId = mysql_insert_id();
+    $lineId = query_insert_id();
   }
   else
     QUERY("UPDATE webapppageszeilen set name='$name',pos='$pos' where id='$lineId' limit 1");
@@ -467,7 +467,7 @@ if ($action == "editButton")
   if ($buttonId != "")
   {
     $erg = QUERY("select name,pos,featureInstanceId from webapppagesbuttons where id='$buttonId' limit 1");
-    $row = MYSQL_FETCH_ROW($erg);
+    $row = mysqli_fetch_ROW($erg);
     $buttonName = $row[0];
     $pos = $row[1];
     $link = $row[2];
@@ -475,7 +475,7 @@ if ($action == "editButton")
     {
       $page = substr($link, 1);
       $erg = QUERY("select name from webapppages where id='$page' limit 1");
-      if ($row = MYSQL_FETCH_ROW($erg))
+      if ($row = mysqli_fetch_ROW($erg))
         $signal = "Subseite: $row[0]";
       else
         $signal = "Fehler: Subseite nicht mehr vorhanden";
@@ -486,29 +486,29 @@ if ($action == "editButton")
     {
       // FeatureInstance suchen
       $erg = QUERY("select controllerId, name from featureInstances where id='$link' limit 1");
-      $row = MYSQL_FETCH_ROW($erg);
+      $row = mysqli_fetch_ROW($erg);
       $controllerId = $row[0];
       $instanceName = $row[1];
       
       $header = "";
       $erg = QUERY("select roomId from roomFeatures where featureInstanceId='$link' limit 1");
-      if ($row = MYSQL_FETCH_ROW($erg))
+      if ($row = mysqli_fetch_ROW($erg))
       {
         $erg = QUERY("select name from rooms where id='$row[0]' limit 1");
-        $row = MYSQL_FETCH_ROW($erg);
+        $row = mysqli_fetch_ROW($erg);
         $header = $row[0];
       }
       else
       {
         $erg = QUERY("select name from controller where id='$controllerId' limit 1");
-        $row = MYSQL_FETCH_ROW($erg);
+        $row = mysqli_fetch_ROW($erg);
         $header = "Controller " . $row[0];
       }
       
-      $signal = $header .= " » " . $instanceName;
+      $signal = $header .= " Â» " . $instanceName;
     }
-    $title = "Button ändern";
-    $submitTitle = "Ändern";
+    $title = "Button Ã¤ndern";
+    $submitTitle = "Ã„ndern";
     chooseTag("%OPT_DELETE%", $html);
   }
   else
@@ -543,7 +543,7 @@ if ($action == "submitButton" || $action == "chooseSignal" || $action == "choose
       QUERY("INSERT into webapppagesbuttons (zeilenId, name,pos,featureInstanceId) values('$lineId','$name','$pos','$signal')");
     else
       QUERY("INSERT into webapppagesbuttons (zeilenId, name,pos) values('$lineId','$name','$pos')");
-    $buttonId = mysql_insert_id();
+    $buttonId = query_insert_id();
   }
   else
   {
@@ -572,7 +572,7 @@ if ($submitted != "")
   {
     QUERY("DELETE from webappPages where id='$pageId' limit 1");
     $erg = QUERY("select id from webapppageszeilen where pageId='$pageId'");
-    while ( $row = MYSQL_FETCH_ROW($erg) )
+    while ( $row = mysqli_fetch_ROW($erg) )
     {
       $actId = $row[0];
       QUERY("DELETE from webapppageszeilen where id='$actId' limit 1");
@@ -594,7 +594,7 @@ if ($submitted != "")
       }
       
       QUERY("INSERT into webappPages (name,pos) values('$name','$pos')");
-      $pageId = mysql_insert_id();
+      $pageId = query_insert_id();
     }
     else
     {
@@ -633,7 +633,7 @@ if ($pageId == "")
   $html = str_replace("%PAGE_NAME%", "", $html);
   
   $erg = QUERY("select id from webappPages where pos='1' limit 1");
-  if ($row = MYSQL_FETCH_ROW($erg))
+  if ($row = mysqli_fetch_ROW($erg))
   {
   }
   else
@@ -647,7 +647,7 @@ else
 {
   $html = str_replace("%PAGE_ID%", $pageId, $html);
   $html = str_replace("%TITLE%", "Seite bearbeiten", $html);
-  $html = str_replace("%SUBMIT_TITLE%", "Ändern", $html);
+  $html = str_replace("%SUBMIT_TITLE%", "Ã„ndern", $html);
   chooseTag("%OPT_DELETE%", $html);
   chooseTag("%OPT_CONFIG%", $html);
   
@@ -658,15 +658,15 @@ else
   {
     $info = $svgInfos->ok . " funktionierende Objekte gefunden <br>";
     if ($svgInfos->old > 0)
-      $info .= $svgInfos->old . " alte nicht mehr gültige Objekte gefunden <br>";
+      $info .= $svgInfos->old . " alte nicht mehr gÃ¼ltige Objekte gefunden <br>";
     if ($svgInfos->notFound > 0)
-      $info .= $svgInfos->notFound . " ungültige nicht existierende Objekte gefunden <br>";
-    $info .= "<br><br><a href='editButtonPage.php?pageId=$pageId&action=addObject'><u>Weitere Objekte zur Seite hinzufügen</a><br>";
+      $info .= $svgInfos->notFound . " ungÃ¼ltige nicht existierende Objekte gefunden <br>";
+    $info .= "<br><br><a href='editButtonPage.php?pageId=$pageId&action=addObject'><u>Weitere Objekte zur Seite hinzufÃ¼gen</a><br>";
     $html = str_replace("%SVG_FUNCTIONS%", $info, $html);
   }
   
-  $erg = MYSQL_QUERY("select name,pos from webappPages where id='$pageId' limit 1") or die(MYSQL_ERROR());
-  if ($obj = MYSQL_FETCH_OBJECT($erg))
+  $erg = QUERY("select name,pos from webappPages where id='$pageId' limit 1");
+  if ($obj = mysqli_fetch_OBJECT($erg))
   {
     $html = str_replace("%PAGE_NAME%", $obj->name, $html);
     if ($obj->pos == 1)
@@ -679,14 +679,14 @@ else
     $html = str_replace("%CHECKED%", $checked, $html);
   }
   else
-    die("FEHLER! Ungültige ID $pageId");
+    die("FEHLER! UngÃ¼ltige ID $pageId");
   
   $zeilenTag = getTag("%OPT_ZEILEN%", $html);
   $zeilen = "";
   $buttonTag = getTag("%OPT_BUTTONS%", $zeilenTag);
   
   $erg = QUERY("select id, name from webapppageszeilen where pageId='$pageId' order by pos");
-  while ( $obj = MYSQL_FETCH_OBJECT($erg) )
+  while ( $obj = mysqli_fetch_OBJECT($erg) )
   {
     $actTag = $zeilenTag;
     if ($obj->name == "")
@@ -696,7 +696,7 @@ else
     
     $buttons = "";
     $erg2 = QUERY("select id, name from webapppagesbuttons where zeilenId='$obj->id' order by pos");
-    while ( $obj2 = MYSQL_FETCH_OBJECT($erg2) )
+    while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
     {
       $actButtonTag = $buttonTag;
       $actButtonTag = str_replace("%BUTTON_ID%", $obj2->id, $actButtonTag);
@@ -782,7 +782,7 @@ function generateSvgCorel($fileIn, $fileOut)
   // Objekte und Typen suchen
   // id="__x0022_100995845_x0022_"
   // <odm name="Type" value="switch" type="0"/>
-  // Status und Text IDs ergänzen
+  // Status und Text IDs ergÃ¤nzen
   // id="status_4"
   // id="text_5"
   $errorCounter = 0;
@@ -884,7 +884,7 @@ function generateSvgCorel($fileIn, $fileOut)
     }
   }
   
-  // Anführungszeichen filtern
+  // AnfÃ¼hrungszeichen filtern
   $input = str_replace("_x0022_", "", $input);
   
   // Metadaten filtern
@@ -917,7 +917,7 @@ function generateSvgCorel($fileIn, $fileOut)
   $input = str_replace("   ", "", $input);
   $input = str_replace("  ", "", $input);
   
-  // Blödsinn filtern
+  // BlÃ¶dsinn filtern
   $errorCounter = 0;
   while ( $errorCounter < 1000 )
   {
@@ -959,7 +959,7 @@ function generateSvgCorel($fileIn, $fileOut)
 
   $output = file_get_contents("appTemplate.tpl");
   
-  // SVG ins Template einfügen
+  // SVG ins Template einfÃ¼gen
   // #SVG#
   $output = str_replace("#SVG#", $input, $output);
   
@@ -1121,7 +1121,7 @@ function generateSvgOther($fileIn, $fileOut)
     unset($svg->g[$i]->metadata);
   }
   $output = file_get_contents("appTemplate.tpl");
-  // SVG ins Template einfügen
+  // SVG ins Template einfÃ¼gen
   // #SVG#
   $output = str_replace("#SVG#", $svg->asXml(), $output);
   $output = str_replace("#REGISTER_OBJECTS#", $register, $output);
@@ -1158,7 +1158,7 @@ function getSvgInfos($pageId)
       $nrObjects++;
       
       $erg = QUERY("select checked from featureinstances where objectId='$objectId' limit 1");
-      if ($row = MYSQL_FETCH_ROW($erg))
+      if ($row = mysqli_fetch_ROW($erg))
       {
         if ($row[0] != 1)
         {

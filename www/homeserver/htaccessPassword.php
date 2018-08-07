@@ -5,7 +5,7 @@ if ($submitted == 1)
 {
 	if (file_exists($_SERVER ["DOCUMENT_ROOT"] . "/homeserver/.htaccess")) unlink($_SERVER ["DOCUMENT_ROOT"] . "/homeserver/.htaccess");
 	
-	if (file_exists($_SERVER ["DOCUMENT_ROOT"] . "/homeserver/.htaccess")) $message="Achtung!<br>Die .htaccess Datei existiert bereits und konnte nicht geschrieben werden.<br>Bitte einmal per SSH einloggen und folgendes ausf¸hren: sudo rm /var/www/homeserver/.htaccess <br><br>Die Datei wird durch dieses Skript anschlieﬂend wiederhergestellt!";
+	if (file_exists($_SERVER ["DOCUMENT_ROOT"] . "/homeserver/.htaccess")) $message="Achtung!<br>Die .htaccess Datei existiert bereits und konnte nicht geschrieben werden.<br>Bitte einmal per SSH einloggen und folgendes ausf√ºhren: sudo rm /var/www/homeserver/.htaccess <br><br>Die Datei wird durch dieses Skript anschlie√üend wiederhergestellt!";
 	else
 	{
   	$cryptedPass = crypt($pass);
@@ -44,7 +44,7 @@ if ($submitted == 1)
 setupTreeAndContent ( "htaccessPassword_design.html", $message );
 
 $erg = QUERY("select paramValue from basicConfig where paramKey='htaccessType'");
-if ($row=MYSQL_FETCH_ROW($erg)) $value=$row[0];
+if ($row=mysqli_fetch_ROW($erg)) $value=$row[0];
 else QUERY("INSERT into basicConfig (paramKey,paramValue) values('htaccessType','0')");
 
 if ($value=="1")  $html = str_replace("%EINS_CHECKED%","checked",$html);
@@ -56,7 +56,7 @@ $html = str_replace("%EINS_CHECKED%","",$html);
 $html = str_replace("%ZWEI_CHECKED%","",$html);
 
 $erg = QUERY("select paramValue from basicConfig where paramKey='htaccessPass'");
-if ($row=MYSQL_FETCH_ROW($erg)) $pass=$row[0];
+if ($row=mysqli_fetch_ROW($erg)) $pass=$row[0];
 else QUERY("INSERT into basicConfig (paramKey,paramValue) values('htaccessPass','')");
 
 $html = str_replace("%PASS%",$pass,$html);

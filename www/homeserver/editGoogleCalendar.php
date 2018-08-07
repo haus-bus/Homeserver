@@ -15,7 +15,7 @@ else if($action=="add")
 	 else
 	 {
 	 	  $calendarId=trim($calendarId);
-	 	  MYSQL_QUERY("INSERT into googleCalendar (name, calendarId) values('$calendarName','$calendarId')") or die(MYSQL_ERROR()); 
+	 	  QUERY("INSERT into googleCalendar (name, calendarId) values('$calendarName','$calendarId')"); 
 	 	  $calendarName="";
 	 	  $calendarId="";
 	 	  $error="OK";
@@ -23,13 +23,13 @@ else if($action=="add")
 }
 else if($action=="delete")
 {
-	MYSQL_QUERY("DELETE from googleCalendar where id='$id' limit 1") or die(MYSQL_ERROR()); 
-  $error="Kalender wurde gelöscht";
+	QUERY("DELETE from googleCalendar where id='$id' limit 1"); 
+  $error="Kalender wurde gelÃ¶scht";
 }
 else if($action=="test")
 {
-	 $erg = MYSQL_QUERY("select * from googleCalendar where id='$id' limit 1") or die(MYSQL_ERROR());
-	 $obj=MYSQL_FETCH_OBJECT($erg);
+	 $erg = QUERY("select * from googleCalendar where id='$id' limit 1");
+	 $obj=mysqli_fetch_OBJECT($erg);
 	 echo "<b>Teste Kalender ".$obj->calendarId."</b><br><br><pre>";
 	 
 	 require_once 'libs/google-api-php-client-master/src/Google/autoload.php';
@@ -88,8 +88,8 @@ chooseTag("%OPT_INSTALLED%",$html);
 
 $calendarTag = getTag("%CALENDAR%",$html);
 $elements="";
-$erg = MYSQL_QUERY("select * from googleCalendar order by id") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select * from googleCalendar order by id");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
 	  $actTag=$calendarTag;
 	  $actTag = str_replace("%ID%",$obj->id,$actTag);

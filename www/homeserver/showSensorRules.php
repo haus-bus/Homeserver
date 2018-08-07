@@ -11,15 +11,15 @@ setupTreeAndContent("showSensorRules_design.html", $message);
 
 $elementsTag = getTag("%ELEMENTS%",$html);
 $elements="";
-$erg = MYSQL_QUERY("select ruleId, rules.groupId,single,groups.name as groupName, groupFeatures.featureInstanceId from rulesignals join rules on (rulesignals.ruleId=rules.id) join groups on (groupId=groups.id) join groupFeatures on (groups.id = groupFeatures.groupId) where rulesignals.featureInstanceId='$id' group by groupId ") or die(MYSQL_ERROR());
-while($obj=MYSQL_FETCH_OBJECT($erg))
+$erg = QUERY("select ruleId, rules.groupId,single,groups.name as groupName, groupFeatures.featureInstanceId from rulesignals join rules on (rulesignals.ruleId=rules.id) join groups on (groupId=groups.id) join groupFeatures on (groups.id = groupFeatures.groupId) where rulesignals.featureInstanceId='$id' group by groupId ");
+while($obj=mysqli_fetch_OBJECT($erg))
 {
   $actTag = $elementsTag;
   $actTag = str_replace("%LAST_OPEN%",$_SESSION["groupLinkNr".$obj->groupId]-1,$actTag);
   $actTag = str_replace("%GROUP_ID%",$obj->groupId,$actTag);
   if ($obj->single==1)
   {
-     $erg2 = MYSQL_QUERY("select featureInstances.name as featureInstanceName, 
+     $erg2 = QUERY("select featureInstances.name as featureInstanceName, 
   	            featureClasses.name as featureClassName,
   	            roomFeatures.roomId,
   	            rooms.name as roomName
@@ -28,10 +28,10 @@ while($obj=MYSQL_FETCH_OBJECT($erg))
                 join featureClasses on (featureClasses.id = featureInstances.featureClassesId)
                 left join roomFeatures on (roomFeatures.featureInstanceId=featureInstances.id)
                 left join rooms on (rooms.id = roomFeatures.roomId)
-                where featureInstances.id='$obj->featureInstanceId' limit 1") or die(MYSQL_ERROR());
-     if ($obj2=MYSQL_FETCH_OBJECT($erg2))
+                where featureInstances.id='$obj->featureInstanceId' limit 1");
+     if ($obj2=mysqli_fetch_OBJECT($erg2))
      {
-     	 $actTag = str_replace("%NAME%",$obj2->roomName." » ".$obj2->featureClassName." » ".$obj2->featureInstanceName,$actTag);
+     	 $actTag = str_replace("%NAME%",$obj2->roomName." Â» ".$obj2->featureClassName." Â» ".$obj2->featureInstanceName,$actTag);
      }
      else $actTag = str_replace("%NAME%","nicht zugeordnet",$actTag);
      
