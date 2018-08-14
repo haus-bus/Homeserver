@@ -3,6 +3,21 @@ require_once $_SERVER["DOCUMENT_ROOT"].'/homeserver/include/all.php';
 
 echo "OK";
 
+$classesId=12;
+$functionId=128;
+$functionsId = getOrCreateFunction($classesId, "ModuleId", $functionId, "RESULT", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "firmwareId", "ENUM", "","Standard");
+getOrCreateFunctionEnum($functionsId, $paramsId, "SONOFF", 5);
+getOrCreateFunctionEnum($functionsId, $paramsId, "ESP Bridge", 6);
+QUERY("UPDATE featurefunctionenums set name='S0 Reader' where paramId='$paramsId' and name='ESP Bridge' limit 1");
+
+
+
+createConfigParam("current1d",0);
+createConfigParam("current7d",0);
+createConfigParam("current30d",0);
+
+
 //// TcpClient ////
 $classId=91;
 $classesId=32;
