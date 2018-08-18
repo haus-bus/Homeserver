@@ -11,7 +11,11 @@ if ($obj=mysqli_fetch_OBJECT($erg))
 }
 else die("FEHLER! Ungültige featureInstanceId $featureInstanceId");
 
-if ($action=="switch") callInstanceMethodByName($featureInstanceId, "toggle",array("offTime"=>"0", "onTime"=>"0", "quantity"=>"1"));
+if ($action=="switch")
+{
+	if ($actionValue=="1") callInstanceMethodByName($featureInstanceId, "on",array("duration"=>"0"));
+	else callInstanceMethodByName($featureInstanceId, "off");
+}
 else if ($action=="status")
 {
 	if (changesSince($lastStatusId))

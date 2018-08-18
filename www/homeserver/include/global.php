@@ -717,7 +717,7 @@ function generateAndCheckRules()
   QUERY ( "DELETE from rulesignalparams where generated='1'" );
   QUERY ( "DELETE from rulesignals where generated='1'" );
 
-  // Referenzielle Integrit㲠 
+  // Referenzielle Integrität 
   checkDatabaseIntegrity();
   
   liveOut ( "- Aufräumen " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
@@ -732,7 +732,7 @@ function generateAndCheckRules()
   }
   liveOut ( "- Basisregeln generieren " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
   
-  // Synchronisationsevents f�uell erstellte Gruppen
+  // Synchronisationsevents für erstellte Gruppen
   $start = microtime ( TRUE );
   $erg = QUERY ( "SELECT groups.id, COUNT( groupFeatures.featureInstanceId ) AS myCount FROM groups JOIN groupFeatures ON ( groupFeatures.groupId = groups.id ) WHERE single =0 AND groups.generated =0 and groups.groupType='' GROUP BY groups.id" );
   while ( $row = MYSQLi_FETCH_ROW ( $erg ) )
@@ -745,12 +745,9 @@ function generateAndCheckRules()
       {
         $manualGroup [$row [0]] = 1;
         
-        if ($row2 [0] == 3)
-          $completeGroupFeedback = 1;
-        else if ($row2 [0] == 2)
-          $completeGroupFeedback = 2;
-        else
-          $completeGroupFeedback = 0;
+        if ($row2 [0] == 3) $completeGroupFeedback = 1;
+        else if ($row2 [0] == 2) $completeGroupFeedback = 2;
+        else $completeGroupFeedback = 0;
         
         generateSyncEvents ( $row [0], $completeGroupFeedback );
       }
@@ -817,7 +814,7 @@ function generateAndCheckRules()
   checkDatabaseIntegrity();
 
   
-  liveOut ( "- Abschlussprüfung" . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
+  liveOut ( "- Abschlussprüfung " . round ( microtime ( TRUE ) - $start, 2 ) . " Sekunden" );
   liveOut ( "- Gesamtdauer " . round ( microtime ( TRUE ) - $scriptStart, 2 ) . " Sekunden" );
 }
 function checkRuleConsistency()
@@ -1099,7 +1096,7 @@ function generateBaseRulesForGroup($groupId)
 {
   // echo "Generiere Basisregeln f�ppe $groupId <br>";
   global $CONTROLLER_CLASSES_ID;
-  global $signalParamWildcard;
+  global $signalParamWildcard,$signalParamWildcardWord;
   global $dimmerClassesId, $rolloClassesId, $ledClassesId, $schalterClassesId, $irClassesId, $tasterClassesId, $logicalButtonClassesId, $ethernetClassesId;
   global $startFunctionId, $stopFunctionId, $moveToPositionFunctionId, $paramToOpen, $paramToClose, $paramToToggle, $paramPosition;
   global $functionTemplates;
@@ -2320,6 +2317,12 @@ else if ($myClassesId == $schalterClassesId)
       $evOnFunctionId = getClassesIdFunctionsIdByName ( $schalterClassesId, "evOn" );
       QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                 values('$ruleId','$myInstanceId','$evOnFunctionId','1')" );
+      $signalId = query_insert_id ();
+      
+      $schalterParamDurationId = getClassesIdFunctionParamIdByName ( $schalterClassesId, "evOn", "duration" );
+      QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
+                                     values('$signalId','$schalterParamDurationId','$signalParamWildcardWord','1')" );                         
+                                
     } else if ($myClassesId == $ledClassesId)
     {
       $evOnFunctionId = getClassesIdFunctionsIdByName ( $ledClassesId, "evOn" );
@@ -2357,6 +2360,7 @@ else if ($myClassesId == $schalterClassesId)
       $evOnFunctionId = getClassesIdFunctionsIdByName ( $schalterClassesId, "evOff" );
       QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated)
                                 values('$ruleId','$myInstanceId','$evOnFunctionId','1')" );
+                                
     } else if ($myClassesId == $ledClassesId)
     {
       $evOnFunctionId = getClassesIdFunctionsIdByName ( $ledClassesId, "evOff" );
@@ -2380,7 +2384,7 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
 {
   // echo "Generiere Ledfeedback f�ppe $groupId <br>";
   global $CONTROLLER_CLASSES_ID;
-  global $signalParamWildcard;
+  global $signalParamWildcard,$signalParamWildcardWord;
   global $dimmerClassesId, $rolloClassesId, $ledClassesId, $schalterClassesId, $irClassesId, $tasterClassesId, $logicalButtonClassesId;
   global $ledStatusBrightness;
   global $serverInstances;
@@ -2395,9 +2399,8 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
   while ( $obj = MYSQLi_FETCH_OBJECT ( $erg ) )
   {
     // LED Feedback 0 = Kein, 1 = Aktor Einzeln, 2 = Teilszene, 3 = Komplettszene
-    if ($obj->ledStatus == 0) // 0 = Kein Feedback
-    {
-    } else if ($obj->ledStatus == 2 || $obj->ledStatus == 3) // 2 = Teilszene 3 = Komplettszene
+    if ($obj->ledStatus == 0) {}// 0 = Kein Feedback
+    else if ($obj->ledStatus == 2 || $obj->ledStatus == 3) // 2 = Teilszene 3 = Komplettszene
     {
       // $ledStatusBrightness="100";
       // $erg2 = QUERY("select paramValue from basicConfig where paramKey = 'ledStatusBrightness' limit 1");
@@ -2428,8 +2431,7 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
             $erg3 = QUERY ( "select groups.id from groups join groupFeatures on (groupFeatures.groupId=groups.id) where featureInstanceId='$ledInstanceId' limit 1" );
             if ($row3 = MYSQLi_FETCH_ROW ( $erg3 ))
               $ledGroupId = $row3 [0];
-            else
-              die ( "B) LED Groupid nicht gefunden zu ledInstanceId $ledInstanceId" );
+            else die ( "B) LED Groupid nicht gefunden zu ledInstanceId $ledInstanceId" );
               
               // Standardstates auslesen
             $ledFirstState = "";
@@ -2437,16 +2439,13 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
             $erg3 = QUERY ( "select id,basics from groupStates where groupId='$ledGroupId' and (basics='1' or basics='2') limit 2" );
             while ( $row3 = MYSQLi_FETCH_ROW ( $erg3 ) )
             {
-              if ($row3 [1] == "1")
-                $ledFirstState = $row3 [0];
-              else if ($row3 [1] == "2")
-                $ledSecondState = $row3 [0];
+              if ($row3 [1] == "1") $ledFirstState = $row3 [0];
+              else if ($row3 [1] == "2") $ledSecondState = $row3 [0];
             }
-            if ($ledFirstState == "" || $ledSecondState == "")
-              die ( "Led States nicht gefunden zu Gruppe $groupId" );
             
-            if ($manualGroup == 1)
-              $szeneGroupId = $groupId;
+            if ($ledFirstState == "" || $ledSecondState == "") die ( "Led States nicht gefunden zu Gruppe $groupId" );
+            
+            if ($manualGroup == 1) $szeneGroupId = $groupId;
             else
             {
               $szeneGroupId = getSyncGroupIdForSignalInstanceId ( $actSignalInstanceId );
@@ -2558,8 +2557,7 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
       while ( $row = MYSQLi_FETCH_ROW ( $erg2 ) )
       {
         $actSignalInstanceId = $row [0];
-        if ($serverInstances [$actSignalInstanceId] == 1)
-          continue; // Kein Feedback f�tuelle Servertaster
+        if ($serverInstances [$actSignalInstanceId] == 1) continue; // Kein Feedback f�tuelle Servertaster
         
         $signalClassesId = getClassesIdByFeatureInstanceId ( $actSignalInstanceId );
         
@@ -2575,10 +2573,8 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
             // while($row4=MYSQLi_FETCH_ROW($erg4)) deleteRule($row4[0]);
             
             $erg3 = QUERY ( "select groups.id from groups join groupFeatures on (groupFeatures.groupId=groups.id) where featureInstanceId='$ledInstanceId' limit 1" );
-            if ($row3 = MYSQLi_FETCH_ROW ( $erg3 ))
-              $ledGroupId = $row3 [0];
-            else
-              die ( "A) LED Groupid nicht gefunden zu ledInstanceId $ledInstanceId" );
+            if ($row3 = MYSQLi_FETCH_ROW ( $erg3 )) $ledGroupId = $row3 [0];
+            else die ( "A) LED Groupid nicht gefunden zu ledInstanceId $ledInstanceId" );
               
               // Standardstates auslesen
             $ledFirstState = "";
@@ -2586,19 +2582,20 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
             $erg3 = QUERY ( "select id,basics from groupStates where groupId='$ledGroupId' and (basics='1' or basics='2') limit 2" );
             while ( $row3 = MYSQLi_FETCH_ROW ( $erg3 ) )
             {
-              if ($row3 [1] == "1")
-                $ledFirstState = $row3 [0];
-              else if ($row3 [1] == "2")
-                $ledSecondState = $row3 [0];
+              if ($row3 [1] == "1") $ledFirstState = $row3 [0];
+              else if ($row3 [1] == "2") $ledSecondState = $row3 [0];
             }
-            if ($ledFirstState == "" || $ledSecondState == "")
-              die ( "Led States nicht gefunden zu Gruppe $ledGroupId" );
+            
+            if ($ledFirstState == "" || $ledSecondState == "") die ( "Led States nicht gefunden zu Gruppe $ledGroupId" );
               // $myClassesId
               // $dimmerClassesId
               // $rolloClassesId
               // $ledClassesId
               // $schalterClassesId
-              
+
+            $paramBrightnessId = - 1; 
+            $paramDurationId = -1;             
+            
             // dimmer events
             if ($myClassesId == $dimmerClassesId)
             {
@@ -2606,21 +2603,22 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
               $evOffFunctionId = getClassesIdFunctionsIdByName ( $dimmerClassesId, "evOff" );
               $paramBrightnessId = getClassesIdFunctionParamIdByName ( $dimmerClassesId, "evOn", "brightness" );
               $paramBrightnessValue = $signalParamWildcard;
-            } else if ($myClassesId == $schalterClassesId)
+            } 
+            else if ($myClassesId == $schalterClassesId)
             {
               $evOnFunctionId = getClassesIdFunctionsIdByName ( $schalterClassesId, "evOn" );
               $evOffFunctionId = getClassesIdFunctionsIdByName ( $schalterClassesId, "evOff" );
-              $paramBrightnessId = - 1;
-            } else if ($myClassesId == $ledClassesId || $myClassesId == $logicalButtonClassesId)
+              $paramDurationId = getClassesIdFunctionParamIdByName ( $schalterClassesId, "evOn", "duration" );
+              $paramDurationValue = $signalParamWildcardWord;
+            } 
+            else if ($myClassesId == $ledClassesId || $myClassesId == $logicalButtonClassesId)
             {
               $evOnFunctionId = getClassesIdFunctionsIdByName ( $ledClassesId, "evOn" );
               $evOffFunctionId = getClassesIdFunctionsIdByName ( $ledClassesId, "evOff" );
               $paramBrightnessId = getClassesIdFunctionParamIdByName ( $ledClassesId, "evOn", "brightness" );
               $paramBrightnessValue = $signalParamWildcard;
-            } else if ($myClassesId == $rolloClassesId)
-            {
-              die ( "LED-FEEDBACK NOCH NICHT IMPLEMENTIERT Fے ROLLOS" );
-            }
+            } 
+            else if ($myClassesId == $rolloClassesId) die ( "LED-FEEDBACK NOCH NICHT IMPLEMENTIERT FüR ROLLOS" );
             
             // Einschalten bei evOn
             QUERY ( "INSERT into rules (groupId,startDay,startHour,startMinute,endDay,endHour,endMinute,activationStateId,resultingStateId,baseRule,ledFeedbackIndent,generated) 
@@ -2631,11 +2629,12 @@ function generateLedFeedbackForGroup($groupId, $manualGroup = 0)
                                        values('$ruleId','$myInstanceId','$evOnFunctionId','1')" );
             $signalId = query_insert_id ();
             
-            if ($paramBrightnessId != - 1)
-            {
-              QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
+            if ($paramBrightnessId != - 1) QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
                                               values('$signalId','$paramBrightnessId','$paramBrightnessValue','1')" );
-            }
+
+            if ($paramDurationId != - 1) QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) 
+                                              values('$signalId','$paramDurationId','$paramDurationValue','1')" );
+            
             
             $ledFunctionIdOn = getClassesIdFunctionsIdByName ( $ledClassesId, "on" );
             QUERY ( "INSERT into ruleActions (ruleId,featureInstanceId,featureFunctionId,generated)
@@ -2685,7 +2684,7 @@ function generateMultiGroups()
 {
   global $CONTROLLER_CLASSES_ID;
   global $debug;
-  global $signalParamWildcard;
+  global $signalParamWildcard,$signalParamWildcardWord;
   global $dimmerClassesId, $rolloClassesId, $ledClassesId, $schalterClassesId, $irClassesId, $tasterClassesId, $logicalButtonClassesId, $pcServerClassesId;
   
   if ($debug == 1)
@@ -2929,8 +2928,7 @@ function generateMultiGroups()
     if ($extras == "Rotation") generateRotation ( $newGroupId );
       
       // Synchronisationsevents generieren
-    if ($foundStateChanges == 1 || $completeGroupFeedback > 0)
-      generateSyncEvents ( $newGroupId, $completeGroupFeedback );
+    if ($foundStateChanges == 1 || $completeGroupFeedback > 0) generateSyncEvents ( $newGroupId, $completeGroupFeedback );
   } // For multigroups
 }
 function generateSignalGroup($groupId)
@@ -2938,7 +2936,7 @@ function generateSignalGroup($groupId)
   // echo "generateSignalGroup $groupId <br>";
   global $CONTROLLER_CLASSES_ID;
   global $debug;
-  global $signalParamWildcard;
+  global $signalParamWildcard,$signalParamWildcardWord;
   global $dimmerClassesId, $rolloClassesId, $ledClassesId, $schalterClassesId, $irClassesId, $tasterClassesId, $logicalButtonClassesId;
   
   $evGroupOnFunctionId = getClassesIdFunctionsIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOn" );
@@ -3233,7 +3231,7 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
   // echo "generateSyncEvents $groupId - $completeGroupFeedback <br>";
   global $CONTROLLER_CLASSES_ID;
   global $debug;
-  global $signalParamWildcard;
+  global $signalParamWildcard,$signalParamWildcardWord;
   global $dimmerClassesId, $rolloClassesId, $ledClassesId, $schalterClassesId, $irClassesId, $tasterClassesId, $logicalButtonClassesId;
   
   $evGroupOnFunctionId = getClassesIdFunctionsIdByName ( $CONTROLLER_CLASSES_ID, "evGroupOn" );
@@ -3260,7 +3258,7 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
   if ($totalMembers > 64) die ( "Fehler: Gruppe mit mehr als 64 Membern gefunden -> $totalMembers" );
     
     // Passende Gruppe(n) erstellen
-    // Wenn mehr als 8 Member beteiligt sind m�wir Gruppen kaskadieren
+    // Wenn mehr als 8 Member beteiligt sind müssen wir Gruppen kaskadieren
     // Zum Verwalten des Gruppenstatus wird dann eine Obergruppe verwendet, die als Member so viele Untergruppen verwendet, wie Aktoren im Spiel sind.
     // Maximal also 8x8 = 64 Member
   $nrNeededGroups = ( int ) ($totalMembers / 8);
@@ -3343,10 +3341,8 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
   $erg2 = QUERY ( "select ruleId,featureInstanceId,groupStates.basics as resultingBasics,groupStates.id as resultingStateId from ruleActions join rules on (rules.id=ruleActions.ruleId) left join groupStates on (groupStates.id=rules.resultingStateId) where rules.groupId='$groupId' order by ruleActions.id" );
   while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
   {
-    if ($obj2->resultingBasics == "2")
-      $myOnStateId = $obj2->resultingStateId;
-    else if ($obj2->resultingBasics == "1")
-      $myOffStateId = $obj2->resultingStateId;
+    if ($obj2->resultingBasics == "2") $myOnStateId = $obj2->resultingStateId;
+    else if ($obj2->resultingBasics == "1") $myOffStateId = $obj2->resultingStateId;
   }
   
   // Pro Aktor ein Event f� On-Zustand und Off-Zustand generieren und damit Bit in Syncgruppe schalten
@@ -3355,8 +3351,7 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
   while ( $obj2 = MYSQLi_FETCH_OBJECT ( $erg2 ) )
   {
     $myClassesId = getClassesIdByFeatureInstanceId ( $obj2->featureInstanceId );
-    if ($myClassesId == $logicalButtonClassesId)
-      continue;
+    if ($myClassesId == $logicalButtonClassesId) continue;
     
     $actFeatureIndex = $indexList [$obj2->featureInstanceId];
     $actGroupIndex = ( int ) ($actFeatureIndex / 8);
@@ -3405,6 +3400,12 @@ function generateSyncEvents($groupId, $completeGroupFeedback)
       {
         $evOnFunctionId = getClassesIdFunctionsIdByName ( $schalterClassesId, "evOn" );
         QUERY ( "INSERT into ruleSignals (ruleId,featureInstanceId,featureFunctionId,generated) values('$ruleId','$obj2->featureInstanceId','$evOnFunctionId','1')" );
+        
+        $signalId = query_insert_id ();
+        
+        $schalterParamDurationId = getClassesIdFunctionParamIdByName ( $schalterClassesId, "evOn", "duration" );
+        QUERY ( "INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue,generated) values('$signalId','$schalterParamDurationId','$signalParamWildcardWord','1')" );
+
       } else if ($myClassesId == 21)
       {
         echo "dummy f�ver fehlt noch <br>";

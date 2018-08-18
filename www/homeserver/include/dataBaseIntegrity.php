@@ -79,6 +79,8 @@ function checkReferenceIntegrity($dry)
   
   checkReference($dry, "rulesignalparams", "ruleSignalId", "ruleSignals", "id");
   checkReference($dry, "rulesignalparams", "featureFunctionParamsId", "featureFunctionParams", "id");
+
+  checkReference($dry, "rulesignals", "ruleId", "rules", "id");
   
   // Sonderlocken
   // Wenn featureInstance in basicRuleSignals oder ruleSignals <0 dann ist damit die id in basicrulegroupsignals gemeint

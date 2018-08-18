@@ -29,5 +29,6 @@ $CONTROLLER_CLASS_ID = 0;
 $FIRMWARE_INSTANCE_ID = 1;
 $BOOTLOADER_INSTANCE_ID = 2;
 $signalParamWildcard="255";
+$signalParamWildcardWord="65535";
 $showGeneratedGroups="auto"; // auto = In der Entwicklersicht aktiv
 ?>

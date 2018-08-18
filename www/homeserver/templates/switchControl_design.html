@@ -51,11 +51,13 @@ function checkStatus()
             {
               document.getElementById("image").src="img/tasterGruen.png";
               document.getElementById("image").title="AN";
+              document.getElementById("actionValue").value="0";
             }
             else if (actValue==0)
             {
               document.getElementById("image").src="img/tasterRot.png";
               document.getElementById("image").title="AUS";
+              document.getElementById("actionValue").value="1";
             }
           }
       
@@ -71,6 +73,7 @@ function checkStatus()
 <body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0" onload="checkStatus()">
 <form action="switchControl.php" method="POST">
 <input type="hidden" name="action" value="switch">
+<input type="hidden" name="actionValue" id="actionValue" value="0">
 <input type="hidden" name="featureInstanceId" value="%FEATURE_INSTANCE_ID%">
 <input type="image" id="image" src="%IMG%" title="%TITLE%">
 </form>
