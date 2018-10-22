@@ -1520,6 +1520,9 @@ else if ($action == "editSignalParams")
       {
         $value = "param" . $row[0];
         $value = $$value;
+        
+        if ($value=="*" && $row[1]=="BYTE") $value=255;
+        else if ($value=="*" && $row[1]=="SHORT") $value=65535;
       }
       QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) values('$ruleSignalId','$row[0]','$value')");
     }
@@ -1571,6 +1574,8 @@ else if ($action == "editSignalParams")
         $actParamsTag = str_replace("%PARAM_NAME%", i18n($obj2->name), $actParamsTag);
         
         $myValue = $myValues[$obj2->id];
+        if ($obj2->type=="BYTE" && $myValue==255) $myValue="*";
+        else if ($obj2->type=="WORD" && $myValue==65535) $myValue="*";
         
         if ($obj2->type == "ENUM")
         {

@@ -1,8 +1,6 @@
 <?php
 require_once $_SERVER["DOCUMENT_ROOT"].'/homeserver/include/all.php';
 
-echo "OK";
-
 $classesId=12;
 $functionId=128;
 $functionsId = getOrCreateFunction($classesId, "ModuleId", $functionId, "RESULT", "Standard");
@@ -16,6 +14,19 @@ QUERY("UPDATE featurefunctionenums set name='S0 Reader' where paramId='$paramsId
 createConfigParam("current1d",0);
 createConfigParam("current7d",0);
 createConfigParam("current30d",0);
+
+createConfigParam("webRollo1",15);
+createConfigParam("webRollo2",30);
+createConfigParam("webRollo3",60);
+createConfigParam("webRollo4",85);
+
+createConfigParam("webDimmer1",15);
+createConfigParam("webDimmer2",30);
+createConfigParam("webDimmer3",60);
+createConfigParam("webDimmer4",85);
+
+createConfigParam("webRoomTemp",1);
+createConfigParam("webRoomHumidity",1);
 
 
 //// TcpClient ////
@@ -45,20 +56,128 @@ $paramsId = getOrCreateFunctionParam($functionsId, "IP3", "BYTE",'',"Standard");
 $functionId=200;
 $functionsId = getOrCreateFunction($classesId, "evWhoIsServer", $functionId, "EVENT", "Standard");
 
+
 //// CurrentReader ////
-//$classId=90;
-//$classesId=31;
-//getOrCreateClass($classId, "CurrentReader", $classesId, "Standard");
+$classId=90;
+$classesId=31;
+getOrCreateClass($classId, "CurrentReader", $classesId, "Standard");
 
-//$functionId=3;
-//$functionsId = getOrCreateFunction($classesId, "setConfiguration", $functionId, "FUNCTION", "Standard");
-//$paramsId = getOrCreateFunctionParam($functionsId, "config", "BITMASK",'',"Standard");
-//getOrCreateFunctionBitMask($functionsId, $paramsId, "enableSignalEvent", 0);
-//$paramsId = getOrCreateFunctionParam($functionsId, "impPerKwh", "WORD", "Anzahl Signale pro kWh","Standard");
-//deleteFunction($classesId, "getCurrentIp", 8);
-//getOrCreateFunctionEnum($functionsId, $paramsId, "SONOFF", 5);
-//createConfigParam("current30d",0);
+$functionId=3;
+$functionsId = getOrCreateFunction($classesId, "setConfiguration", $functionId, "FUNCTION", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "config", "BITMASK",'',"Standard");
+getOrCreateFunctionBitMask($functionsId, $paramsId, "enableSignalEvent", 0);
+getOrCreateFunctionBitMask($functionsId, $paramsId, "enableCurrentEvent", 1);
+getOrCreateFunctionBitMask($functionsId, $paramsId, "enableInterruptEvent", 2);
+getOrCreateFunctionBitMask($functionsId, $paramsId, "enableDebugEvent", 3);
+getOrCreateFunctionBitMask($functionsId, $paramsId, "", 4);
+getOrCreateFunctionBitMask($functionsId, $paramsId, "", 5);
+getOrCreateFunctionBitMask($functionsId, $paramsId, "", 6);
+getOrCreateFunctionBitMask($functionsId, $paramsId, "", 7);
 
+$paramsId = getOrCreateFunctionParam($functionsId, "impPerKwh", "WORD", "Anzahl Signale pro kWh","Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "startCurrent", "DWORD", "Startwert Stromverbrauch in Wattstunden","Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "currentReportInterval", "WORD", "Interval in Sekunden nach dem immer der aktuelle Gesamtstromverbrauch gemeldet wird","Standard");
+
+
+$functionId=4;
+$functionsId = getOrCreateFunction($classesId, "getConfiguration", $functionId, "FUNCTION", "Standard");
+
+$functionId=129;
+$functionsId = getOrCreateFunction($classesId, "Configuration", $functionId, "RESULT", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "config", "BITMASK", "","Standard");
+getOrCreateFunctionBitMask($functionsId, $paramsId, "enableSignalEvent", 0);  
+getOrCreateFunctionBitMask($functionsId, $paramsId, "enableCurrentEvent", 1);  
+getOrCreateFunctionBitMask($functionsId, $paramsId, "enableInterruptEvent", 2);  
+getOrCreateFunctionBitMask($functionsId, $paramsId, "enableDebugEvent", 3);  
+getOrCreateFunctionBitMask($functionsId, $paramsId, "", 4);  
+getOrCreateFunctionBitMask($functionsId, $paramsId, "", 5);  
+getOrCreateFunctionBitMask($functionsId, $paramsId, "", 6);  
+getOrCreateFunctionBitMask($functionsId, $paramsId, "", 7);  
+$paramsId = getOrCreateFunctionParam($functionsId, "impPerKwh", "WORD", "Anzahl Signale pro kWh","Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "startCurrent", "DWORD", "Startwert Stromverbrauch in Wattstunden","Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "currentReportInterval", "WORD", "Interval in Sekunden nach dem immer der aktuelle Gesamtstromverbrauch gemeldet wird","Standard");
+
+
+
+$functionId=200;
+$functionsId = getOrCreateFunction($classesId, "evSignal", $functionId, "EVENT", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "time", "DWORD", "Systemzeit des ESP zu Debugzwecken","Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "signalCount", "DWORD", "Anzahl gezählter S0 Signale seit dem letzten Zurücksetzen");
+$paramsId = getOrCreateFunctionParam($functionsId, "power", "WORD", "Aktuelle Leistung in Watt","Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "signalDuration", "DWORD", "Dauer des gemessenen S0 Signals in ms","Standard");
+
+
+$functionId=1;
+$functionsId = getOrCreateFunction($classesId, "getCurrent", $functionId, "FUNCTION", "Standard");
+
+$functionId=201;
+$functionsId = getOrCreateFunction($classesId, "evCurrent", $functionId, "EVENT", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "current", "DWORD", "Verbrauchter Strom in Wattstunden","Standard");
+  
+$functionId=130;
+$functionsId = getOrCreateFunction($classesId, "Power", $functionId, "RESULT", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "power", "WORD", "Aktuelle Leistung in Watt","Standard");
+  
+$functionId=128;
+$functionsId = getOrCreateFunction($classesId, "Current", $functionId, "RESULT", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "current", "DWORD", "verbrauchter Strom in Wattstunden","Standard");
+
+$functionId=6;
+$functionsId = getOrCreateFunction($classesId, "getSignalCount", $functionId, "FUNCTION", "Standard");
+
+$functionId=131;
+$functionsId = getOrCreateFunction($classesId, "SignalCount", $functionId, "RESULT", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "signalCount", "DWORD", "Anzahl gezählter S0 Signale seit dem letzten Zurücksetzen","Standard");
+  
+$functionId=7;
+$functionsId = getOrCreateFunction($classesId, "clearSignalCount", $functionId, "FUNCTION", "Standard");
+
+$functionId=2;
+$functionsId = getOrCreateFunction($classesId, "setSignalCount", $functionId, "FUNCTION", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "signalCount", "DWORD", "","Standard");
+
+$functionId=5;
+$functionsId = getOrCreateFunction($classesId, "getPower", $functionId, "FUNCTION", "Standard");
+
+$functionId=9;
+$functionsId = getOrCreateFunction($classesId, "incSignalCount", $functionId, "FUNCTION", "Standard");
+	 
+$functionId=10;
+$functionsId = getOrCreateFunction($classesId, "decSignalCount", $functionId, "FUNCTION", "Standard");
+
+
+$functionId=210;
+$functionsId = getOrCreateFunction($classesId, "evDebug", $functionId, "EVENT", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "data", "DWORD", "","Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "type", "BITMASK", "","Standard");
+getOrCreateFunctionBitMask($functionsId, $paramsId, "invalidSignalLength", 0);  
+getOrCreateFunctionBitMask($functionsId, $paramsId, "firmwareUpdateFinished", 1);  
+getOrCreateFunctionBitMask($functionsId, $paramsId, "mainLoopTooLong", 2);  
+getOrCreateFunctionBitMask($functionsId, $paramsId, "gotMultipleEvents", 3);  
+
+deleteFunction($classesId, "getCurrentIp", 8);
+deleteFunction($classesId, "CurrentIp", 132);
+
+$functionId=211;
+$functionsId = getOrCreateFunction($classesId, "evInterrupt", $functionId, "EVENT", "Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "value", "BYTE", "","Standard");
+$paramsId = getOrCreateFunctionParam($functionsId, "stamp", "DWORD", "","Standard");
+
+QUERY("ALTER TABLE `controller` ADD `receivedModuleId` TINYINT NOT NULL AFTER `lastChange`, ADD `receivedConfiguration` TINYINT NOT NULL AFTER `receivedModuleId`, ADD `receivedObjects` TINYINT NOT NULL AFTER `receivedConfiguration`",TRUE);
+QUERY("CREATE TABLE IF NOT EXISTS `smoketest` (`id` int(11) NOT NULL AUTO_INCREMENT,`controllerId` int(11) NOT NULL,`objectId` int(11) NOT NULL,`command` varchar(50) NOT NULL,`logid` int(11) NOT NULL,UNIQUE KEY `id` (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1",TRUE);
+QUERY("CREATE TABLE IF NOT EXISTS `smoketesthelper` (`commandLogId` int(11) NOT NULL) ENGINE=MyISAM DEFAULT CHARSET=latin1",TRUE);
+
+
+if (!hasIndex("plugins","id"))
+{
+	QUERY("ALTER TABLE `plugins` DROP `id`");
+	QUERY("ALTER TABLE `plugins` ADD `id` INT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);");
+	addPrimaryKey("plugins","id");
+}
+
+QUERY("ALTER TABLE `featureinstances` ADD `extra` TINYINT NOT NULL AFTER `lastChange`",TRUE);
+
+echo "OK";
 
 function getOrCreateClass($classId, $className, $classesId, $view)
 {
@@ -148,11 +267,16 @@ function addIndex($table,$column)
   }
 }
 
-function addPrimaryKey($table,$column)
+function hasIndex($table,$column)
 {
 	$erg = QUERY("SHOW INDEX FROM $table WHERE Column_name = '$column'");
-  if ($row=mysqli_fetch_ROW($erg)) {}
-  else
+  if ($row=mysqli_fetch_ROW($erg)) return TRUE;
+  return FALSE;
+}
+
+function addPrimaryKey($table,$column)
+{
+	if (!hasIndex($table,$column))
   {
   	//echo "Ergänze Index $column in $table <br>";
   	QUERY("ALTER TABLE $table ADD PRIMARY KEY ( $column)");

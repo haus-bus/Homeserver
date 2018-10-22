@@ -39,6 +39,8 @@ while(true)
     $errormsg = socket_strerror($errorcode);
     echo "Fehler ".$errorCode.": ".$errormsg."<br>";
   }
+  
+  if (strlen($data)==0) continue;
 
   if ($output==1) echo $line;
   if ($output==1) echo date("H:i:s")." Received ".strlen($data)." bytes".$lb;

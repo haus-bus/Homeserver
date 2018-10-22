@@ -1,7 +1,64 @@
 <?php
 include("../include/all.php");
 
+if ($action=="changeHeating")
+{
+	 $objectId=$heatingId;
+	 $lowThreshold = $heating;
+	 
+   $erg = QUERY("select functionData from lastReceived where senderObj='$objectId' and function='Configuration' order by id desc limit 1");
+   if ($row=MYSQLi_FETCH_ROW($erg))
+   {
+   	 $functionData = unserialize($row[0]);
+   	 $upperThreshold = $lowThreshold+3;
+   	 $reportTime = 5;
+   	 $hysteresis = 1;
+
+	   callObjectMethodByName($objectId, "setConfiguration", array("lowerThreshold"=>$lowThreshold,"upperThreshold"=>$upperThreshold,"reportTime"=>$reportTime,"hysteresis"=>$hysteresis));
+	   sleepMs(200);
+	   callObjectMethodByName($objectId, "getConfiguration");
+	   callObjectMethodByName($objectId, "getStatus");
+	   
+	   $scrollTo="END";
+	   $lastRoom=-1;
+	   $erg = QUERY("select rooms.id as roomId, rooms.name as roomName,
+                     featureClasses.id as classesId, featureClasses.name as classesName,
+                     featureInstances.name as featureInstanceName, objectId, featureInstances.id as featureInstanceId, extra
+                     from rooms 
+                     join roomFeatures on (rooms.id = roomFeatures.roomId)
+                     join featureInstances on (featureInstances.id=featureInstanceId) 
+                     join featureClasses ON ( featureClasses.id = featureInstances.featureClassesId)
+                     where (parentInstanceId=0 or parentInstanceId is null) and (featureClassesId!='$CONTROLLER_CLASSES_ID' or featureClassesId is null)
+                     and (featureClasses.name='Dimmer' or featureClasses.name='Schalter' or featureClasses.name='CurrentReader' or featureClasses.name='Rollladen' or featureClasses.name='Temperatursensor' or featureClasses.name='Feuchtesensor' or featureClasses.name='LogicalButton' or featureClasses.name='Taster')
+                               order by roomName,FIND_IN_SET(featureClasses.name,'Dimmer,Schalter,Rollladen,LogicalButton,Taster,Temperatursensor,Feuchtesensor'), featureInstances.name");
+     while ( $obj = MYSQLi_FETCH_OBJECT($erg))
+     {
+     	  if ($obj->objectId==$objectId) $lastRoom=$obj->roomId;
+     	  else if ($lastRoom!=-1 && $lastRoom!=$obj->roomId)
+     	  {
+     	  	 $scrollTo=$obj->roomId;
+     	  	 break;
+     	  }
+     }
+     
+/*
+	   //die("select roomId from roomFeatures join featureInstances on(featureInstances.id=roomFeatures.featureInstanceId) where objectId='$objectId'");
+	   $erg = QUERY("select roomId from roomFeatures join featureInstances on(featureInstances.id=roomFeatures.featureInstanceId) where objectId='$objectId'");
+	   if ($row=MYSQLi_FETCH_ROW($erg)) header("Location: index.php#room".($row[0]+1));
+	   else 
+	   */
+	   header("Location: index.php?onlyType=$onlyType&scrollBack=250#room".$scrollTo);
+	   exit;
+   }
+}
+
 $html = file_get_contents("index_design.html");
+$html = str_replace("%ONLY_TYPE%",$onlyType,$html);
+if ($onlyType!="") removeTag("%OPT_FOOTER%",$html);
+else chooseTag("%OPT_FOOTER%",$html);
+
+if ($scrollBack>0) $html = str_replace("%SCROLL_BACK%","window.scrollBy(0, -$scrollBack);",$html);
+else $html = str_replace("%SCROLL_BACK%","",$html);
 
 $rolloTag = getTag("%OPT_ROLLO%",$html);
 $erg = QUERY("select paramKey,paramValue from basicConfig where paramKey='webRollo1' or paramKey='webRollo2' or paramKey='webRollo3' or paramKey='webRollo4' limit 4");
@@ -45,8 +102,12 @@ $html = str_replace("%OPT_TASTER_LABEL%","",$html);
 $tasterTag = getTag("%OPT_TASTER%",$html);
 $html = str_replace("%OPT_TASTER%","",$html);
 
+$heatingTag = getTag("%OPT_HEATING%",$html);
+$html = str_replace("%OPT_HEATING%","",$html);
+
 $multiRowTag = getTag("%MULTITASTER_ROW%",$html);
 $multiTasterPanelTag = getTag("%MULTITASTER_PANELS%",$html);
+
 
 $erg = QUERY("select paramKey,paramValue from basicConfig where paramKey='webRoomTemp' or paramKey='webRoomHumidity' limit 2");
 while($obj=MYSQLi_FETCH_OBJECT($erg))
@@ -70,7 +131,9 @@ while($obj=MYSQLi_FETCH_OBJECT($erg))
 	$i++;
 	//if ($i%6==0) $menus.="</tr><tr>";
 }
-$html = str_replace("%MENU%",$menus,$html);
+
+if ($onlyType!="") $html = str_replace("%MENU%","",$html);
+else $html = str_replace("%MENU%",$menus,$html);
 
 $raumTag = getTag("%OPT_RAUM%",$html);
 
@@ -117,7 +180,7 @@ $myObjects="";
 $i=0;
 $erg = QUERY("select rooms.id as roomId, rooms.name as roomName,
                      featureClasses.id as classesId, featureClasses.name as classesName,
-                     featureInstances.name as featureInstanceName, objectId, featureInstances.id as featureInstanceId
+                     featureInstances.name as featureInstanceName, objectId, featureInstances.id as featureInstanceId, extra
                      from rooms 
                      join roomFeatures on (rooms.id = roomFeatures.roomId)
                      join featureInstances on (featureInstances.id=featureInstanceId) 
@@ -127,6 +190,8 @@ $erg = QUERY("select rooms.id as roomId, rooms.name as roomName,
                                order by roomName,FIND_IN_SET(featureClasses.name,'Dimmer,Schalter,Rollladen,LogicalButton,Taster,Temperatursensor,Feuchtesensor'), featureInstances.name");
 while ( $obj = MYSQLi_FETCH_OBJECT($erg))
 {
+	if ($onlyType!="" && $obj->classesName!=$onlyType) continue;
+	
 	//if ($obj->classesName!="Temperatursensor" && $obj->classesName!="Feuchtesensor") continue;
 	$elements[$obj->roomName][$obj->classesName][$obj->featureInstanceName]=$obj;
 	$roomIds[$obj->roomName]=$obj->roomId;
@@ -153,6 +218,8 @@ $results="";
 foreach($elements as $room=>$arr)
 {
 	$actTag = $raumTag;
+	if ($onlyType!="") $actTag="%ELEMENTS%";
+	
 	$actTag = str_replace("%RAUM%",$room,$actTag);
 	$actTag = str_replace("%ROOM_ID%",$roomIds[$room],$actTag);
 	
@@ -210,7 +277,19 @@ foreach($elements as $room=>$arr)
 		    else break;
 		    $i++;
    	  }
-   	  continue;
+
+      $hasHeating=0;
+ 	  	foreach($arra as $instance=>$obj)
+      {
+      	 if ($obj->extra==1)
+      	 {
+      	 	 $hasHeating=1;
+      	 	 break;  
+      	 }
+      }
+
+   	  if ($hasHeating==0) continue;
+   	  else $actClassTag = $heatingTag;
  	  }
  	  else if ($class=="Feuchtesensor")
  	  {
@@ -356,6 +435,8 @@ foreach($elements as $room=>$arr)
  	
 	  foreach($arra as $instance=>$obj)
     {
+    	 if ($class=="Temperatursensor" && $obj->extra!=1) continue;
+    	 
   	   $actFeatureTag = $actClassTag;
    	   $actFeatureTag = str_replace("%MY_ID%",$obj->objectId,$actFeatureTag);
    	   $actFeatureTag = str_replace("%TEXT%",$instance,$actFeatureTag);
@@ -373,7 +454,19 @@ foreach($elements as $room=>$arr)
    	     $actFeatureTag = str_replace("%LEFT%",$left,$actFeatureTag);
    	     $actFeatureTag = str_replace("%RIGHT%",$right,$actFeatureTag);
    	   }
-   	   
+
+    	 if ($class=="Temperatursensor" && $obj->extra==1)
+    	 {
+    	 	  $lowThreshold="";
+    	 	  $erg = QUERY("select functionData from lastReceived where senderObj='$obj->objectId' and function='Configuration' order by id desc limit 1");
+    	 	  if ($row=MYSQLi_FETCH_ROW($erg))
+    	 	  {
+    	 	  	 $functionData = unserialize($row[0]);
+    	 	  	 $lowThreshold = $functionData->paramData[0]->dataValue;
+    	 	  }
+          $actFeatureTag = str_replace("%HEATING_TEMP%",$lowThreshold,$actFeatureTag);
+    	 }
+
    	   $actElements.=$actFeatureTag;
     }
   }

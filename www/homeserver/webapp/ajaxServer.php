@@ -60,6 +60,7 @@ else if ($command == "readStatus")
   while ( $obj = MYSQLi_FETCH_OBJECT($erg) )
   {
   	if ($obj->featureClassesId!=$currentReaderClassesId) callObjectMethodByName($obj->objectId, "getStatus");
+  	if ($obj->featureClassesId==$temperatureClassesId) callObjectMethodByName($obj->objectId, "getConfiguration");
   }
 }
 else if ($command == "dbId")
@@ -86,12 +87,10 @@ else if ($command == "updateMyStatus")
   {
     if ($_SESSION["ajaxObjects"][$senderObj]["changed"] == 1)
     {
-      if ($result != "")
-        $result .= ",";
+      if ($result != "") $result .= ",";
       $result .= $senderObj . "=" . $arr["status"] . ";" . $arr["text"];
       
-      if ($arr["toDirection"] != "")
-        $result .= ";" . $arr["toDirection"];
+      if ($arr["toDirection"] != "") $result .= ";" . $arr["toDirection"];
       
       if ($_SESSION["ajaxObjects"][$senderObj]["featureClassesId"] != $currentReaderClassesId) $_SESSION["ajaxObjects"][$senderObj]["toDirection"] = "";
     }
@@ -305,10 +304,19 @@ function updateStatus()
     }
     else if ($data->featureClassesId == $temperatureClassesId)
     {
-      $myStatus = $data->paramData[0]->dataValue . "." . $data->paramData[1]->dataValue;
-      if ( $_SESSION["utf8Encoding"] == 1) $myStatus .= utf8_encode("°") . "C";
-      else $myStatus .= "°C";
-      if ($data->name == "Status") setObjectStatus($obj->senderObj, 1, $myStatus);
+    	$_SESSION["ajaxObjects"][$obj->senderObj]["changed"] = 1;
+    	if ($data->name == "Status")
+    	{
+        $myStatus = $data->paramData[0]->dataValue . "." . $data->paramData[1]->dataValue;
+        if ( $_SESSION["utf8Encoding"] == 1) $myStatus .= utf8_encode("°") . "C";
+        else $myStatus .= "°C";
+      	setObjectStatus($obj->senderObj, 1, $myStatus);
+      	
+      	$_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"] = $data->paramData[2]->dataValueName;
+      }
+      else if ($data->name == "evCold") $_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"] = "COLD";
+      else if ($data->name == "evWarm") $_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"] = "WARM";
+      else if ($data->name == "evHot") $_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"] = "HOT";
     }
     else if ($data->featureClassesId == $humidityClassesId)
     {

@@ -37,7 +37,7 @@ function query_real_escape_string($escapestr)
 	 return mysqli_real_escape_string ($db, $escapestr);
 }
 
-function query($sql)
+function query($sql, $ignoreErrors=FALSE)
 {
 	 global $scriptStart;
 	 global $debugTime;
@@ -46,7 +46,8 @@ function query($sql)
 	 //echo $sql."\n";
 	 
 	 $start = microtime(TRUE);
-	 $erg = MYSQLi_QUERY($db, $sql) or die("<br>".MYSQLi_ERROR($db).debug_print_backtrace());
+	 if ($ignoreErrors) $erg = MYSQLi_QUERY($db, $sql);
+	 else $erg = MYSQLi_QUERY($db, $sql) or die("<br>".MYSQLi_ERROR($db).debug_print_backtrace());
 	 if ($debugTime==1)
 	 {
 	 	 $scriptDuration = (microtime(TRUE)-$scriptStart)*1000;

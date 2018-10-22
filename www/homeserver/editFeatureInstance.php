@@ -71,7 +71,7 @@ if ($submitted!="")
     if ($row[0]==$name) $message="FEHLER! Ein Feature darf nicht so heißen wie sein Typ. Bitte anderen Namen wählen!";
     else
     {
-      QUERY("UPDATE featureInstances set name='$name' where id='$id' limit 1");
+      QUERY("UPDATE featureInstances set name='$name',extra='$extra' where id='$id' limit 1");
       $message="Einstellungen gespeichert";
     }
     
@@ -195,6 +195,7 @@ foreach($allFeatureInstances as $obj)
   {
     $objectId = $obj->objectId;
     $featureType = $allFeatureClasses[$obj->featureClassesId]->name;
+    $extra = $obj->extra;
     $html = str_replace("%FEATURE_NAME%",i18n($obj->name), $html);
     $html = str_replace("%FEATURE_TYP%",i18n($featureType), $html);
     
@@ -229,6 +230,14 @@ if ($featureClassesId==25) //wetter
   $html = str_replace("%OFFSET_SUNSET%", $offsetSunset, $html);
 }
 else removeTag("%OPT_WEATHER%",$html);
+
+if ($featureClassesId==2) //Temperatur
+{
+	chooseTag("%OPT_TEMP_CONTROL%",$html);
+	if ($extra==1) $tempControlChecked="checked";
+  $html = str_replace("%TEMP_CONTROL_CHECKED%", $tempControlChecked, $html);
+}
+else removeTag("%OPT_TEMP_CONTROL%",$html);
 
 // Zuletzt empfangene Daten von diesem Sender
 $erg = QUERY("select function,functionData,id from lastReceived  where senderObj='$objectId' order by id desc limit 50");

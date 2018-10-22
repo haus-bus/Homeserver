@@ -111,6 +111,15 @@ function checkReferenceIntegrity($dry)
   	 QUERY("delete from controller where id='$obj->id' limit 1"); 
   }
   
+  // Es gab nach der Umstellung von Schalter evOns mal Signale ohne Parameter
+  $erg = QUERY("select * from ruleSignals where featureFunctionId=62");
+  while($obj=MYSQLi_FETCH_OBJECT($erg))
+  {
+   	$erg2 = QUERY("select * from rulesignalparams where ruleSignalId='$obj->id' limit 1");
+    if ($obj2=MYSQLi_FETCH_OBJECT($erg2)) {}
+    else QUERY("INSERT into ruleSignalParams (ruleSignalId, featureFunctionParamsId, paramValue) values('$obj->id', '470','65535')");
+  }
+  
   if ($dry==1)
   {
   	 if ($foundErrors==1) die("Bitte angzeigte Fehler sorgfältig prüfen und zum Reparieren <a href='cleanUpDb.php?dry=0&wasDry=1'>HIER KLICKEN</A>");

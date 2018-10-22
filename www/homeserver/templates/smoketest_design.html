@@ -1,0 +1,39 @@
+<script>
+	function checkAll()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("controller")!=-1) document.forms[0].elements[$i].checked=true;
+    }
+	}
+
+	function uncheckAll()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("controller")!=-1) document.forms[0].elements[$i].checked=false;
+    }
+	}
+	
+</script>
+
+
+Smoketests
+<hr>
+<br>
+<form action="smoketest.php" method="POST">
+<input type="hidden" name="submitted" value="1">
+<b>Zu testende Controller:</b> &nbsp;&nbsp;&nbsp; <a href="javascript:checkAll()">Alle aktivieren</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;<a href="javascript:uncheckAll()">Alle deaktivieren</a><br>
+<table>
+<%INSTANCES%>
+  <tr><td><input type="checkbox" checked name="controller%CONTROLLER_ID%" value="1"></td><td>%CONTROLLER_NAME%</td></tr>
+</%INSTANCES%>
+</table><br>
+<b>Test auswählen:</b><br>
+<table>
+	<tr>
+		<td>Runden <input type=text name=rounds size=2 value=10> - Verzögerung <input type=text name=delay size=2 value=0>ms - Überlappte Senderunden <input type=text name=overlay size=2 value=0> <input type=submit name=test value="Kommunikationstest"></td>
+	</tr>
+</table>
+    
+</form>

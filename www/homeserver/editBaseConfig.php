@@ -450,10 +450,11 @@ $tasterClassesId = getClassesIdByName("Taster");
 
 $mixGroup = 0;
 unset($diffFeatureClasses);
-$erg = QUERY("select featureInstanceId,featureClassesId from groupFeatures join featureInstances on (featureInstances.id=featureInstanceId) where groupId='$groupId'");
+$erg = QUERY("select featureInstanceId,featureClassesId,name from groupFeatures join featureInstances on (featureInstances.id=featureInstanceId) where groupId='$groupId'");
 while ( $obj = mysqli_fetch_OBJECT($erg) )
 {
   $myClassesId = $obj->featureClassesId;
+  $myTitle = $obj->name;
   $diffFeatureClasses[$myClassesId] = 1;
   
   if (count($diffFeatureClasses) > 1) // Multigruppe
@@ -463,6 +464,7 @@ while ( $obj = mysqli_fetch_OBJECT($erg) )
     break;
   }
 }
+
 
 if ($action == "insertFromClipboard")
 {
@@ -527,6 +529,9 @@ if ($myClassesId == "1" || $myClassesId == "24") showMessage("Für diesen Aktor,
 
 setupTreeAndContent("editBaseConfig_design.html", $message);
 $html = str_replace("%GROUP_ID%", $groupId, $html);
+
+if ($mixGroup!=1) $html = str_replace("%TITLE%",$myTitle, $html);
+else $html = str_replace("%TITLE%","", $html);
 
 if ($myClassesId == $dimmerClassesId)
 {

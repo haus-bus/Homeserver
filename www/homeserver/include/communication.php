@@ -551,7 +551,7 @@ function callInstanceMethodForObjectId($receiverObjectId, $featureFunctionId, $p
         else $debugStr .= ", " . i18n($obj2->name) . "(" . $obj2->type . ", " . $param . ")";
       }
     } 
-    else die("Ung� methodId b -> $featureFunctionId");
+    else die("Ungültige methodId b -> $featureFunctionId");
 
     sendCommand($receiverObjectId, $data, $senderObjectId, $binaryStartPos);
 
@@ -690,7 +690,7 @@ function updateControllerStatus($short=0)
 
     treeStatusOut("Controllerstatus wird aktualisiert ...");
 
-    QUERY("UPDATE controller set online='0'");
+    QUERY("UPDATE controller set online='0',receivedModuleId='0',receivedConfiguration='0',receivedObjects='0'");
 
     $message = "";
     callObjectMethodByName($BROADCAST_OBJECT_ID, "getModuleId", array("index"=>"0"));
@@ -741,6 +741,46 @@ function updateControllerStatus($short=0)
            }
            else
              break;
+        }
+      }
+      
+      $repeated=0;
+      $erg = QUERY("select objectId, receivedModuleId, receivedConfiguration, receivedObjects from controller where bootloader='0' and online='1' and (receivedModuleId='0' or receivedConfiguration='0' or receivedObjects='0')");
+      while ($row = MYSQLi_FETCH_ROW($erg))
+      {
+      	 if ($row[1]==0)
+      	 {
+      	 	 $repeated=1;
+      	 	 treeStatusOut("Wiederhole ModuleId");
+      	 	 callObjectMethodByName($row[0], "getModuleId", array("index"=>"0"));
+      	 	 sleepMS(100);
+      	 }
+      	 
+      	 if ($row[2]==0)
+      	 {
+      	 	 $repeated=1;
+      	 	 treeStatusOut("Wiederhole Configuration");
+      	 	 callObjectMethodByName($row[0], "getConfiguration");
+      	 	 sleepMS(100);
+      	 }
+      	 
+      	 if ($row[3]==0)
+      	 {
+      	 	 $repeated=1;
+      	 	 treeStatusOut("Wiederhole RemoteObjects");
+      	 	 callObjectMethodByName($row[0], "getRemoteObjects");
+      	 	 sleepMS(100);
+      	 }
+      }
+      
+      if ($repeated==1)
+      {
+      	sleepMS(1000);
+      	$erg = QUERY("select objectId, receivedModuleId, receivedConfiguration, receivedObjects from controller where bootloader='0' and online='1' and (receivedModuleId='0' or receivedConfiguration='0' or receivedObjects='0') limit 1");
+        if ($row = MYSQLi_FETCH_ROW($erg))
+        {
+        	 treeStatusOut("Nicht alle Daten empfangen!");
+        	 sleepMS(1000);
         }
       }
     }
@@ -1266,6 +1306,15 @@ function getControllerId($objectId)
     return 0;
 }
 
+function getController($objectId)
+{
+    $erg = QUERY("select SQL_CACHE * from controller where objectId='$objectId' limit 1");
+    if ($obj = MYSQLi_FETCH_OBJECT($erg)) return $obj;
+        
+    echo "getControllerId: Unbekannte objectId $objectId! <br>";
+    return 0;
+}
+
 /*
  ObjectId:
  Byte0=instanceId,
@@ -1292,7 +1341,7 @@ function getBootloaderObjectId($objectId)
 
 function getObjectIdForInstanceId($instanceId)
 {
-  $erg = QUERY("select id from featureInstances where id='$instanceId' limit 1");
+  $erg = QUERY("select objectId from featureInstances where id='$instanceId' limit 1");
   if ($row=MYSQLi_FETCH_ROW($erg)) return $row[0];
 }
 

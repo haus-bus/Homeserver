@@ -1,48 +1,19 @@
 <?php
+include("include/all.php");
 
-print_r(getWeather());
-
-function getWeather() 
+$erg = QUERY("select * from ruleSignals where featureFunctionId=62");
+while($obj=MYSQLi_FETCH_OBJECT($erg))
 {
-	$lat= "51.7177"; 
-	$lng = "8.7527";
-	$apiKey = "2f88e986e72c9e592cd6698340c0aabd";
-  $data = new stdClass();
-
-  try 
+	$erg2 = QUERY("select * from rulesignalparams where ruleSignalId='$obj->id' limit 1");
+  if ($obj2=MYSQLi_FETCH_OBJECT($erg2)) {}
+  else
   {
-    $url = 'http://api.openweathermap.org/data/2.5/weather?lat='.$lat.'&lon='.$lng.'&APPID='.$apiKey;
-    $ch = curl_init();
-    $timeout = 5;
-    curl_setopt($ch,CURLOPT_URL,$url);
-    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-    curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
-    $data = curl_exec($ch);
-
-    $data = json_decode(utf8_encode($data));
-
-    if($data->cod != "200") $data->error = "Failed retrieving weather data.";
-    else 
-    {
-        $res = $data->current_condition;
-        $main = $data->main;
-        $wind = $data->wind;
-        $data->tempC = round(($main->temp -273.15), 0);
-        $data->tempF = round(((($data->tempC * 9 ) / 5) + 32) ,0);
-        $data->pressure = $main->pressure;
-        $data->ws_miles = $wind->speed;
-        $data->ws_kts = round($data->ws_miles * 0.868976242, 0);
-        $data->winddirDegree = round($wind->deg);
-        $data->visibility = $res->visibility; // In Kilometer
-    }
-  } 
-  catch(Exception $ex) 
-  {
-    $data->error = $ex->getMessage();
+  	echo $obj->id."<br>";
+  	QUERY("INSERT into ruleSignalParams (ruleSignalId, featureFunctionParamsId, paramValue) values('$obj->id', '470','65535')");
   }
-  
-  return $data;
 }
+die("ende");
+
 
 exit;
 

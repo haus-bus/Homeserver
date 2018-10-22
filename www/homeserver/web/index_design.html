@@ -1,4 +1,16 @@
 <html>
+<head>
+ <link rel="apple-touch-icon" sizes="180x180" href="/homeserver/web/icons/apple-touch-icon.png">
+ <link rel="icon" type="image/png" sizes="32x32" href="/homeserver/web/icons/favicon-32x32.png">
+ <link rel="icon" type="image/png" sizes="16x16" href="/homeserver/web/icons/favicon-16x16.png">
+ <link rel="manifest" href="/homeserver/web/icons/site.webmanifest">
+ <link rel="mask-icon" href="/homeserver/web/icons/safari-pinned-tab.svg" color="#5bbad5">
+ <link rel="shortcut icon" href="/homeserver/web/icons/favicon.ico">
+ <meta name="msapplication-TileColor" content="#2b5797">
+ <meta name="msapplication-config" content="/homeserver/web/icons/browserconfig.xml">
+ <meta name="theme-color" content="#ffffff">
+</head>
+
 <style type="text/css">
 .bordered
 {
@@ -119,6 +131,7 @@ function sendCommand(id, action, param)
 
 function registerAllObjects()
 {
+	%SCROLL_BACK%
 	send("/homeserver/webapp/ajaxServer.php?command=registerObjects&%OBJECTS%", "registerCallback");
 }
 	
@@ -186,11 +199,17 @@ function updateStatusCallback(result)
  	        }
  	        else if (actObject["type"]=="Temperatursensor" || actObject["type"]=="Feuchtesensor")
  	        {
- 	           if (document.getElementById("label"+objectId)!=null)
+           	 if (document.getElementById("label"+objectId)!=null) document.getElementById("label"+objectId).innerHTML=text;
+             if (document.getElementById("label"+objectId+"#2")!=null) document.getElementById("label"+objectId+"#2").innerHTML=text;
+             if (document.getElementById("label"+objectId+"#3")!=null) document.getElementById("label"+objectId+"#3").innerHTML=text;
+ 	           
+ 	           if (toDirection!="" && document.getElementById("direction"+objectId)!=null)
  	           {
- 	            	document.getElementById("label"+objectId).innerHTML=text;
-                if (document.getElementById("label"+objectId+"#2")!=null) document.getElementById("label"+objectId+"#2").innerHTML=text;
+ 	           	  if (toDirection=="COLD") document.getElementById("direction"+objectId).style.backgroundColor="red";
+ 	           	  else document.getElementById("direction"+objectId).style.backgroundColor="";
+ 	           	  document.getElementById("direction"+objectId).innerHTML=toDirection;
  	           }
+ 	           
  	           //else alert("null -> "+objectId);
  	        }
  	        else if (actObject["type"]=="Rollladen")
@@ -288,7 +307,6 @@ function checkHideMultitaster()
 {
 	if (actShownMultitasterPanel>0 && new Date().getTime()-lastShownMultitasterTime>2) hideMultitaster(actShownMultitasterPanel);
 }
-
 </script>
 
 <body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0" onload="registerAllObjects()" onclick="checkHideMultitaster();">
@@ -317,6 +335,66 @@ function checkHideMultitaster()
 %ELEMENTS%
 <tr><td colspan="10"><br><br></td></tr>
 </%OPT_RAUM%>
+
+<%OPT_HEATING%>
+<!-- Trenner horizontal -->
+<tr><td colspan="7" height="10"></td></tr>
+
+<!-- Heizungssteuerng Element start -->
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10" bgcolor="#7F7F7F"></td></tr>
+<tr bgcolor="#7F7F7F">
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <%LEFT%>
+ <!-- Heizungssteuerng TEXT START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top" align=center>
+ 	<table width="100%" height="127" cellspacing=0 cellpadding=0 border=0>
+ 	 <tr><td width="100%" height="42" valign="top"><div id="text%MY_ID%" class="text">%TEXT%</div></td></tr>
+ 	 <tr><td width="100%" height="32" valign="bottom" align="center">
+ 	  <table width="50%" height="31" cellspacing=0 cellpadding=0 border=0>
+	   <tr><td bgcolor="#eeeeee" align=center valign=center class="bordered"><div id="label%MY_ID%#3" class="label"></div></td></tr>
+	  </table>
+	  </td>
+	 </tr>
+	</table>
+ </td>
+ <!-- Heizungssteuerng TEXT ENDE -->
+ </%LEFT%>
+
+ <td width="2%" bgcolor="#7F7F7F"></td>
+
+ <!-- Heizungssteuerng MITTE START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="bottom">
+ 	<form action="index.php" method="POST"  id="form%MY_ID%"><input type=hidden name=onlyType value="%ONLY_TYPE%"><input type=hidden name=action value="changeHeating"><input type=hidden name=heatingId value="%MY_ID%">
+ 	<input style="width:90%;background-color:#eeeeee;height:80px;text-align:center;font-size:30px;color:#444444" type=text size=10 name="heating" value="%HEATING_TEMP%"><br>
+ 	<br>
+  <input type=submit style="background-image:verlauf_gross.gif;width:90%" value="Speichern"></form>
+ </td>
+ <!-- Heizungssteuerng MITTE ENDE -->
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+
+ <%RIGHT%>
+ <!-- Heizungssteuerng TASTER START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top" onclick="sendCommand('%MY_ID%','on',0)">
+ 	<table width="100%" height="127" cellspacing=0 cellpadding=0 border=0>
+ 	 <tr><td width="100%" height="42" valign="top"></td></tr>
+ 	 <tr><td width="100%" height="32" valign="bottom" align="center">
+ 	  <table width="50%" height="31" cellspacing=0 cellpadding=0 border=0>
+	   <tr><td bgcolor="#eeeeee" align=center valign=center class="bordered"><div id="direction%MY_ID%" class="label"></div></td></tr>
+	  </table>
+	  </td>
+	 </tr>
+	</table>
+ </td>
+ <!-- Heizungssteuerng TASTER ENDE -->
+ </%RIGHT%>
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+</tr>
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10"  bgcolor="#7F7F7F"></td></tr>
+<!-- Schalter Element ende -->
+</%OPT_HEATING%>
 
 <%OPT_ROLLO%>
 <!-- Trenner horizontal -->
@@ -645,8 +723,38 @@ function checkHideMultitaster()
 <tr bgcolor="#7F7F7F"><td colspan="7" height="10"  bgcolor="#7F7F7F"></td></tr>
 <!-- Taster Element ende -->
 </%OPT_TASTER%>
-
 </table>
+<div id="roomEND"> </div>
+<%OPT_FOOTER%>
+<table cellspacing="0" cellpadding="0" border="0" width="98%">
+<tr><td align=center>
+<a href="index.php?onlyType=Temperatursensor" style="color:black">
+ <div class="buttonMaster">
+ <div class="buttontTitle">Temperatursensoren</div>
+ </div>
+</a>
+
+<a href="index.php?onlyType=Schalter" style="color:black">
+ <div class="buttonMaster">
+ <div class="buttontTitle">Schalter</div>
+ </div>
+</a>
+
+<a href="index.php?onlyType=Dimmer" style="color:black">
+ <div class="buttonMaster">
+ <div class="buttontTitle">Dimmer</div>
+ </div>
+</a>
+
+<a href="index.php?onlyType=Rollladen" style="color:black">
+ <div class="buttonMaster">
+ <div class="buttontTitle">Rollladen</div>
+ </div>
+</a>
+</td></tr>
+</table>
+</%OPT_FOOTER%>
+<br>
 <form>
 	<input type="button" value="Forciertes Update" onclick="forceStatusRead()">
 </form>

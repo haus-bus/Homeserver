@@ -86,6 +86,7 @@ function eventOccured($senderData, $receiverData, $functionData)
   
   
   myEventOccured($senderData, $receiverData, $functionData);
+  triggerEventOccured($senderData, $receiverData, $functionData);
 }
 
 /*
@@ -276,6 +277,7 @@ if ($argv[1]=="cron")
   require($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
   myTimeTrigger();
 }
+else include_once("/var/www/homeserver/plugins/watchdog/trigger.php");
 
 //set_error_handler("myErrorHandler");
 

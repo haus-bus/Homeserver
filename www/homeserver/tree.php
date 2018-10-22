@@ -158,7 +158,7 @@ function setupTreeAndContent($content = "")
       
       if ($featureClassesId == 14) $children[$parentInstanceId] .= addToTree("Zeiteinmessung", 0, "rolloAdjustment.php?featureInstanceId=" . $obj->featureInstanceId);
       if ($featureClassObj->guiControl != "") $children[$parentInstanceId] .= addToTree("GUI-Control", 0, "guiControl.php?script=" . $featureClassObj->guiControl . "&featureInstanceId=" . $obj->featureInstanceId);
-      if ($featureClassObj->smoketest != "") $children[$parentInstanceId] .= addToTree("Smoketest", 0, "guiControl.php?script=tests/" . $featureClassObj->smoketest . "&featureInstanceId=" . $obj->featureInstanceId);
+      //if ($featureClassObj->smoketest != "") $children[$parentInstanceId] .= addToTree("Smoketest", 0, "guiControl.php?script=tests/" . $featureClassObj->smoketest . "&featureInstanceId=" . $obj->featureInstanceId);
       
       $children[$parentInstanceId] .= $closeTreeFolder;
     }
@@ -244,7 +244,7 @@ function setupTreeAndContent($content = "")
       
       if ($featureClassesId == 14) $treeElements .= addToTree("Zeiteinmessung", 0, "rolloAdjustment.php?featureInstanceId=" . $obj->featureInstanceId);
       if ($featureClassObj->guiControl != "") $treeElements .= addToTree("GUI-Control", 0, "guiControl.php?script=" . $featureClassObj->guiControl . "&featureInstanceId=" . $obj->featureInstanceId);
-      if ($featureClassObj->smoketest != "") $treeElements .= addToTree("Smoketest", 0, "guiControl.php?script=tests/" . $featureClassObj->smoketest . "&featureInstanceId=" . $obj->featureInstanceId);
+      //if ($featureClassObj->smoketest != "") $treeElements .= addToTree("Smoketest", 0, "guiControl.php?script=tests/" . $featureClassObj->smoketest . "&featureInstanceId=" . $obj->featureInstanceId);
 
       if ($children[$obj->featureInstanceId] != "")
       {
@@ -350,6 +350,7 @@ function setupTreeAndContent($content = "")
     $treeElements .= addToTree("LED-Statushelligkeit", 0, "editLedBrightness.php");
     $treeElements .= addToTree("Standorteinstellungen", 0, "editLocation.php");
     $treeElements .= addToTree("Netzwerkeinstellungen", 0, "editNetwork.php");
+    $treeElements .= addToTree("Smoketests", 0, "smoketest.php");
     //$treeElements .= addToTree("Internationalisierung", 0, "editLanguages.php");
     $treeElements .= addToTree("Google Kalender Integration *BETA*", 0, "editGoogleCalendar.php");
     $treeElements .= addToTree("Passwortschutz", 0, "htaccessPassword.php");

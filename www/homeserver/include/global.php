@@ -501,6 +501,7 @@ function toWeekTime($day, $hour, $minute)
   $value += $minute;
   return $value;
 }
+
 function changesSince($lastStatusId)
 {
   $actId = updateLastLogId ();
@@ -508,6 +509,7 @@ function changesSince($lastStatusId)
     return true;
   return false;
 }
+
 function waitForIdle()
 {
   $rememberedId = updateLastLogId ();
@@ -521,6 +523,7 @@ function waitForIdle()
     $rememberedId = $next;
   }
 }
+
 function flushIt()
 {
   for($i = 0; $i < 40; $i ++)
@@ -532,21 +535,22 @@ function flushIt()
     flush ();
   }
 }
+
 function updateLastLogId()
 {
   global $lastLogId;
   
   $erg = QUERY ( "select max(id) from udpCommandLog" );
-  if ($row = MYSQLi_FETCH_ROW ( $erg ))
-    $lastLogId = $row [0];
-  if ($lastLogId < 1)
-    $lastLogId = 0;
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) $lastLogId = $row [0];
+  if ($lastLogId < 1) $lastLogId = 0;
   return $lastLogId;
 }
+
 function sleepMS($ms)
 {
   usleep ( $ms * 1000 );
 }
+
 function trace($text, $output=0)
 {
   global $PHP_SELF;
@@ -558,6 +562,7 @@ function trace($text, $output=0)
   
   if ($output==1) echo $text."\n";
 }
+
 function getBitMask($name, $value, $names)
 {
   global $bitScriptDone;
@@ -602,6 +607,7 @@ updateBits("' . $name . '");
   
   return $result;
 }
+
 function getWeekTime($name, $value)
 {
   $times = parseWeekTime ( $value );
@@ -3985,17 +3991,21 @@ function isWindows()
     return TRUE;
   return FALSE;
 }
+
 function triggerTreeUpdate()
 {
   forceTreeUpdate();
 }
-function liveOut($newOut)
+
+function liveOut($newOut, $withBr=1)
 {
-  echo "<script>document.getElementById('updateArea').innerHTML=document.getElementById('updateArea').innerHTML+'$newOut'+'<br>';</script>";
+	if ($withBr==1) echo "<script>document.getElementById('updateArea').innerHTML=document.getElementById('updateArea').innerHTML+'$newOut'+'<br>';</script>";
+  else echo "<script>document.getElementById('updateArea').innerHTML=document.getElementById('updateArea').innerHTML+'$newOut';</script>";
   flushIt ();
   // flush();
   // ob_flush();
 }
+
 function treeStatusOut($newOut)
 {
   echo "<script>top.frames[0].document.getElementById('treeUpdateArea').innerHTML='$newOut';</script>";

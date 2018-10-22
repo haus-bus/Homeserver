@@ -57,8 +57,11 @@ while(true)
     QUERY("INSERT into udpCommandLog (time,  sender,  function,  params) values('".time()."','UdpWorker','SocketError $errorcode','$errormsg')");
   }
 
+  if (strlen($data)==0) continue;
+
   if ($output==1) echo $line;
   if ($output==1) echo date("H:i:s")." Received ".strlen($data)." bytes".$lb;
+  
   
   $rawData="";
   unset($datagramm);
@@ -143,6 +146,11 @@ while(true)
     {
       if ($functionId==$controllerModuleIdFktId) updateControllerData($sender, $functionData);
       else if ($functionId==$controllerRemoteObjectsFktId) updateRemoteObjects($sender, $functionData);
+      else if ($functionId==$controllerConfigurationFktId)
+      {
+        $controllerId = getControllerId($sender);
+        if ($controllerId!=0) QUERY("update controller set receivedConfiguration='1' where id='$controllerId' limit 1");
+      }
       else if ($functionId==202)
       {
       	// nach einem evStarted eines Controllers schicken wir automatisch ein getModuleId, getRemoteObjects und getConfiguration
@@ -150,19 +158,23 @@ while(true)
       	$commandData[0]=2; // getModuleId;
       	$commandData[1]=0; // index = running
       	sendCommand($sender, $commandData);
+      	sleepMs(100);
       	
       	unset($commandData);
       	$commandData[0]=3; // getRemoteObjects;
       	sendCommand($sender, $commandData);
+      	sleepMs(100);
 
       	unset($commandData);
       	$commandData[0]=5; // getConfiguration;
       	sendCommand($sender, $commandData);
+      	sleepMs(100);
       	
       	// Zeit ist nicht genau, aber wird dann später über den Timesyncer genauer eingestellt
       	unset($commandData);
         $commandData["weekTime"]=toWeekTime(date("N")-1,date("H"),date("i"));
         callObjectMethodByName($sender, "setTime", $commandData);
+      	sleepMs(100);
       }
       
       //else if ($functionId == $controllerConfigurationFktId) updateControllerData($sender, $functionData,$noMessages, $profileStart, $profile, $debugBuffer);
@@ -300,6 +312,7 @@ function updateControllerData($sender, $functionData)
       }
     }
 
+    $update.=",receivedModuleId='1'";
     $sql = "UPDATE controller set $update where objectId='$sender' limit 1";
     QUERY($sql);
   }
@@ -321,6 +334,8 @@ function updateRemoteObjects($sender, $functionData)
   $deviceId = getDeviceId($sender);
   $controllerId = getControllerId($sender);
   if ($controllerId==0) return;
+  
+  QUERY("update controller set receivedObjects='1' where id='$controllerId' limit 1");
   
   //echo "updateRemoteObjects $deviceId \n";
 

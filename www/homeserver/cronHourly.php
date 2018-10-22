@@ -10,7 +10,9 @@ if($obj=mysqli_fetch_OBJECT($erg))
 {
 	 $objectId=$obj->objectId;
 	 
-	 $erg = QUERY("select time,functionData from udpCommandLog where senderObj='$objectId' and function='evCurrent' order by time desc limit 1");
+	 $sql = "select time,functionData from udpCommandLog where senderObj='$objectId' and function='evCurrent' order by time desc limit 1";
+	 //echo $sql."<br>";
+	 $erg = QUERY($sql);
 	 if($obj=mysqli_fetch_OBJECT($erg))
 	 {
   	 $data = unserialize($obj->functionData);
@@ -18,7 +20,7 @@ if($obj=mysqli_fetch_OBJECT($erg))
 
      $min = time()-60*60*24;
      $sql = "select time,functionData from udpCommandLog where senderObj='$objectId' and function='evCurrent' and time>$min order by time limit 1";
-     echo $sql."<br>";
+     //echo $sql."<br>";
   	 $erg = QUERY($sql);
 	   if($obj=mysqli_fetch_OBJECT($erg))
 	   {
@@ -69,7 +71,7 @@ if($obj=mysqli_fetch_OBJECT($erg))
 }
 
 
-include ($_SERVER["DOCUMENT_ROOT"] . "/homeserver/generateGraphData.php");
+include_once($_SERVER["DOCUMENT_ROOT"] . "/homeserver/generateGraphData.php");
 generateGraphData();
 
 ?>

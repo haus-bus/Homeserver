@@ -13,12 +13,12 @@ $debugTime=0;
 
 debugScript("started");
 
-include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/dbconnect.php");
-include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/global.php");
-include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/config.php");
-include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/templates.php");
-include($_SERVER["DOCUMENT_ROOT"]."/homeserver/tree.php");
-include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/communication.php");
+include_once($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/dbconnect.php");
+include_once($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/global.php");
+include_once($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/config.php");
+include_once($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/templates.php");
+include_once($_SERVER["DOCUMENT_ROOT"]."/homeserver/tree.php");
+include_once($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/communication.php");
 
 function debugScript($message, $exit=0)
 {
