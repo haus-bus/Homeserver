@@ -41,6 +41,15 @@ if ($action=="readOnlineVersion")
     $_SESSION["onlineVersionDateMultiTasterSD6"]=trim(substr($in,$pos+1,strlen($in)-$pos-1));
   }
   
+  $in = @file_get_contents("http://www.haus-bus.de/SD485.chk", False, $cxContext);
+  $pos = strpos($in,"-");
+  if ($pos===FALSE) $message="Onlinerversionen konnten nicht gelesen werden - Keine Internetverbindung?";
+  else
+  {
+    $_SESSION["onlineVersionMultiTasterSD485"]=trim(substr($in,0,$pos));
+    $_SESSION["onlineVersionDateMultiTasterSD485"]=trim(substr($in,$pos+1,strlen($in)-$pos-1));
+  }  
+  
   $in = @file_get_contents("http://www.haus-bus.de/AR8_BOOTER.chk", False, $cxContext);
   $pos = strpos($in,"-");
   if ($pos===FALSE) $message="Onlinerversionen konnten nicht gelesen werden - Keine Internetverbindung?";
@@ -67,6 +76,15 @@ if ($action=="readOnlineVersion")
     $_SESSION["onlineVersionMultiTasterBooterSD6"]=trim(substr($in,0,$pos));
     $_SESSION["onlineVersionDateMultiTasterBooterSD6"]=trim(substr($in,$pos+1,strlen($in)-$pos-1));
   }
+  
+  $in = @file_get_contents("http://www.haus-bus.de/SD485_BOOTER.chk", False, $cxContext);
+  $pos = strpos($in,"-");
+  if ($pos===FALSE) $message="Onlinerversionen konnten nicht gelesen werden - Keine Internetverbindung?";
+  else
+  {
+    $_SESSION["onlineVersionMultiTasterBooterSD485"]=trim(substr($in,0,$pos));
+    $_SESSION["onlineVersionDateMultiTasterBooterSD485"]=trim(substr($in,$pos+1,strlen($in)-$pos-1));
+  }  
   
   $in = @file_get_contents("http://www.haus-bus.de/sonoff.chk", False, $cxContext);
   $pos = strpos($in,"-");
@@ -107,6 +125,12 @@ $html = str_replace("%VERSION_MULTI_TASTER_SD6%","V".$versionMultiTaster, $html)
 $versionMultiTaster=trim(@file_get_contents("../firmware/SD6_BOOTER.chk"));
 $html = str_replace("%VERSION_MULTI_TASTER_SD6_BOOTER%","V".$versionMultiTaster, $html);
 
+$versionMultiTaster=trim(@file_get_contents("../firmware/SD485.chk"));
+$html = str_replace("%VERSION_MULTI_TASTER_SD485%","V".$versionMultiTaster, $html);
+
+$versionMultiTaster=trim(@file_get_contents("../firmware/SD485_BOOTER.chk"));
+$html = str_replace("%VERSION_MULTI_TASTER_SD485_BOOTER%","V".$versionMultiTaster, $html);
+
 $versionSonoff=trim(@file_get_contents("../firmware/sonoff.chk"));
 $html = str_replace("%VERSION_SONOFF%","V".$versionSonoff, $html);
 
@@ -124,6 +148,9 @@ chooseTag("%OPT_UPDATE_MULTI_TASTER%", $html);
 $html = str_replace("%VERSION_MULTI_TASTER_SD6_ONLINE%","V".$_SESSION["onlineVersionMultiTasterSD6"]." - ".$_SESSION["onlineVersionDateMultiTasterSD6"], $html);
 chooseTag("%OPT_UPDATE_MULTI_TASTER_SD6%", $html);
 
+$html = str_replace("%VERSION_MULTI_TASTER_SD485_ONLINE%","V".$_SESSION["onlineVersionMultiTasterSD485"]." - ".$_SESSION["onlineVersionDateMultiTasterSD485"], $html);
+chooseTag("%OPT_UPDATE_MULTI_TASTER_SD485%", $html);
+
 $html = str_replace("%VERSION_MAIN_CONTROLLER_BOOTER_ONLINE%","V".$_SESSION["onlineVersionMainControllerBooter"]." - ".$_SESSION["onlineVersionDateMainControllerBooter"], $html);
 chooseTag("%OPT_UPDATE_MAINCONTROLLER_BOOTER%", $html);
 
@@ -132,6 +159,9 @@ chooseTag("%OPT_UPDATE_MULTI_TASTER_BOOTER%", $html);
 
 $html = str_replace("%VERSION_MULTI_TASTER_SD6_BOOTER_ONLINE%","V".$_SESSION["onlineVersionMultiTasterBooterSD6"]." - ".$_SESSION["onlineVersionDateMultiTasterBooterSD6"], $html);
 chooseTag("%OPT_UPDATE_MULTI_TASTER_SD6_BOOTER%", $html);
+
+$html = str_replace("%VERSION_MULTI_TASTER_SD485_BOOTER_ONLINE%","V".$_SESSION["onlineVersionMultiTasterBooterSD485"]." - ".$_SESSION["onlineVersionDateMultiTasterBooterSD485"], $html);
+chooseTag("%OPT_UPDATE_MULTI_TASTER_SD485_BOOTER%", $html);
 
 $html = str_replace("%VERSION_SONOFF_ONLINE%","V".$_SESSION["onlineVersionSonoff"]." - ".$_SESSION["onlineVersionDateSonoff"], $html);
 chooseTag("%OPT_UPDATE_SONOFF%", $html);
@@ -154,7 +184,7 @@ while($obj=mysqli_fetch_OBJECT($erg))
 	 if ($obj->firmwareId==1) $typ="Maincontroller";
 	 else if ($obj->firmwareId==2) $typ="Multitaster MS6";
 	 else if ($obj->firmwareId==3) $typ="Multitaster SD6";
-	 else if ($obj->firmwareId==4) $typ="IO128";
+	 else if ($obj->firmwareId==4) $typ="SD485";
 	 else if ($obj->firmwareId==5) $typ="Sonoff WLAN Relais";
 	 else if ($obj->firmwareId==6) $typ="ESP TCP Brücke";
 	 else $typ="Unbekannt";

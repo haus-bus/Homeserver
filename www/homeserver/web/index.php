@@ -12,7 +12,7 @@ if ($action=="changeHeating")
    	 $functionData = unserialize($row[0]);
    	 $upperThreshold = $lowThreshold+3;
    	 $reportTime = 5;
-   	 $hysteresis = 1;
+   	 $hysteresis = 0;
 
 	   callObjectMethodByName($objectId, "setConfiguration", array("lowerThreshold"=>$lowThreshold,"upperThreshold"=>$upperThreshold,"reportTime"=>$reportTime,"hysteresis"=>$hysteresis));
 	   sleepMs(200);
@@ -103,6 +103,8 @@ $tasterTag = getTag("%OPT_TASTER%",$html);
 $html = str_replace("%OPT_TASTER%","",$html);
 
 $heatingTag = getTag("%OPT_HEATING%",$html);
+$heatingSwitchTag = getTag("%OPT_HEATING_SWITCH%",$heatingTag);
+$heatingDiagramTag = getTag("%OPT_DIAGRAM%",$heatingTag);
 $html = str_replace("%OPT_HEATING%","",$html);
 
 $multiRowTag = getTag("%MULTITASTER_ROW%",$html);
@@ -190,11 +192,13 @@ $erg = QUERY("select rooms.id as roomId, rooms.name as roomName,
                                order by roomName,FIND_IN_SET(featureClasses.name,'Dimmer,Schalter,Rollladen,LogicalButton,Taster,Temperatursensor,Feuchtesensor'), featureInstances.name");
 while ( $obj = MYSQLi_FETCH_OBJECT($erg))
 {
-	if ($onlyType!="" && $obj->classesName!=$onlyType) continue;
+	if ($onlyType!="" && $obj->classesName!=$onlyType && !($onlyType=="Temperatursensor" && $obj->classesName=="Schalter" && $obj->featureInstanceName=="Heizung ".$obj->roomName)) continue;
 	
 	//if ($obj->classesName!="Temperatursensor" && $obj->classesName!="Feuchtesensor") continue;
 	$elements[$obj->roomName][$obj->classesName][$obj->featureInstanceName]=$obj;
 	$roomIds[$obj->roomName]=$obj->roomId;
+	
+	if ($obj->classesName=="Temperatursensor" && $obj->extra==1) $heating[$obj->roomName]=1;
 	
 	if ($obj->classesName!="LogicalButton" && $obj->classesName!="Taster")
 	{
@@ -209,6 +213,16 @@ while ( $obj = MYSQLi_FETCH_OBJECT($erg))
 	}
 }
 
+$erg = QUERY("select id,title from graphs where title like 'Temperatur%'");
+while($obj=MYSQLi_FETCH_OBJECT($erg))
+{
+	 $pos = strpos($obj->title," ");
+	 if ($pos!==FALSE)
+	 {
+	 	  $diagramRoom = substr($obj->title,$pos+1);
+	 	  $elements[$diagramRoom]["diagram"]=$obj->id;
+	 }
+}
 
 $objects="objects=".$i.$objects;
 $html = str_replace("%OBJECTS%",$objects,$html);
@@ -288,7 +302,7 @@ foreach($elements as $room=>$arr)
       	 }
       }
 
-   	  if ($hasHeating==0) continue;
+   	  if ($heating[$room]=="") continue;
    	  else $actClassTag = $heatingTag;
  	  }
  	  else if ($class=="Feuchtesensor")
@@ -436,7 +450,9 @@ foreach($elements as $room=>$arr)
 	  foreach($arra as $instance=>$obj)
     {
     	 if ($class=="Temperatursensor" && $obj->extra!=1) continue;
-    	 
+    	 if ($heating[$room]!="" && $class=="Schalter" && $instance=="Heizung $room") continue;
+    	       	
+
   	   $actFeatureTag = $actClassTag;
    	   $actFeatureTag = str_replace("%MY_ID%",$obj->objectId,$actFeatureTag);
    	   $actFeatureTag = str_replace("%TEXT%",$instance,$actFeatureTag);
@@ -455,16 +471,38 @@ foreach($elements as $room=>$arr)
    	     $actFeatureTag = str_replace("%RIGHT%",$right,$actFeatureTag);
    	   }
 
-    	 if ($class=="Temperatursensor" && $obj->extra==1)
+    	 if ($class=="Temperatursensor")
     	 {
-    	 	  $lowThreshold="";
-    	 	  $erg = QUERY("select functionData from lastReceived where senderObj='$obj->objectId' and function='Configuration' order by id desc limit 1");
-    	 	  if ($row=MYSQLi_FETCH_ROW($erg))
+    	 	  if ($obj->extra==1)
     	 	  {
-    	 	  	 $functionData = unserialize($row[0]);
-    	 	  	 $lowThreshold = $functionData->paramData[0]->dataValue;
-    	 	  }
-          $actFeatureTag = str_replace("%HEATING_TEMP%",$lowThreshold,$actFeatureTag);
+    	 	    $mySchalterObj = $elements[$room]["Schalter"]["Heizung $room"];
+    	 	    if ($mySchalterObj!="")
+    	 	    {
+    	 	  	  $myHeatingSwitchTag = $heatingSwitchTag;
+    	 	  	  $myHeatingSwitchTag = str_replace("%MY_ID%",$mySchalterObj->objectId, $myHeatingSwitchTag);
+    	 	  	  $actFeatureTag = str_replace("%OPT_HEATING_SWITCH%",$myHeatingSwitchTag,$actFeatureTag);
+    	 	    }
+    	 	    else $actFeatureTag = str_replace("%OPT_HEATING_SWITCH%","<td></td>",$actFeatureTag);
+    	 	    
+    	 	    $diagramId = $elements[$room]["diagram"];
+    	 	    if ($diagramId!="")
+    	 	    {
+    	 	  	  $myHeatingDiagramTag = $heatingDiagramTag;
+    	 	  	  $myHeatingDiagramTag = str_replace("%DIAGRAM_LINK%","/homeserver/showGraph.php?id=".$diagramId, $myHeatingDiagramTag);
+    	 	  	  $actFeatureTag = str_replace("%OPT_DIAGRAM%",$myHeatingDiagramTag,$actFeatureTag);
+    	 	    }
+    	 	    else $actFeatureTag = str_replace("%OPT_DIAGRAM%","",$actFeatureTag);
+    	 	    
+    	 	    $lowThreshold="";
+    	 	    $erg = QUERY("select functionData from lastReceived where senderObj='$obj->objectId' and function='Configuration' order by id desc limit 1");
+    	 	    if ($row=MYSQLi_FETCH_ROW($erg))
+    	 	    {
+    	 	  	   $functionData = unserialize($row[0]);
+    	 	  	   $lowThreshold = $functionData->paramData[0]->dataValue;
+    	 	    }
+            $actFeatureTag = str_replace("%HEATING_TEMP%",$lowThreshold,$actFeatureTag);
+          }
+          
     	 }
 
    	   $actElements.=$actFeatureTag;

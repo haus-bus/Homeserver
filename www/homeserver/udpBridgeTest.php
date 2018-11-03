@@ -1,4 +1,9 @@
 <?php
+
+$bridgeIp="192.168.178.34";
+$data="1620000270.LED.2.10";
+
+
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 $ifConfig = shell_exec('/sbin/ifconfig eth0');
@@ -8,8 +13,6 @@ $pos2 = strpos($ifConfig," ",$pos);
 $address = substr($ifConfig,$pos+1,$pos2-$pos-1);
 $addressParts = explode(".", $address);
 
-
-echo "adress: $address \n";
 $lb="\n";
 set_time_limit(0);
 ob_implicit_flush();
@@ -29,8 +32,10 @@ echo "UDP server ready \n";
 
 ob_implicit_flush(true);
 
-$start = time();
-
+echo microtime(true)." send\n";
+socket_sendto($udpSocket, $data, strlen($data), 0, $bridgeIp, $UDP_PORT);
+echo microtime(true)." send ready\n";
+exit;
 /*
 if ($argv[1]==1)
 {

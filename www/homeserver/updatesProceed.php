@@ -150,6 +150,19 @@ if ($proceed == 1)
             sleep ( 1 );
             die ( "<script>location='updatesProceed.php?action=$action&proceed=1&confirm=1&local=$local&firmwareId=$firmwareId&force=$force&actUpdateId=$actUpdateId';</script>" );
           }
+        } else if ($force != 1 && $obj->firmwareId == 4)
+        {
+          $onlineVersion = $_SESSION ["onlineVersionMultiTasterSD485"];
+          $parts = explode ( ".", $onlineVersion );
+          $major = $parts [0];
+          $minor = $parts [1];
+          if ($obj->majorRelease == $major && $obj->minorRelease == $minor)
+          {
+            liveOut ( "Controller: ObjectID: " . getFormatedObjectId ( $objectId ) . " hat bereits die neuste FW geladen ($obj->name)" );
+            flushIt ();
+            sleep ( 1 );
+            die ( "<script>location='updatesProceed.php?action=$action&proceed=1&confirm=1&local=$local&firmwareId=$firmwareId&force=$force&actUpdateId=$actUpdateId';</script>" );
+          }
         }
         
         liveOut ( "<b>$obj->name </b><br>Firmwareupdate von Controller " . getFormatedObjectId ( $objectId ) );
@@ -404,6 +417,19 @@ if ($proceed == 1)
         } else if ($force != 1 && $obj->firmwareId == 3)
         {
           $onlineVersion = $_SESSION ["onlineVersionMultiTasterBooterSD6"];
+          $parts = explode ( ".", $onlineVersion );
+          $major = $parts [0];
+          $minor = $parts [1];
+          if ($obj->booterMajor == $major && $obj->booterMinor == $minor)
+          {
+            liveOut ( "Controller: ObjectID: " . getFormatedObjectId ( $objectId ) . " hat bereits die neuste FW geladen ($obj->name)" );
+            flushIt ();
+            sleep ( 1 );
+            die ( "<script>location='updatesProceed.php?action=$action&proceed=1&local=$local&confirm=1&firmwareId=$firmwareId&force=$force&actUpdateId=$actUpdateId';</script>" );
+          }
+        } else if ($force != 1 && $obj->firmwareId == 4)
+        {
+          $onlineVersion = $_SESSION ["onlineVersionMultiTasterBooterSD485"];
           $parts = explode ( ".", $onlineVersion );
           $major = $parts [0];
           $minor = $parts [1];

@@ -36,6 +36,17 @@ Firmware per Broadcast laden
     }
 	}
 	
+	function checkAllSd485()
+	{
+ 	  for ($i=0;$i<document.forms[0].elements.length;$i++)
+    {
+       if (document.forms[0].elements[$i].type=="checkbox" && document.forms[0].elements[$i].name.indexOf("instsd485")!=-1)
+          document.forms[0].elements[$i].checked=true;
+       else 
+          document.forms[0].elements[$i].checked=false;
+    }
+	}	
+	
 	function uncheckAll()
 	{
  	  for ($i=0;$i<document.forms[0].elements.length;$i++)
@@ -46,7 +57,7 @@ Firmware per Broadcast laden
 	}
 	
 </script>
-<b>Verf&uuml;gbare Onlinecontroller:</b> &nbsp;&nbsp;&nbsp; <a href="javascript:checkAllAr8()">Alle AR8 Hauptcontroller</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp; <a href="javascript:checkAllMs6()">Alle MS6 Multitaster</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp; <a href="javascript:checkAllSd6()">Alle SD6 Multitaster</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp; <a href="javascript:uncheckAll()">Alle deaktivieren</a> <br><br>
+<b>Verf&uuml;gbare Onlinecontroller:</b> &nbsp;&nbsp;&nbsp; <a href="javascript:checkAllAr8()">Alle AR8 Hauptcontroller</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp; <a href="javascript:checkAllMs6()">Alle MS6 Multitaster</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp; <a href="javascript:checkAllSd6()">Alle SD6 Multitaster</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp; <a href="javascript:checkAllSd485()">Alle SD485 Multitaster</a> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp; <a href="javascript:uncheckAll()">Alle deaktivieren</a> <br><br>
 <form action="broadcastFirmware.php" method="POST" enctype="multipart/form-data">
 
 Hauptcontroller <hr>
@@ -72,6 +83,13 @@ Multitaster SD6<hr>
 </table>
 <br>
 
+Multitaster SD485<hr>
+<table>
+  <%TASTER_SD485_INSTANCES%>
+   <tr><td><input type="checkbox" name="instsd485%FEATURE_INSTANCE_ID%" value="1"></td><td>%FEATURE_NAME%</td></tr>
+  </%TASTER_SD485_INSTANCES%>
+</table>
+<br>
 
 <br>
 <br>

@@ -1,6 +1,12 @@
 <?php
 include("include/all.php");
 
+die(date("d.m.Y",1540104757));
+    	 	  
+    	 	  $min = time()-60*60*24*30;
+    	 	  $sql="select time,functionData from udpCommandLog where senderObj='$objectId' and function='evCurrent' and time>$min order by time limit 1";
+die($sql);
+
 $erg = QUERY("select * from ruleSignals where featureFunctionId=62");
 while($obj=MYSQLi_FETCH_OBJECT($erg))
 {

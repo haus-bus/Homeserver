@@ -249,7 +249,11 @@ function _waitForObjectResult($senderObjectId, $waitSeconds, $type, $functionId,
         if (time() - $start > $waitSeconds)
         {
             if ($fail == 1) die("Antwort nicht empfangen $type: functionId=$functionId,  waitSeconds=$waitSeconds, lastLogId=$lastLogId, senderObjectId=$senderObjectId");
-            else return -1;
+            else
+            {
+            	echo "Antwort nicht empfangen $type: functionId=$functionId,  waitSeconds=$waitSeconds, lastLogId=$lastLogId, senderObjectId=$senderObjectId <br>";
+            	return -1;
+            }
         }
         if ($wait!=1) sleepMS(20);
     }

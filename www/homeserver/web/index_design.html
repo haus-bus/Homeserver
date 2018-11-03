@@ -307,6 +307,27 @@ function checkHideMultitaster()
 {
 	if (actShownMultitasterPanel>0 && new Date().getTime()-lastShownMultitasterTime>2) hideMultitaster(actShownMultitasterPanel);
 }
+
+function adjustHeating(theId, direction)
+{
+	 var actValue = document.getElementById("form"+theId).elements.namedItem("heating").value;
+	 actValue = parseFloat(actValue.replace(",","."));
+	 if (direction=="hoch") actValue+=0.5;
+	 else actValue-=0.5;
+	 if (direction=="hoch") actValue+=0.5;
+	 else actValue-=0.5;
+
+   document.getElementById("form"+theId).elements.namedItem("heating").value=actValue;
+   //saveHeating(theId);
+}
+
+function saveHeating(theId)
+{
+	 var actValue = document.getElementById("form"+theId).elements.namedItem("heating").value;
+	 var request="index.php?action=changeHeating&heatingId="+theId+"&heating="+actValue;
+	 send(request, "");
+}
+
 </script>
 
 <body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0" onload="registerAllObjects()" onclick="checkHideMultitaster();">
@@ -350,10 +371,20 @@ function checkHideMultitaster()
  <td width="30%" height="144" bgcolor="#7F7F7F" valign="top" align=center>
  	<table width="100%" height="127" cellspacing=0 cellpadding=0 border=0>
  	 <tr><td width="100%" height="42" valign="top"><div id="text%MY_ID%" class="text">%TEXT%</div></td></tr>
- 	 <tr><td width="100%" height="32" valign="bottom" align="center">
- 	  <table width="50%" height="31" cellspacing=0 cellpadding=0 border=0>
-	   <tr><td bgcolor="#eeeeee" align=center valign=center class="bordered"><div id="label%MY_ID%#3" class="label"></div></td></tr>
-	  </table>
+ 	 <tr>
+ 	 	<td width="100%" height="32" valign="bottom" align="center">
+ 	 	 <table width=100%>
+ 	 	 	<tr>
+ 	 	 	 <td width=33%><%OPT_DIAGRAM%><a href="%DIAGRAM_LINK%" target="_blank"><img src="../img/diagram.png"></a></%OPT_DIAGRAM%></td>
+ 	 	 	 <td>
+ 	 	 	 	<table width="100%" height="31" cellspacing=0 cellpadding=0 border=0>
+	       <tr>
+	   	    <td bgcolor="#eeeeee" align=center valign=center class="bordered"><div id="label%MY_ID%#3" style="padding-top:6px" class="label"></div><div id="direction%MY_ID%" style="padding-top:6px;padding-bottom:6px" class="label"></div></td>
+   	   	</tr>
+	     </table>
+	     <td width=33%></td>
+	    </tr>
+	   </table>
 	  </td>
 	 </tr>
 	</table>
@@ -365,10 +396,24 @@ function checkHideMultitaster()
 
  <!-- Heizungssteuerng MITTE START -->
  <td width="30%" height="144" bgcolor="#7F7F7F" valign="bottom">
- 	<form action="index.php" method="POST"  id="form%MY_ID%"><input type=hidden name=onlyType value="%ONLY_TYPE%"><input type=hidden name=action value="changeHeating"><input type=hidden name=heatingId value="%MY_ID%">
- 	<input style="width:90%;background-color:#eeeeee;height:80px;text-align:center;font-size:30px;color:#444444" type=text size=10 name="heating" value="%HEATING_TEMP%"><br>
- 	<br>
-  <input type=submit style="background-image:verlauf_gross.gif;width:90%" value="Speichern"></form>
+  <table width=100% border=0>
+   <tr>
+    <td valign=bottom>
+ 	   <form action="index.php" method="POST"  id="form%MY_ID%"><input type=hidden name=onlyType value="%ONLY_TYPE%"><input type=hidden name=action value="changeHeating"><input type=hidden name=heatingId value="%MY_ID%">
+ 	   <input style="width:90%;background-color:#eeeeee;height:80px;text-align:center;font-size:30px;color:#444444" type=text size=10 name="heating" value="%HEATING_TEMP%"><br>
+ 	   <br>
+     <input onclick="saveHeating(%MY_ID%)" type=button style="background-image:verlauf_gross.gif;width:90%" value="Speichern"></form>
+    </td>
+    <td valign=top>
+     <table onclick="adjustHeating(%MY_ID%, 'hoch')" width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+      <tr><td align=center valign="center"><img src="hoch_einzeln.png" id="hoch%MY_ID%" border=0></td></tr>
+	   </table><br>
+   	 <table onclick="adjustHeating(%MY_ID%, 'runter')" width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+	    <tr><td align=center valign="center"><img src="runter_einzeln.png" id="runter%MY_ID%" border=0></td></tr>
+	   </table>
+    </td>
+   </tr>
+  </table>
  </td>
  <!-- Heizungssteuerng MITTE ENDE -->
  
@@ -376,17 +421,13 @@ function checkHideMultitaster()
 
  <%RIGHT%>
  <!-- Heizungssteuerng TASTER START -->
+ <%OPT_HEATING_SWITCH%>
  <td width="30%" height="144" bgcolor="#7F7F7F" valign="top" onclick="sendCommand('%MY_ID%','on',0)">
- 	<table width="100%" height="127" cellspacing=0 cellpadding=0 border=0>
- 	 <tr><td width="100%" height="42" valign="top"></td></tr>
- 	 <tr><td width="100%" height="32" valign="bottom" align="center">
- 	  <table width="50%" height="31" cellspacing=0 cellpadding=0 border=0>
-	   <tr><td bgcolor="#eeeeee" align=center valign=center class="bordered"><div id="direction%MY_ID%" class="label"></div></td></tr>
-	  </table>
-	  </td>
-	 </tr>
+	<table width="100%" height="144" background="verlauf_gross.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+		<tr><td align=center valign="center"><img src="button_einzeln.png" border=0 id="status%MY_ID%"></td></tr>
 	</table>
  </td>
+</%OPT_HEATING_SWITCH%>
  <!-- Heizungssteuerng TASTER ENDE -->
  </%RIGHT%>
  

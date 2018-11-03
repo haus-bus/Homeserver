@@ -111,9 +111,10 @@ $entryTag=getTag("%ENTRY%",$html);
 $entries="";
 $c=0;
 $export="";
-//echo $where;
 
-$erg = QUERY("select id,time,type,messageCounter,sender,receiver,function,params from udpCommandLog $where order by id $order limit $nrElements");
+$sql = "select id,time,type,messageCounter,sender,receiver,function,params from udpCommandLog $where order by id $order limit $nrElements";
+//echo $sql."<br>";
+$erg = QUERY($sql);
 while($obj=mysqli_fetch_OBJECT($erg))
 {
   $c++;

@@ -8,7 +8,7 @@ $COUNTRY = "Deutschland"; // Land für automatische Tag/Nacht Steuerung nach Dä
 $ZIP_CODE = "33102";      // PLZ für automatische Tag/Nacht Steuerung nach Dämmerungszeiten
 */
 
-$MAX_LOG_ENTRIES = 1000000; // Wie viele Datenbankeinträge maximal im Journal gehalten werden
+$MAX_LOG_ENTRIES = 200000; // Wie viele Datenbankeinträge maximal im Journal gehalten werden
 $MAX_TRACE_ENTRIES = 10000; // Wie viele Datenbankeinträge maximal im Trace gehalten werden
 
 

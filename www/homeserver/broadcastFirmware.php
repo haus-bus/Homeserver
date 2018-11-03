@@ -48,6 +48,15 @@ if ($submitted!="")
 			$found=1;
 			$neededFirmware="SD6";
 		  }
+		  else
+		  {
+			  $actFeature = "instsd485".$obj->id;
+			  if ($$actFeature==1)
+			  {
+				$found=1;
+				$neededFirmware="SD485";
+			  }
+		  }		  
 	  }
     }
     
@@ -172,6 +181,7 @@ setupTreeAndContent("broadcastFirmware_design.html", $message);
 $ar8Tag = getTag("%INSTANCES%",$html);
 $ms6Tag = getTag("%TASTER_INSTANCES%",$html);
 $sd6Tag = getTag("%TASTER_SD6_INSTANCES%",$html);
+$sd485Tag = getTag("%TASTER_SD485_INSTANCES%",$html);
 
 $instances="";
 $erg = QUERY("select id, name from controller where firmwareId=1 order by name");
@@ -209,6 +219,17 @@ while($obj=mysqli_fetch_OBJECT($erg))
 }
 $html = str_replace("%TASTER_SD6_INSTANCES%", $instances, $html);
 
+$instances="";
+$erg = QUERY("select id, name from controller where firmwareId=4 order by name");
+while($obj=mysqli_fetch_OBJECT($erg))
+{
+  $actTag = $sd485Tag;
+  if ($controllers[$obj->id]->online!=1) continue;
+  $actTag = str_replace("%FEATURE_NAME%",$obj->name, $actTag);
+  $actTag = str_replace("%FEATURE_INSTANCE_ID%",$obj->id, $actTag);
+  $instances.=$actTag;
+}
+$html = str_replace("%TASTER_SD485_INSTANCES%", $instances, $html);
 
 show();
 

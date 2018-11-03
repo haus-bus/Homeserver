@@ -77,6 +77,7 @@ else if ($action == "addSignal")
     {
       $tasterClassesId = getClassesIdByName("Taster");
       $irClassesId = getClassesIdByName("IR-Sensor");
+      $tempClassesId = getClassesIdByName("Temperatursensor");
       
       setupTreeAndContent("addRuleSignal_design.html");
       removeTag("%OPT_ADD_OTHERS%",$html);
@@ -106,12 +107,11 @@ else if ($action == "addSignal")
                                  join roomFeatures on (roomFeatures.roomId = rooms.id)
                                  join featureInstances on (featureInstances.id = roomFeatures.featureInstanceId)
                                  join featureClasses on (featureClasses.id = featureInstances.featureClassesId)
-                                 where (featureInstances.featureClassesId='$tasterClassesId' or featureInstances.featureClassesId='$irClassesId')
+                                 where (featureInstances.featureClassesId='$tasterClassesId' or featureInstances.featureClassesId='$irClassesId' or featureInstances.featureClassesId='$tempClassesId' )
                                  order by roomName,featureClassName,featureInstanceName");
       while ( $obj = mysqli_fetch_object($erg) )
       {
-        if ($ready[$obj->featureInstanceId] == 1)
-          continue;
+        if ($ready[$obj->featureInstanceId] == 1) continue;
         
         $ready[$obj->featureInstanceId] = 1;
         
@@ -119,10 +119,7 @@ else if ($action == "addSignal")
         {
           if ($obj->roomId != $lastRoom)
           {
-            if ($lastRoom != "")
-              $treeElements .= $closeTreeFolder; // letzter raum
-            
-
+            if ($lastRoom != "") $treeElements .= $closeTreeFolder; // letzter raum
             $lastRoom = $obj->roomId;
             $treeElements .= addToTree($obj->roomName, 1);
           }
@@ -142,12 +139,11 @@ else if ($action == "addSignal")
                                  from featureInstances
                                  join featureClasses on (featureClasses.id = featureInstances.featureClassesId)
                                  join controller on (featureInstances.controllerId = controller.id)
-                                 where (featureInstances.featureClassesId='$tasterClassesId'  or featureInstances.featureClassesId='$irClassesId')
+                                 where (featureInstances.featureClassesId='$tasterClassesId'  or featureInstances.featureClassesId='$irClassesId'  or featureInstances.featureClassesId='$tempClassesId')
                                  order by controllerName, featureClassName,featureInstanceName");
       while ( $obj = mysqli_fetch_object($erg) )
       {
-        if ($ready[$obj->featureInstanceId] == 1)
-          continue;
+        if ($ready[$obj->featureInstanceId] == 1) continue;
         
         if ($allMyRuleSignals[$obj->featureInstanceId] != 1)
         {
@@ -522,8 +518,7 @@ if ($action == "insertFromClipboard")
   }
 }
 
-if ($myClassesId == "")
-  showMessage("Bitte zunächst Gruppenelemente hinzufügen");
+if ($myClassesId == "") showMessage("Bitte zunächst Gruppenelemente hinzufügen");
 
 if ($myClassesId == "1" || $myClassesId == "24") showMessage("Für diesen Aktor, können keine Basisregeln konfiguriert werden. <a href='editRules.php?groupId=$groupId'>Hier klicken</a>, um die Zusatzregeln dieser Gruppe anzuzeigen.");
 
@@ -1013,7 +1008,7 @@ while ( $obj99 = GetNext($erg99, $emptyRuleFound) )
   chooseTag("%OPT_TEMPLATES%", $actTag);
   
   // Wird ggf. oben schon anders überschrieben. Das hier ist Default
-  $extras = ",Rotation,Bewegungsmelder";
+  $extras = ",Rotation,Bewegungsmelder,Heizungssteuerung";
   $actTag = str_replace("%EXTRAS_OPTIONS%", getSelect($obj99->extras, $extras, $extras), $actTag);
 
   chooseTag("%OPT_EXTRAS%", $actTag);

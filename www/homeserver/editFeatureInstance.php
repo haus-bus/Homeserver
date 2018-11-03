@@ -236,6 +236,8 @@ if ($featureClassesId==2) //Temperatur
 	chooseTag("%OPT_TEMP_CONTROL%",$html);
 	if ($extra==1) $tempControlChecked="checked";
   $html = str_replace("%TEMP_CONTROL_CHECKED%", $tempControlChecked, $html);
+  
+  $html = str_replace("%TEMP COMMENT%", "Wird dieses Häkchen aktiviert, erscheint in der tabellarischen Webapp automatisch das Thermostatelement, mit dem man diesen Temperatursensor einstellen kann. Gleichzeitig kann ein Schalter zugeordnet werden, der durch diesen Sensor getriggert wird (z.b. als Heizungssteuerung), indem der Name des Schalters als 'Heizung <RAUMNAME>' gesetzt wird. Zusätzlich wird automatisch ein Link zum zugehörigen Diagramm eingeblendet, wenn dieses 'Temperatur <RAUMNAME>' benannt wird.", $html);
 }
 else removeTag("%OPT_TEMP_CONTROL%",$html);
 
