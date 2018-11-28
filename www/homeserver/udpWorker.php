@@ -25,14 +25,20 @@ $line="-------------------------------------------------------------------------
 
 set_time_limit(0);
 ob_implicit_flush();
+setupNetwork();
 
 echo "Opening UDP Socket on port $UDP_PORT and sourceIp ";
 $sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 if (!socket_set_option($sock, SOL_SOCKET, SO_REUSEADDR, 1)) echo 'Could not set option SO_REUSEADDR to socket: '. socket_strerror(socket_last_error()) . PHP_EOL;
+if (!socket_set_option($sock, SOL_SOCKET, SO_BROADCAST, 1)) echo 'Could not set option SO_BROADCAST to socket: '. socket_strerror(socket_last_error()) . PHP_EOL;
 
 $sourceIp = getNetworkIp();
+// in case of broadcast address connect to 0, that means to all available interfaces
 if( $sourceIp == '255.255.255.255') $sourceIp = "0";
 echo $sourceIp . $lb;
+echo '  NetworkIP: ' . $UDP_NETWORK_IP . $lb;
+echo '  NetworkMask: ' . $UDP_NETWORK_MASK . $lb;
+echo '  BroadcastIP: ' . $UDP_BCAST_IP . $lb;
 socket_bind($sock, $sourceIp, $UDP_PORT) or die('Could not bind to address');
 
 $controllerModuleIdFktId = getObjectFunctionIdByName($BROADCAST_OBJECT_ID, "ModuleId");

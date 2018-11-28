@@ -14,6 +14,8 @@ $MAX_TRACE_ENTRIES = 10000; // Wie viele Datenbankeinträge maximal im Trace geh
 
 // INTERNE PARAMETER -- HIER NICHTS ÄNDERN !
 $UDP_PORT = 9;
+$UDP_NETWORK_IP = "255.255.255.255";
+$UDP_NETWORK_MASK = "255.255.255.0";
 $UDP_BCAST_IP = "255.255.255.255";
 $MY_OBJECT_ID = (9999<<16)+1;
 $UDP_HEADER_BYTES= array(0xef,0xef);

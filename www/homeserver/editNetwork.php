@@ -23,6 +23,19 @@ if ($submitted == 1)
   {
     QUERY ( "DELETE from basicConfig where paramKey = 'networkIp' limit 1" );
     QUERY ( "INSERT into basicConfig (paramKey,paramValue) values('networkIp','$networkIp')" );
+	if ($networkPort == '') $networkPort = 9;
+    QUERY ( "DELETE from basicConfig where paramKey = 'networkPort' limit 1" );
+    QUERY ( "INSERT into basicConfig (paramKey,paramValue) values('networkPort','$networkPort')" );	
+	if ($networkMask == '') $networkMask = '255.255.255.0';
+    if ($networkMask != '' && ! filter_var ( $networkMask, FILTER_VALIDATE_IP ))
+    {
+	  $message .= "Netzwerk-IP ist ungültig!<br>";
+    }
+	else
+	{
+	  QUERY ( "DELETE from basicConfig where paramKey = 'networkMask' limit 1" );
+      QUERY ( "INSERT into basicConfig (paramKey,paramValue) values('networkMask','$networkMask')" );	
+	}		
   }
   if (! $message)
     $message = " Einstellung wurde gespeichert.";
@@ -44,6 +57,16 @@ $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'networkIp' 
 if ($row = mysqli_fetch_ROW ( $erg ))
   $myNetworkIp = $row [0];
 $html = str_replace ( "%NETWORK_IP%", $myNetworkIp, $html );
+
+$erg = QUERY ( "select paramValue from basicConfig where paramKey = 'networkPort' limit 1" );
+if ($row = mysqli_fetch_ROW ( $erg ))
+  $myNetworkPort = $row [0];
+$html = str_replace ( "%NETWORK_PORT%", $myNetworkPort, $html );
+
+$erg = QUERY ( "select paramValue from basicConfig where paramKey = 'networkMask' limit 1" );
+if ($row = mysqli_fetch_ROW ( $erg ))
+  $myNetworkMask = $row [0];
+$html = str_replace ( "%NETWORK_MASK%", $myNetworkMask, $html );
 
 show ();
 

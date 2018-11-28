@@ -566,9 +566,12 @@ function sendCommand($receiverObjectId, $data, $senderObjectId = "", $binaryStar
 {
 	//echo $receiverObjectId."-".$data."-".$senderObjectId."-".$binaryStartPos."<br>";
     global $UDP_PORT;
+	global $UDP_BCAST_IP;
     global $MY_OBJECT_ID;
     global $UDP_HEADER_BYTES;
     global $debug;
+	
+	setupNetwork();
 
     if ($senderObjectId == "")
         $senderObjectId = $MY_OBJECT_ID;
@@ -633,7 +636,7 @@ function sendCommand($receiverObjectId, $data, $senderObjectId = "", $binaryStar
 
     if (isWindows())
     {
-      $fp = fsockopen("udp://" . getNetworkIp(), $UDP_PORT, $errno, $errstr);
+      $fp = fsockopen("udp://" . $UDP_BCAST_IP, $UDP_PORT, $errno, $errstr);
       fwrite($fp, $binary_msg, $datagrammPos);
     }
     else
@@ -652,7 +655,7 @@ function sendCommand($receiverObjectId, $data, $senderObjectId = "", $binaryStar
         {
           echo "setsockopt() failed, error: " . strerror($opt_ret) . "\n";
         }
-        $e = socket_sendto($s, $binary_msg, $datagrammPos, 0, getNetworkIp(), $UDP_PORT);
+        $e = socket_sendto($s, $binary_msg, $datagrammPos, 0, $UDP_BCAST_IP, $UDP_PORT);
         socket_close($s);
       }
     }    

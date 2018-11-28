@@ -4122,15 +4122,56 @@ function getStreamContext()
 
 function getNetworkIp()
 {
-  global $UDP_BCAST_IP;
+  global $UDP_NETWORK_IP;
   
-  $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'netWorkIp' limit 1" );
+  $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'networkIp' limit 1" );
   if ($row = MYSQLi_FETCH_ROW ( $erg )) $myNetwork = $row [0];
   
-  if (filter_var ( $myNetwork, FILTER_VALIDATE_IP )) return $myNetwork;
-
-  return '255.255.255.255';
+  if (filter_var ( $myNetwork, FILTER_VALIDATE_IP )) $UDP_NETWORK_IP = $myNetwork;
+  
+  return $UDP_NETWORK_IP;
 }
+
+function getNetworkMask()
+{
+  global $UDP_NETWORK_MASK;
+  
+  $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'networkMask' limit 1" );
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) $myNetworkMask = $row [0];
+  
+  if (filter_var ( $myNetworkMask, FILTER_VALIDATE_IP )) $UDP_NETWORK_MASK = $myNetworkMask;
+  
+  return $UDP_NETWORK_MASK;
+}
+
+function getNetworkPort()
+{
+  global $UDP_PORT;
+  
+  $erg = QUERY ( "select paramValue from basicConfig where paramKey = 'networkPort' limit 1" );
+  if ($row = MYSQLi_FETCH_ROW ( $erg )) $UDP_PORT = $row [0];
+}
+
+function setupNetwork()
+{
+  global $UDP_NETWORK_IP;
+  global $UDP_NETWORK_MASK;
+  global $UDP_BCAST_IP;
+  
+  // update config from database
+  getNetworkIp();
+  getNetworkPort();
+  getNetworkMask();
+  
+  // calculate UDP_BCAST_IP
+  // Network is a logical AND between the address and netmask
+  $netmask_int = ip2long($UDP_NETWORK_MASK);
+  $network_int = ip2long($UDP_NETWORK_IP) & $netmask_int;
+  // Broadcast is a logical OR between the address and the NOT netmask
+  $broadcast_int = $network_int | (~ $netmask_int);
+  $UDP_BCAST_IP = long2ip($broadcast_int);  
+}
+
 
 function forceTreeUpdate()
 {

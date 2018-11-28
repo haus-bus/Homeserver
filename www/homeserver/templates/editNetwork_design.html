@@ -6,7 +6,8 @@ Standort konfigurieren
 
 <table cellspacing="10">
 <tr><td>Proxy-Server:</td><td><input type=text size=20 name=proxyIp value='%PROXY%'></td><td>Port:</td><td><input type=text size=5 name=proxyPort value='%PROXY_PORT%'></td></tr>
-<tr><td>Hausbus-Netzwerk:</td><td><input type=text size=20 name=networkIp value='%NETWORK_IP%'></td><td></td><td>(z.b. 192.168.0.255)</td></tr>
+<tr><td>Hausbus-Netzwerk:</td><td><input type=text size=20 name=networkIp value='%NETWORK_IP%'></td><td>Port:</td><td><input type=text size=5 name=networkPort value='%NETWORK_PORT%'></td></tr>
+<tr><td>Netzmaske:</td><td><input type=text size=20 name=networkMask value='%NETWORK_MASK%'></td><td></td><td></td></tr>
 <tr><td></td><td><input type="submit" value="Speichern"></td></tr>
 </table>
 </form>
@@ -16,5 +17,7 @@ Standort konfigurieren
 Diese Einstellungen werden verwendet, um z.b. für das Onlineupdate eine Verbindung zum Server aufbauen zu können.<br>
 Ist kein Proxy-Server vorhanden, sollte das Feld leer bleiben.<br>
 Ausserdem ist es möglich die Hausautomatisierung in einem separaten Netzwerksegment laufen zu lassen.<br>
-Dazu einfach die IP des Segments eintragen. Damit mit allen Controllern an diesem Segment kommuniziert werden kann,<br>
-sollte an der letzten Stelle 255 (Broadcast) stehen.
+Dazu einfach die IP des Segments und die dazugehörige Netzmaske eintragen.<br>
+Der Port des Hausbus-Netzwerks sollte erst verändert werden, wenn alle Controller im Netzwerk bereits auf diesen Port umgestellt sind.<br>
+Controller->Ethernet->setConfiguration( IP, Port )<br>
+Andernfalls werden diese Controller anschließend nicht mehr erreichbar sein.
