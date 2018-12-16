@@ -1,0 +1,36 @@
+
+<html>
+<head><link rel="StyleSheet" href="/homeserver/css/main.css" type="text/css" />
+<body><div class="contentWrap"  id="content" style="margin-right:16px;">
+<br>
+<table width=95% align=center>
+	<tr><td>
+<b>Heizungssteuerung</b>
+<hr>
+Hier können Thermostate bestehend aus jeweils einem Temperatursensor und einem Relais zur Heizungssteuerung erstellt werden.<br>
+Diese werden automatisch in der tabellarischen Webapplikation angezeigt, sobald der Temperatursensor einem Raum zugeordnet wird.<br>
+Damit das Thermostat aktiv wird, müssen einmalig die zugehörigen Regeln per Button generiert werden.<br>
+<br>%DEBUG%
+<br><br>
+<b>Aktuelle Thermostate</b>
+<hr>
+<table cellspacing=3 cellpadding=3 border=0>
+<tr><td><b>Temperatursensor</td><td></td><td><b>Heizungsaktor</td><td></td><td><b>Diagramm</td><td></td><td><b>Raum</td><td></td><td></td></tr>
+<%ELEMENTS%>
+<tr>
+ <td valign=top>%STATUS% &nbsp;<a href="addGenericFeature.php?params=%SENSOR_PARAMS%&classes=Temperatursensor&returnUrl=heatingControl.php">%TEMP%</a></td><td></td>
+ <td valign=top><a href="addGenericFeature.php?params=%AKTOR_PARAMS%&classes=Schalter,Rollladen&returnUrl=heatingControl.php">%SWITCH%</a></td><td></td>
+ <td valign=top><a href="heatingControl.php?action=selectDiagram&id=%ID%">%DIAGRAM%</a></td><td></td>
+ <td valign=top><i>%ROOM%</i></td>
+ <td valign=top></td>
+ <td  valign=top width=10><a href="heatingControl.php?action=delete&id=%ID%"><img src="img/remove.gif" title="löschen"></a></td>
+</tr>
+</%ELEMENTS%>
+</table>
+<br>
+<form action="heatingControl.php" method="POST"><input type=hidden name=action value="createNew"><input type=submit value="Neues Thermostat erstellen"></form>
+<br><br>
+<%OPT_GENERATE_RULES%><b>TODOs</b><hr><form action="heatingControl.php" method="POST"><input type=hidden name=action value="generateRules"><input type=submit value="Regeln für inaktive Thermostate generieren"></form><br><br></%OPT_GENERATE_RULES%>
+
+
+</td></tr></table>

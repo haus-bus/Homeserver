@@ -36,6 +36,40 @@
 	white-space: nowrap;
 }
 
+.contentWrap 
+{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #333;
+}
+
+.contentWrap a
+{
+	color: #333;
+	text-decoration: none;
+}
+
+.contentWrap a:hover
+{
+  color: #333;
+	text-decoration: underline;
+}
+
+.contentWrap hr 
+{
+  border: 0px;
+  width: 100%;
+  border-top: ridge   3px #C0D2EC;
+  border-bottom: transparent;
+}
+
+
+.contentWrap td
+{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #333;
+}
 
 table.basic
 {

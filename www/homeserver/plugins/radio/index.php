@@ -18,6 +18,10 @@ else if ($_POST["function"]=="updateStreams")
 	 file_put_contents("channels.txt",$newStreams);
 }
 
+echo "<html>";
+echo '<head><link rel="StyleSheet" href="/homeserver/css/main.css" type="text/css" />';
+echo '<body><div class="contentWrap"  id="content" style="margin-right:16px;">';
+
 echo "<br><table width=95% align=center><tr><td>";
 echo "<b>Raspberry Webstream Player</b><hr>";
 

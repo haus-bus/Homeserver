@@ -655,12 +655,9 @@ if ($action == "addSignal")
       {
         if ($singleParamName != "")
         {
-          if ($singleParamName == "celsius" && $row[0] == "centiCelsius")
-            $singleParamName = "celsius+centiCelsius/100";
-          else if ($singleParamName == "relativeHumidity" && $row[0] == "lastEvent")
-            $singleParamName = "relativeHumidity";
-          else
-            $singleParamName = "";
+          if ($singleParamName == "celsius" && $row[0] == "centiCelsius") $singleParamName = "celsius+centiCelsius/100";
+          else if ($singleParamName == "relativeHumidity" && $row[0] == "lastEvent") $singleParamName = "relativeHumidity";
+          else $singleParamName = "";
           break;
         }
         $singleParamName = $row[0];
@@ -670,14 +667,8 @@ if ($action == "addSignal")
       
       if ($signalId > 0)
       {
-      	 if ( $signalEventId > 0)
-         {
-         	QUERY("UPDATE graphSignalEvents set featureInstanceId='$featureInstanceId', functionId='$featureFunctionId',fkt='$singleParamName' where id='$signalEventId' and graphSignalsId='$graphId' limit 1");
-         }
-         else 
-         {
-         	QUERY("INSERT into graphSignalEvents (graphSignalsId, featureInstanceId, functionId,fkt) values('$signalId','$featureInstanceId','$featureFunctionId','$singleParamName')");
-         }        
+      	 if ( $signalEventId > 0) QUERY("UPDATE graphSignalEvents set featureInstanceId='$featureInstanceId', functionId='$featureFunctionId',fkt='$singleParamName' where id='$signalEventId' and graphSignalsId='$graphId' limit 1");
+         else  QUERY("INSERT into graphSignalEvents (graphSignalsId, featureInstanceId, functionId,fkt) values('$signalId','$featureInstanceId','$featureFunctionId','$singleParamName')");
       }
       else
       {

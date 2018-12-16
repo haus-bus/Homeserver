@@ -20,8 +20,7 @@ if ($check==1)
     $param1Value=$fktData->paramData[0]->dataValue;
     $param2Value=$fktData->paramData[1]->dataValue;
     
-    $obj->sender = utf8_encode($obj->sender);
-    
+    //$obj->sender = utf8_encode($obj->sender);
     die($obj->id."#<a href='editRules.php?action=$action&submitted=1&logicalGroupMode=$logicalGroupMode&graphId=$graphId&signalId=$signalId&signalEventId=$signalEventId&groupId=$groupId&ruleId=$ruleId&featureInstanceId=$senderId&featureFunctionId=$fktData->id&param1Value=$param1Value&param2Value=$param2Value' target='main'><img src='img/action.gif' border=0> ".$obj->function." ".$obj->sender."</a><br>");
   }
   else die("");

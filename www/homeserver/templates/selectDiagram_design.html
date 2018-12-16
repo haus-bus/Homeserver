@@ -1,0 +1,35 @@
+
+<html>
+<head><link rel="StyleSheet" href="/homeserver/css/main.css" type="text/css" />
+<body><div class="contentWrap"  id="content" style="margin-right:16px;">
+<br>
+<table width=95% align=center>
+	<tr><td>
+<b>Diagramm für Thermostat wählen</b>
+<hr>
+Hier kann ein Diagramm erstellt oder ausgewählt werden, dass passend zum Thermostat angezeigt wird<br>
+Entweder ein vorhandenes Diagramm aus der Liste unten wählen oder automatisch ein Diagramm erstellen<br>
+<br>
+<br>
+<b>Diagramm automatisch neu generieren</b><hr>
+<form action="heatingControl.php" method="POST">
+	<input type=hidden name=action value="createDiagram">
+	<input type=hidden name=id value="%ID%">
+	<input type=radio name="diagramType" checked value=1> Temperatur + Schaltzeitpunkte
+	<input type=radio name="diagramType" value=2> Nur Temperatur
+	&nbsp; <input type=submit value="Diagramm automatisch neu erstellen">
+</form>
+<br>
+<br>
+<br><br>
+<b>Oder aus vorhandenen Diagrammen wählen</b>
+<hr>
+<table cellspacing=3 cellpadding=3 border=0 >
+<%ELEMENTS%>
+<tr><td><a href="heatingControl.php?action=setDiagram&id=%ID%&diagram=%DIAGRAM_ID%">%DIAGRAM_TITLE%</a></td></tr>
+</%ELEMENTS%>
+</table>
+<form>
+
+
+</td></tr></table>

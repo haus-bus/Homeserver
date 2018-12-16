@@ -2223,7 +2223,7 @@ function generateBaseRulesForGroup($groupId)
 
     
     // Stop Regeln bei Rollos
-    if ($myClassesId == $rolloClassesId)
+    if ($myClassesId == $rolloClassesId && $isHeizungsSteuerung!=TRUE)
     {
       $signalType = $functionTemplates [$myClassesId . "-5-" . $obj->template];
       if ($signalType == "")
@@ -3783,6 +3783,7 @@ function formatInstance($instanceId)
   $result .= $obj->featureInstanceName;
   return $result;
 }
+
 function getFeatureInstanceData($instanceId)
 {
   $erg = QUERY ( "select featureInstances.name as featureInstanceName, 

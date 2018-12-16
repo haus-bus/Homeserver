@@ -16,15 +16,16 @@ $nextCheck = "30";
 $message="";
 $lastId="-";
 
+$minTime = time()-60*60*8; // maximal 8 Stunden zurück
 if ($id=="")
 {
-	$erg = QUERY("select id from appMessages order by id desc limit 1");
+	$erg = QUERY("select id from appMessages where time>$minTime order by id desc limit 1");
 	if ($row=mysqli_fetch_ROW($erg)) $lastId=$row[0];
 	else $lastId="0";
 }
 else
 {
-  $erg = QUERY("select id,title,message from appMessages where id>'$id' limit 1");
+  $erg = QUERY("select id,title,message from appMessages where id>'$id' and time>$minTime limit 1");
   if ($row=mysqli_fetch_ROW($erg))
   {
 	   $lastId=$row[0];

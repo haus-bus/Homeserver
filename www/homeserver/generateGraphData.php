@@ -46,6 +46,7 @@ while ($graphObj = mysqli_fetch_OBJECT($erg))
         				join featureInstances on ( featureInstances.id=graphSignalEvents.featureInstanceId  )
 				        join featureFunctions on ( featureFunctions.id=graphSignalEvents.functionId  )
 				        $whereGraph";
+  //die($sql);
   $erg = QUERY($sql);
   while ( $obj = mysqli_fetch_object($erg) )
   {

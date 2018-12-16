@@ -78,6 +78,7 @@ else if ($action == "addSignal")
       $tasterClassesId = getClassesIdByName("Taster");
       $irClassesId = getClassesIdByName("IR-Sensor");
       $tempClassesId = getClassesIdByName("Temperatursensor");
+
       
       setupTreeAndContent("addRuleSignal_design.html");
       removeTag("%OPT_ADD_OTHERS%",$html);
@@ -155,9 +156,7 @@ else if ($action == "addSignal")
           
           if ($obj->controllerId != $lastController)
           {
-            if ($lastController != "")
-              $treeElements .= $closeTreeFolder; // letzter controller
-            
+            if ($lastController != "") $treeElements .= $closeTreeFolder; // letzter controller
 
             $lastController = $obj->controllerId;
             $treeElements .= addToTree($obj->controllerName, 1);
@@ -169,7 +168,6 @@ else if ($action == "addSignal")
       
       $treeElements .= $closeTreeFolder; // letzter controller
       $treeElements .= $closeTreeFolder; // letzter raum
-      
 
       $foundGroups = 0;
       $erg = QUERY("select id,name,groupType from groups where single!='1' and subOf='0' and groupType!='' order by name");
@@ -195,8 +193,7 @@ else if ($action == "addSignal")
           $treeElements .= $closeTreeFolder;
         }
       }
-      if ($foundGroups == 1)
-        $treeElements .= $closeTreeFolder;
+      if ($foundGroups == 1) $treeElements .= $closeTreeFolder;
       
       $html = str_replace("%TREE_ELEMENTS%", $treeElements, $html);
       $html = str_replace("%GROUP_ID%", $groupId, $html);

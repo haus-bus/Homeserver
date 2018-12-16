@@ -29,6 +29,7 @@ if ($action == "addMember")
   else
   {
     setupTreeAndContent("addGroupMember_design.html");
+    
     $html = str_replace("%ACTION_TYPE%", $action, $html);
     
     $closeTreeFolder = "</ul></li> \n";
@@ -38,14 +39,11 @@ if ($action == "addMember")
     $html = str_replace("%INITIAL_ELEMENT2%", "expandToItem('tree2','$treeElementCount');", $html);
     
     $allActionClasses = readFeatureClassesThatSupportType("ACTION");
-    //$allSignalClasses= readFeatureClassesThatSupportType("EVENT");
     $allMyGroupFeatures = readGroupFeatures($id);
-    //$logicalButtonClass = getClassesIdByName("LogicalButton");
     
-
     unset($ready);
     $lastRoom = "";
-    $erg = QUERY("select rooms.id as roomId, rooms.name as roomName,
+    $sql = "select rooms.id as roomId, rooms.name as roomName,
                                  roomFeatures.featureInstanceId,
                                  featureInstances.name as featureInstanceName, featureInstances.featureClassesId,
                                  featureClasses.name as featureClassName,
@@ -57,8 +55,11 @@ if ($action == "addMember")
                                  join featureClasses on (featureClasses.id = featureInstances.featureClassesId)
                                  join featureFunctions on (featureInstances.featureClassesId=featureFunctions.featureClassesId) 
                                  
-                                 where featureFunctions.type='ACTION' 
-                                 order by roomName,featureClassName,featureInstanceName"); // and featureInstances.featureClassesId !='$logicalButtonClass'
+                                 where featureFunctions.type='ACTION'
+                                 order by roomName,featureClassName,featureInstanceName";
+                     
+    //die($sql);            
+    $erg = QUERY($sql); // and featureInstances.featureClassesId !='$logicalButtonClass'
     while ( $obj = mysqli_fetch_object($erg) )
     {
       $ready[$obj->featureInstanceId] = 1;
@@ -79,10 +80,7 @@ if ($action == "addMember")
         
         if ($obj->featureClassesId != $lastClass)
         {
-          if ($lastClass != "")
-          {
-            $treeElements .= $closeTreeFolder; // letzte featureclass
-          }
+          if ($lastClass != "") $treeElements .= $closeTreeFolder; // letzte featureclass
           
           $lastClass = $obj->featureClassesId;
           $treeElements .= addToTree($obj->featureClassName, 1);
@@ -98,8 +96,7 @@ if ($action == "addMember")
             $checked = "checked";
             $assigned .= "expandToItem('tree2'," . $treeElementCount . ");\n";
           }
-          else
-            $checked = "";
+          else $checked = "";
           
           $treeElements .= addToTree("<input type='checkbox' name='id$obj->featureInstanceId' value='1' $checked>$obj->featureInstanceName", 0);
         }
@@ -126,8 +123,7 @@ if ($action == "addMember")
                                  order by controllerName, featureClassName,featureInstanceName,featureFunctionName"); // and featureInstances.featureClassesId !='$logicalButtonClass'
     while ( $obj = mysqli_fetch_object($erg) )
     {
-      if ($ready[$obj->featureInstanceId] == 1)
-        continue;
+      if ($ready[$obj->featureInstanceId] == 1) continue;
       
       if ($allActionClasses[$obj->featureClassesId] == 1)
       {

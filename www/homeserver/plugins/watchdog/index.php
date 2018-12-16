@@ -46,9 +46,13 @@ else if ($action=="refresh")
 	 $error="Refeshed!";
 }
 
+echo "<html>";
+echo '<head><link rel="StyleSheet" href="/homeserver/css/main.css" type="text/css" />';
+echo '<body><div class="contentWrap"  id="content" style="margin-right:16px;">';
+
 if ($error!="") $error="<font color=#bb0000><b>".$error."</b></font><br>";
 
-echo "<br><table width=95% align=center><tr><td><div style='font-size:13px;font-face:arial'>";
+echo "<br><table width=95% align=center><tr><td>";
 echo "<b>Gruppen Watchdog</b><hr>";
 echo "Mit diesem Watchdog kann man \"Alles-Aus\" Gruppen durch den Raspberry überwachen und Aktoren automatisch nachgeschalten, die kein zugehöriges evOff Event geliefert haben. Das kann bei großen Gruppen sinnvoll sein (z.b. Alles aus mit mehr als 20 Aktoren), wo ggf. Aktionen oder Events verloren gehen können<br>";
 echo "<br><b>INFO:</b><br>Aktuell wird nur der erste Eintrag einer Gruppe mit Aktivierungszustand ALLE überwacht!<br><br>";

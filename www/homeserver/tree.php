@@ -596,5 +596,26 @@ function readFreeDiskSpace()
   return $obj;
 }
 
+function paramsToUrl($params)
+{
+	 $params= str_replace("&",",",$params);
+	 $params= str_replace("=","*",$params);
+	 return $params;
+}
+
+function urlToParams($params)
+{
+	$parts = explode(",",$params);
+	
+	foreach($parts as $act)
+	{
+		  $inner = explode("*",$act);
+		  $key = $inner[0];
+		  $value=$inner[1];
+		  global $$key;
+		  $$key=$value;
+	}
+}
+
 
 ?>

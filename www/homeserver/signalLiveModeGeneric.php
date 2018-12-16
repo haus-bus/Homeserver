@@ -1,9 +1,7 @@
 <?php
 include($_SERVER["DOCUMENT_ROOT"]."/homeserver/include/all.php");
 
-$html = loadTemplate("signalLiveModeBaseRules_design.html");
-
-if ($action=="") $action="addSignal";
+$html = loadTemplate("signalLiveModeGeneric_design.html");
 
 if ($check==1)
 {
@@ -16,7 +14,7 @@ if ($check==1)
     $param1Value=$fktData->paramData[0]->dataValue;
     $param2Value=$fktData->paramData[1]->dataValue;
     
-    die($obj->id."#<a href='editBaseConfig.php?action=$action&submitted=1&groupId=$groupId&ruleId=$ruleId&featureInstanceId=$senderId&featureFunctionId=$fktData->id&param1Value=$param1Value&param2Value=$param2Value' target='main'><img src='img/action.gif' border=0> ".$obj->function." ".$obj->sender."</a><br>");
+    die($obj->id."#<a href='$returnUrl?params=$params&featureInstanceId=$senderId&featureFunctionId=$fktData->id&param1Value=$param1Value&param2Value=$param2Value' target='main'><img src='img/action.gif' border=0> ".$obj->function." ".$obj->sender."</a><br>");
   }
   else die("");
 }
@@ -26,9 +24,8 @@ if ($row=mysqli_fetch_ROW($erg)) $lastId=$row[0];
 else $lastId=0;
 
 $html = str_replace("%FIRST_ID%",$lastId,$html);
-$html = str_replace("%GROUP_ID%",$groupId,$html);
-$html = str_replace("%RULE_ID%",$ruleId,$html);
-$html = str_replace("%ACTION%",$action,$html);
+$html = str_replace("%PARAMS%",$params,$html);
+$html = str_replace("%RETURN_URL%",$returnUrl,$html);
 
 die($html);
 

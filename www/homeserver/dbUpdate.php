@@ -175,7 +175,14 @@ if (!hasIndex("plugins","id"))
 	addPrimaryKey("plugins","id");
 }
 
+$erg = QUERY("select id from plugins where url='/homeserver/heatingControl.php' limit 1");
+if ($row=MYSQLi_FETCH_ROW($erg)){}
+else QUERY("INSERT into plugins (title, url) values('Heizungssteuerung','/homeserver/heatingControl.php')");
+
 QUERY("ALTER TABLE `featureinstances` ADD `extra` TINYINT NOT NULL AFTER `lastChange`",TRUE);
+
+QUERY("CREATE TABLE IF NOT EXISTS `heating` (`id` int(11) NOT NULL AUTO_INCREMENT, `sensor` int(11) NOT NULL, `relay` int(11) NOT NULL, `diagram` int(11) NOT NULL, PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1", TRUE);
+
 
 echo "OK";
 

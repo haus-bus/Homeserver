@@ -23,7 +23,7 @@ if ($action=="changeHeating")
 	   $lastRoom=-1;
 	   $erg = QUERY("select rooms.id as roomId, rooms.name as roomName,
                      featureClasses.id as classesId, featureClasses.name as classesName,
-                     featureInstances.name as featureInstanceName, objectId, featureInstances.id as featureInstanceId, extra
+                     featureInstances.name as featureInstanceName, objectId, featureInstances.id as featureInstanceId
                      from rooms 
                      join roomFeatures on (rooms.id = roomFeatures.roomId)
                      join featureInstances on (featureInstances.id=featureInstanceId) 
@@ -176,13 +176,26 @@ while($obj=MYSQLi_FETCH_OBJECT($erg))
 	$multitaster[$obj->id]=substr($newMembers,0,strlen($newMembers)-1);
 }
 
+$heatingSensors = array(); // alle Thermostat Temperatur Sensoren -> Schalter
+$heatingRelays = array();    // alle Thermostat Schalter -> Temperatur Sensoren
+$heatingRelayObj = array();  // alle Thermostat Temperatur Sensoren -> Datenbankobjekte der Schalter
+$heatingDiagrams = array(); // alle Thermostat Temperatur Sensoren -> Diagramme
+$heating=array();          // Räume, die ein Thermostat haben
+$erg = QUERY("select sensor,relay,diagram from heating");
+while($obj=MYSQLi_FETCH_OBJECT($erg))
+{
+	 if ($obj->relay==0) $obj->relay=1;
+	 $heatingSensors[$obj->sensor]=$obj->relay;
+	 $heatingDiagrams[$obj->sensor]=$obj->diagram;
+	 $heatingRelays[$obj->relay]=$obj->sensor;
+}
 
 $objects="";
 $myObjects="";
 $i=0;
 $erg = QUERY("select rooms.id as roomId, rooms.name as roomName,
                      featureClasses.id as classesId, featureClasses.name as classesName,
-                     featureInstances.name as featureInstanceName, objectId, featureInstances.id as featureInstanceId, extra
+                     featureInstances.name as featureInstanceName, objectId, featureInstances.id as featureInstanceId
                      from rooms 
                      join roomFeatures on (rooms.id = roomFeatures.roomId)
                      join featureInstances on (featureInstances.id=featureInstanceId) 
@@ -192,13 +205,24 @@ $erg = QUERY("select rooms.id as roomId, rooms.name as roomName,
                                order by roomName,FIND_IN_SET(featureClasses.name,'Dimmer,Schalter,Rollladen,LogicalButton,Taster,Temperatursensor,Feuchtesensor'), featureInstances.name");
 while ( $obj = MYSQLi_FETCH_OBJECT($erg))
 {
-	if ($onlyType!="" && $obj->classesName!=$onlyType && !($onlyType=="Temperatursensor" && $obj->classesName=="Schalter" && $obj->featureInstanceName=="Heizung ".$obj->roomName)) continue;
+	if ($onlyType!="" && $obj->classesName!=$onlyType && !($onlyType=="Temperatursensor" && $heatingRelays[$obj->featureInstanceId]>0)) continue;
 	
-	//if ($obj->classesName!="Temperatursensor" && $obj->classesName!="Feuchtesensor") continue;
 	$elements[$obj->roomName][$obj->classesName][$obj->featureInstanceName]=$obj;
 	$roomIds[$obj->roomName]=$obj->roomId;
 	
-	if ($obj->classesName=="Temperatursensor" && $obj->extra==1) $heating[$obj->roomName]=1;
+	// Räume merken, die ein Thermostat haben
+	if ($heatingSensors[$obj->featureInstanceId]>0)
+	{
+		$heating[$obj->roomName]=1;
+		$obj->thermostatSensor=1;
+	}
+	
+	// Datenbankobjekte der Thermostatschalter zu den Temperatursensoren merken
+	if ($heatingRelays[$obj->featureInstanceId]>0)
+	{
+		$heatingRelayObj[$heatingRelays[$obj->featureInstanceId]]=$obj;
+		$obj->thermostatRelay=1;
+	}
 	
 	if ($obj->classesName!="LogicalButton" && $obj->classesName!="Taster")
 	{
@@ -211,17 +235,6 @@ while ( $obj = MYSQLi_FETCH_OBJECT($erg))
 	  $myObjects.="newObject['type']='".$obj->classesName."';";
 	  $myObjects.="myObjects['".$obj->objectId."']=newObject;\n";
 	}
-}
-
-$erg = QUERY("select id,title from graphs where title like 'Temperatur%'");
-while($obj=MYSQLi_FETCH_OBJECT($erg))
-{
-	 $pos = strpos($obj->title," ");
-	 if ($pos!==FALSE)
-	 {
-	 	  $diagramRoom = substr($obj->title,$pos+1);
-	 	  $elements[$diagramRoom]["diagram"]=$obj->id;
-	 }
 }
 
 $objects="objects=".$i.$objects;
@@ -295,7 +308,7 @@ foreach($elements as $room=>$arr)
       $hasHeating=0;
  	  	foreach($arra as $instance=>$obj)
       {
-      	 if ($obj->extra==1)
+      	 if ($obj->thermostatSensor==1)
       	 {
       	 	 $hasHeating=1;
       	 	 break;  
@@ -449,8 +462,8 @@ foreach($elements as $room=>$arr)
  	
 	  foreach($arra as $instance=>$obj)
     {
-    	 if ($class=="Temperatursensor" && $obj->extra!=1) continue;
-    	 if ($heating[$room]!="" && $class=="Schalter" && $instance=="Heizung $room") continue;
+    	 if ($class=="Temperatursensor" && $obj->thermostatSensor!=1) continue;
+    	 if ($heating[$room]!="" && $obj->thermostatRelay==1) continue;
     	       	
 
   	   $actFeatureTag = $actClassTag;
@@ -473,9 +486,9 @@ foreach($elements as $room=>$arr)
 
     	 if ($class=="Temperatursensor")
     	 {
-    	 	  if ($obj->extra==1)
+    	 	  if ($obj->thermostatSensor==1)
     	 	  {
-    	 	    $mySchalterObj = $elements[$room]["Schalter"]["Heizung $room"];
+    	 	    $mySchalterObj = $heatingRelayObj[$obj->featureInstanceId];
     	 	    if ($mySchalterObj!="")
     	 	    {
     	 	  	  $myHeatingSwitchTag = $heatingSwitchTag;
@@ -484,7 +497,7 @@ foreach($elements as $room=>$arr)
     	 	    }
     	 	    else $actFeatureTag = str_replace("%OPT_HEATING_SWITCH%","<td></td>",$actFeatureTag);
     	 	    
-    	 	    $diagramId = $elements[$room]["diagram"];
+    	 	    $diagramId = $heatingDiagrams[$obj->featureInstanceId];
     	 	    if ($diagramId!="")
     	 	    {
     	 	  	  $myHeatingDiagramTag = $heatingDiagramTag;

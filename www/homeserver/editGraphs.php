@@ -31,8 +31,7 @@ if ($action == "submitGraph")
     }
   }
 }
-else if ($action == "changeSignalType")
-  QUERY("update graphSignals set type='$signalType' where graphId='$id' and id='$signalId' limit 1");
+else if ($action == "changeSignalType") QUERY("update graphSignals set type='$signalType' where graphId='$id' and id='$signalId' limit 1");
 
 if ($deleteSignal!="") 
 {
@@ -130,7 +129,6 @@ if ($id != "")
   $html = str_replace("%SUBMIT_TITLE%", "Änderungen speichern", $html);
   
   $html = str_replace("%GRAPH_TYPE%", $obj->type, $html);
-  $html = str_replace("%HEIGHT_TYPE_OPTIONS%", getSelect("", ",percent,fixed", "Automatisch,Prozent der Fensterhöhe:,Feste Höhe in Pixel:"), $html);
   $html = str_replace("%TIME_TYPE%", $obj->timeMode, $html);
   
   chooseTag("%OPT_DELETE%", $html);
@@ -198,6 +196,8 @@ else
   $html = str_replace("%HEIGHT%", "", $html);
   
     $html = str_replace("%THEME_OPTIONS%", getSelect("default", "default,dark-unica,sand-signika,grid-light", "Standard,Dunkel,Sand,Gitter"), $html);
+
+  $html = str_replace("%HEIGHT_TYPE_OPTIONS%", getSelect("", ",percent,fixed", "Automatisch,Prozent der Fensterhöhe:,Feste Höhe in Pixel:"), $html);
 
   $html = str_replace("%GRAPH_TYPE_OPTIONS%", getSelect("", "line,spline,scatter", "Line,Spline,Events"), $html);
   $html = str_replace("%TIME_TYPE_OPTIONS%", getSelect("", ",fixed,seconds,minutes,hours,days", "-- wählen --,Fester Zeitraum,Die letzten X Sekunden,Die letzten X Minuten,Die letzten X Stunden,Die letzten X Tage"), $html);
