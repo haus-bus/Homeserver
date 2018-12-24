@@ -518,8 +518,7 @@ function waitForIdle()
   {
     sleepMS ( 500 );
     $next = updateLastLogId ();
-    if ($next == $rememberedId)
-      return;
+    if ($next == $rememberedId) return;
     $rememberedId = $next;
   }
 }

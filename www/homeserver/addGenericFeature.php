@@ -84,6 +84,7 @@ $erg = QUERY("select featureInstances.id as featureInstanceId, featureInstances.
 while ( $obj = mysqli_fetch_object($erg) )
 {
   if ($ready[$obj->featureInstanceId] == 1) continue;
+  $ready[$obj->featureInstanceId] = 1;
   
   if ($lastRoom == "")
   {

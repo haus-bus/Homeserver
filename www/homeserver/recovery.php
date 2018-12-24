@@ -19,8 +19,7 @@ if ($action=="Aktuelle Konfiguration speichern" || $action=="save")
      $erg = QUERY("select controller.name as ControllerName, objectId from controller where online='1' and size!='999'");
      while($obj=mysqli_fetch_OBJECT($erg))
      {
-        callObjectMethodByName($obj->objectId, "getConfiguration");
-        $result = waitForObjectResultByName($obj->objectId,5, "Configuration", $lastLogId,"funtionDataParams",0);
+     	  $result = callObjectMethodByNameAndRecover($obj->objectId, "getConfiguration", "", "Configuration");
         if ($result==-1) $message.="Fehler bei $obj->ControllerName <br>";
         else
         {
@@ -32,9 +31,7 @@ if ($action=="Aktuelle Konfiguration speichern" || $action=="save")
         }
         sleepMS(10);
      } 
-
-
-     
+    
 	   $erg = QUERY("select featureInstances.name as featureInstanceName, featureInstances.featureClassesId, featureInstances.objectId,
                           featureClasses.name as featureClassName,
                           featureFunctions.id  as featureFunctionId,featureFunctions.name  as featureFunctionName,
@@ -43,11 +40,10 @@ if ($action=="Aktuelle Konfiguration speichern" || $action=="save")
                           join controller on (controller.id = featureInstances.controllerId)
                           join featureClasses on (featureClasses.id = featureInstances.featureClassesId)
                           join featureFunctions on (featureInstances.featureClassesId=featureFunctions.featureClassesId) 
-                          where featureFunctions.name='setConfiguration' and checked='1' and controller.size!='999'");
+                          where featureFunctions.name='setConfiguration' and checked='1' and controller.size!='999' and featureClasses.name!='Gateway'");
      while($obj=mysqli_fetch_OBJECT($erg))
      {
-        callObjectMethodByName($obj->objectId, "getConfiguration");
-        $result = waitForObjectResultByName($obj->objectId,5, "Configuration", $lastLogId,"funtionDataParams",0);
+        $result = callObjectMethodByNameAndRecover($obj->objectId, "getConfiguration", "", "Configuration");
         if ($result==-1) $message.="Fehler bei $obj->featureClassName - $obj->featureInstanceName <br>";
         else
         {

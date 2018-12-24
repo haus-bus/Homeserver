@@ -28,6 +28,7 @@ var maxRunTime=600000; // 10 min
 var minClickDelay=60000; // 1 min
 //var maxRunTime=10000; // 10 sec
 //var minClickDelay=5000; // 5sec
+var mySessionId = Math.floor((Math.random() * 100000) + 1);
 
 function init()
 {
@@ -54,7 +55,7 @@ function registerCallback(result)
 {
 	  debugIt("registerCallback");
 	  initDone=1;
-		sendAsync("ajaxServer.php?command=readStatus");
+		sendAsync("ajaxServer.php?command=readStatus&mySessionId="+mySessionId);
 		updateStatus();
 		//pollStatus();
 }
@@ -120,7 +121,7 @@ function move(id, evt)
 		
 	if (direction!="")
 	{
-		send("ajaxServer.php?command=click"+direction+"&id="+id.replace("#", "_"), "dummyCallback");
+		send("ajaxServer.php?command=click"+direction+"&id="+id.replace("#", "_")+"&mySessionId="+mySessionId, "dummyCallback");
 		//deActivateMoving(id);
 		
 		moveFeedback(id, direction, 0);
@@ -268,7 +269,7 @@ function action(id)
   	var functionParam1 = myObjects[selectedId]["functionParam1"];
   	var functionParam2 = myObjects[selectedId]["functionParam2"];
   	var myFunction = myObjects[selectedId]["function"];
-  	send("ajaxServer.php?command=click&id="+id.replace("#", "_")+"&functionParam1="+functionParam1+"&functionParam2="+functionParam2+"&function="+myFunction, "dummyCallback");
+  	send("ajaxServer.php?command=click&id="+id.replace("#", "_")+"&functionParam1="+functionParam1+"&functionParam2="+functionParam2+"&function="+myFunction+"&mySessionId="+mySessionId, "dummyCallback");
   }
 	
   if (debugActive==1) showDebug();
@@ -296,7 +297,7 @@ function updateStatusOfLastShownIdByServer()
  */
 function updateStatusOfLastShownIdByContext(value)
 {
-	if (myObjects[lastShownId]!=null) send("ajaxServer.php?command=setValue&newValue="+value+"&id="+lastShownId.replace("#", "_"), "updateStatusOfLastShownIdByContextCallback");
+	if (myObjects[lastShownId]!=null) send("ajaxServer.php?command=setValue&newValue="+value+"&id="+lastShownId.replace("#", "_")+"&mySessionId="+mySessionId, "updateStatusOfLastShownIdByContextCallback");
 }
 
 function updateStatusOfLastShownIdByContextCallback()
@@ -384,7 +385,7 @@ function registerAllObjects()
 	}
 
   console.log("Registered: "+params);
-	send("ajaxServer.php?command=registerObjects&"+params, "registerCallback");
+	send("ajaxServer.php?command=registerObjects&"+params+"&mySessionId="+mySessionId, "registerCallback");
 	//send("ajaxServer.php?command=registerObjects&"+params, "updateStatusCallback");
 
   // Sliders registrieren
@@ -419,21 +420,21 @@ function slideUp(evt)
 {
 	//alert("slideup");
 	evt.preventDefault();
-	send("ajaxServer.php?command=clickup&id="+lastShownId.replace("#", "_"), "dummyCallback");
+	send("ajaxServer.php?command=clickup&id="+lastShownId.replace("#", "_")+"&mySessionId="+mySessionId, "dummyCallback");
 }
 
 function slideDown(evt)
 {
 	//alert("slidedown");
 	evt.preventDefault();
-	send("ajaxServer.php?command=clickdown&id="+lastShownId.replace("#", "_"), "dummyCallback");
+	send("ajaxServer.php?command=clickdown&id="+lastShownId.replace("#", "_")+"&mySessionId="+mySessionId, "dummyCallback");
 }
 
 function slideRelease(evt)
 {
 	//alert("sliderelease");
 	//evt.preventDefault();
-	send("ajaxServer.php?command=clickrelease&id="+lastShownId.replace("#", "_"), "dummyCallback");
+	send("ajaxServer.php?command=clickrelease&id="+lastShownId.replace("#", "_")+"&mySessionId="+mySessionId, "dummyCallback");
 }
 
 /**
@@ -456,7 +457,7 @@ function pollStatus()
 function updateStatus()
 {
 	debugIt("updateStatus");
-	sendStatus("ajaxServer.php?command=updateMyStatus", "updateStatusCallback");
+	sendStatus("ajaxServer.php?command=updateMyStatus&mySessionId="+mySessionId, "updateStatusCallback");
 }
 
 //1493176580=100,1493176581=-1,1493176582=50
@@ -473,14 +474,16 @@ function updateStatusCallback(result)
 		 {
 		 	  var act = el[i].split("=");
 		 	  var objectId = act[0];
+		 	  
 		 	  act = act[1].split(";");
+		 	  
 		 	  
 		 	  var status=act[0];
 		 	  var text=act[1];
 		 	  
 		 	  var toDirection="";
 		 	  if (act.length>2) toDirection=act[2];
-		 	  
+	 	  
 		 	  var oldStatus = myObjects[objectId]["status"];
 
 	 	  	console.log(objectId+": status "+myObjects[objectId]["status"]+" -> "+status);

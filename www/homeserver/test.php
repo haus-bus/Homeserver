@@ -1,7 +1,8 @@
 <?php
 include("include/all.php");
 
-die(date("d.m.Y",1540104757));
+print_r(unserialize('O:8:"stdClass":9:{s:2:"id";s:2:"94";s:16:"featureClassesId";s:1:"2";s:4:"type";s:6:"RESULT";s:4:"name";s:6:"Status";s:10:"functionId";s:3:"129";s:7:"classId";s:2:"32";s:16:"functionDebugStr";s:6:"Status";s:9:"paramData";a:3:{i:0;O:8:"stdClass":4:{s:2:"id";s:3:"161";s:4:"name";s:7:"celsius";s:4:"type";s:4:"BYTE";s:9:"dataValue";i:22;}i:1;O:8:"stdClass":4:{s:2:"id";s:3:"162";s:4:"name";s:12:"centiCelsius";s:4:"type";s:4:"BYTE";s:9:"dataValue";i:38;}i:2;O:8:"stdClass":5:{s:2:"id";s:3:"422";s:4:"name";s:9:"lastEvent";s:4:"type";s:4:"ENUM";s:13:"dataValueName";s:4:"WARM";s:9:"dataValue";i:201;}}s:14:"paramsDebugStr";s:55:"celsius = 22, centiCelsius = 38, lastEvent = WARM / 201";}'));
+exit;
     	 	  
     	 	  $min = time()-60*60*24*30;
     	 	  $sql="select time,functionData from udpCommandLog where senderObj='$objectId' and function='evCurrent' and time>$min order by time limit 1";

@@ -5,16 +5,27 @@ if ($action=="changeHeating")
 {
 	 $objectId=$heatingId;
 	 $lowThreshold = $heating;
-	 
    $erg = QUERY("select functionData from lastReceived where senderObj='$objectId' and function='Configuration' order by id desc limit 1");
    if ($row=MYSQLi_FETCH_ROW($erg))
    {
    	 $functionData = unserialize($row[0]);
+   	 
    	 $upperThreshold = $lowThreshold+3;
    	 $reportTime = 5;
    	 $hysteresis = 0;
 
-	   callObjectMethodByName($objectId, "setConfiguration", array("lowerThreshold"=>$lowThreshold,"upperThreshold"=>$upperThreshold,"reportTime"=>$reportTime,"hysteresis"=>$hysteresis));
+   	 $paramData = $functionData->paramData;
+   	 $callArray = array();
+   	 foreach ($paramData as $obj)
+   	 {
+   	 	  if ($obj->name=="lowerThreshold") $callArray["lowerThreshold"]=$lowThreshold;
+   	 	  else if ($obj->name=="upperThreshold") $callArray["upperThreshold"]=$upperThreshold;
+   	 	  else if ($obj->name=="reportTime") $callArray["reportTime"]=$reportTime;
+   	 	  else if ($obj->name=="hysteresis") $callArray["hysteresis"]=$hysteresis;
+   	 	  else $callArray[$obj->name]=$obj->dataValue;
+   	 } 
+   	 
+	   callObjectMethodByName($objectId, "setConfiguration", $callArray);
 	   sleepMs(200);
 	   callObjectMethodByName($objectId, "getConfiguration");
 	   callObjectMethodByName($objectId, "getStatus");

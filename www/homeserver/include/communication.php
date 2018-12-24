@@ -332,10 +332,8 @@ function callObjectMethodByNameAndRecover($objectId, $methodName, $params, $resu
       flushIt();
    }
 
-   if ($fail==1)
-      die("Antwort nicht empfangen $objectId $methodName");
-   else
-     return -1;
+   if ($fail==1) die("Antwort nicht empfangen $objectId $methodName");
+   else return -1;
 }
 
 function callObjectMethodByNameForEventAndRecover($objectId, $methodName, $params, $eventName, $waitSeconds=3, $repetitions=1,$fail=1)

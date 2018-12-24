@@ -33,10 +33,9 @@ if ($action == "callMethod")
       $minute = $$value;
       $paramData[trim($obj->name)] = toWeekTime($day, $hour, $minute);
     }
-    else
-      $paramData[trim($obj->name)] = $$param;
-    if ($obj->name == "deviceId" && ($$param > 32767))
-      showMessage("Fehler: Die DeviceID darf nicht größer als 32767 sein");
+    else $paramData[trim($obj->name)] = $$param;
+    
+    if ($obj->name == "deviceId" && ($$param > 32767)) showMessage("Fehler: Die DeviceID darf nicht größer als 32767 sein");
   }
   
   callInstanceMethodForObjectId($objectId, $featureFunctionId, $paramData);
@@ -90,8 +89,7 @@ else if ($action == "recover")
       // Zuerst schauen ob sich an der Controllerconfiguration was geändert hat
       $resetRelevantChanges = 0;
       
-      callObjectMethodByName($controllerObjectId, "getConfiguration");
-      $result = waitForObjectResultByName($controllerObjectId, 5, "Configuration", $lastLogId, "funtionDataParams", 0);
+      $result = callObjectMethodByNameAndRecover($controllerObjectId, "getConfiguration", "", "Configuration");
       if ($result != - 1)
       {
         $changes = 0;
@@ -108,18 +106,15 @@ else if ($action == "recover")
           $data[$valueObj->name] = $valueObj->dataValue;
           if ($actData[$valueObj->name] != $valueObj->dataValue)
           {
-            if ($debugMe == 1)
-              echo $valueObj->name . " von " . $actData[$valueObj->name] . " -> " . $valueObj->dataValue . "<br>";
+            if ($debugMe == 1) echo $valueObj->name . " von " . $actData[$valueObj->name] . " -> " . $valueObj->dataValue . "<br>";
             $resetRelevantChanges = 1;
             $changes = 1;
           }
         }
         
-        if ($changes == 1)
-          callObjectMethodByName($controllerObjectId, "setConfiguration", $data);
+        if ($changes == 1) callObjectMethodByName($controllerObjectId, "setConfiguration", $data);
       }
-      else
-        $message = "getConfiguration nicht erfolgreich";
+      else $message = "getConfiguration nicht erfolgreich";
       
       $erg = QUERY("select * from featureInstances where controllerId='$id' and featureClassesId='$digitalPortClassesId'");
       while ( $obj = mysqli_fetch_OBJECT($erg) )
@@ -129,8 +124,7 @@ else if ($action == "recover")
         {
           $configObj = unserialize($row2[0]);
           
-          callObjectMethodByName($obj->objectId, "getConfiguration");
-          $result = waitForObjectResultByName($obj->objectId, 5, "Configuration", $lastLogId, "funtionDataParams", 0);
+          $result = callObjectMethodByNameAndRecover($obj->objectId, "getConfiguration", "", "Configuration");
           if ($result != - 1)
           {
             $changes = 0;
@@ -147,21 +141,17 @@ else if ($action == "recover")
               $data[$valueObj->name] = $valueObj->dataValue;
               if ($actData[$valueObj->name] != $valueObj->dataValue)
               {
-                if ($debugMe == 1)
-                  echo $valueObj->name . " von " . $actData[$valueObj->name] . " -> " . $valueObj->dataValue . "<br>";
+                if ($debugMe == 1) echo $valueObj->name . " von " . $actData[$valueObj->name] . " -> " . $valueObj->dataValue . "<br>";
                 $resetRelevantChanges = 1;
                 $changes = 1;
               }
             }
             
-            if ($changes == 1)
-              callObjectMethodByName($obj->objectId, "setConfiguration", $data);
+            if ($changes == 1) callObjectMethodByName($obj->objectId, "setConfiguration", $data);
           }
-          else
-            $message = "getConfiguration nicht erfolgreich";
+          else $message = "getConfiguration nicht erfolgreich";
         }
-        else if ($debugMe == 1)
-          "Keine gespeicherte Konfiguration zu " . $obj->name . "<br>";
+        else if ($debugMe == 1) "Keine gespeicherte Konfiguration zu " . $obj->name . "<br>";
       }
       
       // bei zuvoriger Änderung -> Reset 
@@ -169,13 +159,8 @@ else if ($action == "recover")
       {
         callObjectMethodByName($controllerObjectId, "reset");
         sleep(5);
-        callObjectMethodByName($controllerObjectId, "ping");
-        $result = waitForObjectResultByName($controllerObjectId, 5, "pong", $lastLogId, "funtionDataParams", 0);
-        if ($result == - 1)
-        {
-          callObjectMethodByName($controllerObjectId, "ping");
-          $result = waitForObjectResultByName($controllerObjectId, 5, "pong", $lastLogId);
-        }
+        $result = callObjectMethodByNameAndRecover($controllerObjectId, "ping", "", "pong");
+        if ($result == - 1) die("Kein pong empfangen");
       }
       
       // Dann der Rest
@@ -187,8 +172,7 @@ else if ($action == "recover")
         {
           $configObj = unserialize($row2[0]);
           
-          callObjectMethodByName($obj->objectId, "getConfiguration");
-          $result = waitForObjectResultByName($obj->objectId, 5, "Configuration", $lastLogId, "funtionDataParams", 0);
+          $result = callObjectMethodByNameAndRecover($obj->objectId, "getConfiguration", "", "Configuration");
           if ($result != - 1)
           {
             $changes = 0;
@@ -206,27 +190,21 @@ else if ($action == "recover")
               
               if ($actData[$valueObj->name] != $valueObj->dataValue)
               {
-                if ($debugMe == 1)
-                  echo $valueObj->name . " von " . $actData[$valueObj->name] . " -> " . $valueObj->dataValue . "<br>";
+                if ($debugMe == 1) echo $valueObj->name . " von " . $actData[$valueObj->name] . " -> " . $valueObj->dataValue . "<br>";
                 $changes = 1;
               }
             }
             
-            if ($changes == 1)
-              callObjectMethodByName($obj->objectId, "setConfiguration", $data);
+            if ($changes == 1) callObjectMethodByName($obj->objectId, "setConfiguration", $data);
           }
-          else
-            $message = "getConfiguration nicht erfolgreich";
+          else $message = "getConfiguration nicht erfolgreich";
         }
-        else if ($debugMe == 1)
-          "Keine gespeicherte Konfiguration zu " . $obj->name . "<br>";
+        else if ($debugMe == 1) "Keine gespeicherte Konfiguration zu " . $obj->name . "<br>";
       }
     }
-    else
-      $message = "Zu diesem Controller wurde bisher keine Konfiguration gespeichert";
+    else $message = "Zu diesem Controller wurde bisher keine Konfiguration gespeichert";
   }
-  else
-    $message = "Fehler ObjectID nicht gefunden";
+  else $message = "Fehler ObjectID nicht gefunden";
   
   if ($callback == 1)
   {

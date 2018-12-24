@@ -14,7 +14,7 @@ if (!isset($_SESSION["utf8Encoding"]))
 
 if ($command=="ajaxObjects")
 {
-  print_r($_SESSION["ajaxObjects"]);
+  print_r($_SESSION["ajaxObjects".$mySessionId]);
   exit;
 }
 
@@ -30,32 +30,32 @@ $currentReaderClassesId = getClassesIdByName("CurrentReader");
 
 if ($command == "registerObjects")
 {
-  unset($_SESSION["ajaxObjects"]);
+  unset($_SESSION["ajaxObjects".$mySessionId]);
   $where = "1=2";
   for($i = 0; $i < $objects; $i++)
   {
     $act = "object$i";
     $objectId = $$act;
-    $_SESSION["ajaxObjects"][$objectId]["status"] = - 1;
-    $_SESSION["ajaxObjects"][$objectId]["text"] = - 1;
-    $_SESSION["ajaxObjects"][$objectId]["running"] = 0;
-    $_SESSION["ajaxObjects"][$objectId]["toDirection"] = "";
+    $_SESSION["ajaxObjects".$mySessionId][$objectId]["status"] = - 1;
+    $_SESSION["ajaxObjects".$mySessionId][$objectId]["text"] = - 1;
+    $_SESSION["ajaxObjects".$mySessionId][$objectId]["running"] = 0;
+    $_SESSION["ajaxObjects".$mySessionId][$objectId]["toDirection"] = "";
     $where .= " or objectId='$objectId'";
   }
   
   $erg = QUERY("select featureClassesId,objectId from featureInstances where $where");
   while ( $obj = MYSQLi_FETCH_OBJECT($erg) )
   {
-    $_SESSION["ajaxObjects"][$obj->objectId]["featureClassesId"] = $obj->featureClassesId;
+    $_SESSION["ajaxObjects".$mySessionId][$obj->objectId]["featureClassesId"] = $obj->featureClassesId;
   }
   
-  $_SESSION["ajaxLastId"] = - 1;
-  $_SESSION["myWhere"]=$where;
+  $_SESSION["ajaxLastId".$mySessionId] = - 1;
+  $_SESSION["myWhere".$mySessionId]=$where;
   die("registered $where");
 }
 else if ($command == "readStatus")
 {
-	$where = $_SESSION["myWhere"];
+	$where = $_SESSION["myWhere".$mySessionId];
   $erg = QUERY("select featureClassesId,objectId from featureInstances where $where");
   while ( $obj = MYSQLi_FETCH_OBJECT($erg) )
   {
@@ -65,11 +65,11 @@ else if ($command == "readStatus")
 }
 else if ($command == "dbId")
 {
-  die($_SESSION["ajaxLastId"]);
+  die($_SESSION["ajaxLastId".$mySessionId]);
 }
 else if ($command == "showObjects")
 {
-  print_r($_SESSION["ajaxObjects"]);
+  print_r($_SESSION["ajaxObjects".$mySessionId]);
   exit();
 }
 else if ($command == "updateMyStatus")
@@ -83,16 +83,16 @@ else if ($command == "updateMyStatus")
   
 
   $result = "";
-  foreach ( (array)$_SESSION["ajaxObjects"] as $senderObj => $arr )
+  foreach ( (array)$_SESSION["ajaxObjects".$mySessionId] as $senderObj => $arr )
   {
-    if ($_SESSION["ajaxObjects"][$senderObj]["changed"] == 1)
+    if ($_SESSION["ajaxObjects".$mySessionId][$senderObj]["changed"] == 1)
     {
       if ($result != "") $result .= ",";
       $result .= $senderObj . "=" . $arr["status"] . ";" . $arr["text"];
       
       if ($arr["toDirection"] != "") $result .= ";" . $arr["toDirection"];
       
-      if ($_SESSION["ajaxObjects"][$senderObj]["featureClassesId"] != $currentReaderClassesId) $_SESSION["ajaxObjects"][$senderObj]["toDirection"] = "";
+      if ($_SESSION["ajaxObjects".$mySessionId][$senderObj]["featureClassesId"] != $currentReaderClassesId) $_SESSION["ajaxObjects".$mySessionId][$senderObj]["toDirection"] = "";
     }
   }
   
@@ -100,21 +100,21 @@ else if ($command == "updateMyStatus")
 }
 else if ($command == "click")
 {
-  if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $dimmerClassesId)
+  if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $dimmerClassesId)
   {
   	if ($function!="" && $function!="undefined") callObjectMethodByName($id, $function, array (getParamNameForObjectFunction($id,$function,0) => $functionParam1,getParamNameForObjectFunction($id,$function,1) => $functionParam2 ));
     else
     {
-      if ($_SESSION["ajaxObjects"][$id]["status"] == 1) callObjectMethodByName($id, "setBrightness", array ("brightness" => 0,"fadingTime" => 0));
+      if ($_SESSION["ajaxObjects".$mySessionId][$id]["status"] == 1) callObjectMethodByName($id, "setBrightness", array ("brightness" => 0,"fadingTime" => 0));
       else callObjectMethodByName($id, "setBrightness", array ("brightness" => 100, "fadingTime" => 0 ));
     }
   }
-  else if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $switchClassesId)
+  else if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $switchClassesId)
   {
    	if ($function!="" && $function!="undefined") callObjectMethodByName($id, $function, array (getParamNameForObjectFunction($id,$function,0) => $functionParam1,getParamNameForObjectFunction($id,$function,1) => $functionParam2 ));
    	else
    	{
-      if ($_SESSION["ajaxObjects"][$id]["status"] == 1) callObjectMethodByName($id, "off");
+      if ($_SESSION["ajaxObjects".$mySessionId][$id]["status"] == 1) callObjectMethodByName($id, "off");
       else
       {
         $duration = $functionParam1;
@@ -123,12 +123,12 @@ else if ($command == "click")
       }
     }
   }
-  else if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $ledClassesId)
+  else if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $ledClassesId)
   {
     if ($function!="" && $function!="undefined") callObjectMethodByName($id, $function, array (getParamNameForObjectFunction($id,$function,0) => $functionParam1,getParamNameForObjectFunction($id,$function,1) => $functionParam2 ));
     else
     {
-    	if ($_SESSION["ajaxObjects"][$id]["status"] == 1) callObjectMethodByName($id, "off");
+    	if ($_SESSION["ajaxObjects".$mySessionId][$id]["status"] == 1) callObjectMethodByName($id, "off");
       else
     	{
         $duration = $functionParam1;
@@ -137,19 +137,19 @@ else if ($command == "click")
       }
     }
   }
-  else if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $rolloClassesId)
+  else if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $rolloClassesId)
   {
    	if ($function!="" && $function!="undefined") callObjectMethodByName($id, $function, array (getParamNameForObjectFunction($id,$function,0) => $functionParam1,getParamNameForObjectFunction($id,$function,1) => $functionParam2 ));
    	else
    	{
-      if ($_SESSION["ajaxObjects"][$id]["running"] == 1) callObjectMethodByName($id, "stop");
+      if ($_SESSION["ajaxObjects".$mySessionId][$id]["running"] == 1) callObjectMethodByName($id, "stop");
     	else
     	{
         callObjectMethodByName($id, "start", array ("direction" => "0" ));
       }
     }
   }
-  else if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $tasterClassesId || $multiTaster==1)
+  else if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $tasterClassesId || $multiTaster==1)
   {
   	if ($function!="" && $function!="undefined") callObjectMethodByName($id, $function, array (getParamNameForObjectFunction($id,$function,0) => $functionParam1,getParamNameForObjectFunction($id,$function,1) => $functionParam2 ));
   	else
@@ -161,13 +161,13 @@ else if ($command == "click")
 }
 else if ($command == "clickup")
 {
-  if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $rolloClassesId)
+  if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $rolloClassesId)
   {
     //print_r($_SESSION["ajaxObjects"]);
-    if ($_SESSION["ajaxObjects"][$id]["running"] == 1) callObjectMethodByName($id, "stop");
+    if ($_SESSION["ajaxObjects".$mySessionId][$id]["running"] == 1) callObjectMethodByName($id, "stop");
     else callObjectMethodByName($id, "start", array ("direction" => "255" ));
   }
-  else if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $dimmerClassesId)
+  else if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $dimmerClassesId)
   {
     //print_r($_SESSION["ajaxObjects"]);
     callObjectMethodByName($id, "start", array ("direction" => 1));
@@ -175,13 +175,13 @@ else if ($command == "clickup")
 }
 else if ($command == "clickdown")
 {
-  if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $rolloClassesId)
+  if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $rolloClassesId)
   {
     //print_r($_SESSION["ajaxObjects"]);
-    if ($_SESSION["ajaxObjects"][$id]["running"] == 1) callObjectMethodByName($id, "stop");
+    if ($_SESSION["ajaxObjects".$mySessionId][$id]["running"] == 1) callObjectMethodByName($id, "stop");
     else callObjectMethodByName($id, "start", array ("direction" => "1" ));
   }
-  else if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $dimmerClassesId)
+  else if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $dimmerClassesId)
   {
     //print_r($_SESSION["ajaxObjects"]);
     callObjectMethodByName($id, "start", array ("direction" => 255 ));
@@ -189,7 +189,7 @@ else if ($command == "clickdown")
 }
 else if ($command == "clickrelease")
 {
-  if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $dimmerClassesId)
+  if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $dimmerClassesId)
   {
     //print_r($_SESSION["ajaxObjects"]);
     callObjectMethodByName($id, "stop");
@@ -197,12 +197,12 @@ else if ($command == "clickrelease")
 }
 else if ($command == "setValue")
 {
-  if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $dimmerClassesId) // DIMMER
+  if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $dimmerClassesId) // DIMMER
   {
     //print_r($_SESSION["ajaxObjects"]);
     callObjectMethodByName($id, "setBrightness", array ("brightness" => $newValue));
   }
-  else if ($_SESSION["ajaxObjects"][$id]["featureClassesId"] == $rolloClassesId) // Rollos
+  else if ($_SESSION["ajaxObjects".$mySessionId][$id]["featureClassesId"] == $rolloClassesId) // Rollos
   {
     //print_r($_SESSION["ajaxObjects"]);
     callObjectMethodByName($id, "moveToPosition", array ("position" => $newValue));
@@ -224,14 +224,17 @@ function updateStatus()
   global $humidityClassesId;
   global $tasterClassesId;
   global $currentReaderClassesId;
+  global $mySessionId;
   
-  if ($_SESSION["ajaxLastId"] == - 1) $firstRound = 1;
+  if ($_SESSION["ajaxLastId".$mySessionId] == - 1) $firstRound = 1;
+
+  //file_put_contents ("dbLog.txt" , $mySessionId."\n", FILE_APPEND);
   
-  $sql = "select * from lastreceived where id>'" . $_SESSION["ajaxLastId"] . "' and (1=2";
+  $sql = "select * from lastreceived where id>'" . $_SESSION["ajaxLastId".$mySessionId] . "' and (1=2";
   
-  foreach ( (array)$_SESSION["ajaxObjects"] as $senderObj => $arr )
+  foreach ( (array)$_SESSION["ajaxObjects".$mySessionId] as $senderObj => $arr )
   {
-    $_SESSION["ajaxObjects"][$senderObj]["changed"] = 0;
+    $_SESSION["ajaxObjects".$mySessionId][$senderObj]["changed"] = 0;
     $sql .= " or senderObj='" . $senderObj . "'";
   }
   $sql .= ") order by id";
@@ -239,7 +242,7 @@ function updateStatus()
   $erg = QUERY($sql);
   while ( $obj = MYSQLi_FETCH_OBJECT($erg) )
   {
-    $_SESSION["ajaxLastId"] = $obj->id;
+    $_SESSION["ajaxLastId".$mySessionId] = $obj->id;
     
     $data = unserialize($obj->functionData);
     
@@ -290,21 +293,21 @@ function updateStatus()
       
       if ($data->name == "evStart")
       {
-        $_SESSION["ajaxObjects"][$obj->senderObj]["running"] = 1;
+        $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["running"] = 1;
         
         if ($firstRound != 1)
         {
-          if ($data->paramData[0]->dataValue == 255) $_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"] = "up";
-          else $_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"] = "down";
-          $_SESSION["ajaxObjects"][$obj->senderObj]["changed"] = 1;
+          if ($data->paramData[0]->dataValue == 255) $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["toDirection"] = "up";
+          else $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["toDirection"] = "down";
+          $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["changed"] = 1;
         }
       }
-      else if ($data->name == "evClosed") $_SESSION["ajaxObjects"][$obj->senderObj]["running"] = 0;
-      else if ($data->name == "evOpen") $_SESSION["ajaxObjects"][$obj->senderObj]["running"] = 0;
+      else if ($data->name == "evClosed") $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["running"] = 0;
+      else if ($data->name == "evOpen") $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["running"] = 0;
     }
     else if ($data->featureClassesId == $temperatureClassesId)
     {
-    	$_SESSION["ajaxObjects"][$obj->senderObj]["changed"] = 1;
+    	$_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["changed"] = 1;
     	if ($data->name == "Status")
     	{
         $myStatus = $data->paramData[0]->dataValue . "." . $data->paramData[1]->dataValue;
@@ -312,11 +315,11 @@ function updateStatus()
         else $myStatus .= "°C";
       	setObjectStatus($obj->senderObj, 1, $myStatus);
       	
-      	$_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"] = $data->paramData[2]->dataValueName;
+      	$_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["toDirection"] = $data->paramData[2]->dataValueName;
       }
-      else if ($data->name == "evCold") $_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"] = "COLD";
-      else if ($data->name == "evWarm") $_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"] = "WARM";
-      else if ($data->name == "evHot") $_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"] = "HOT";
+      else if ($data->name == "evCold") $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["toDirection"] = "COLD";
+      else if ($data->name == "evWarm") $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["toDirection"] = "WARM";
+      else if ($data->name == "evHot") $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["toDirection"] = "HOT";
     }
     else if ($data->featureClassesId == $humidityClassesId)
     {
@@ -337,8 +340,8 @@ function updateStatus()
        }
        else if ($data->name == "evSignal")
        {
-      	 $_SESSION["ajaxObjects"][$obj->senderObj]["toDirection"]=$data->paramData[2]->dataValue." Watt";
-      	 $_SESSION["ajaxObjects"][$obj->senderObj]["changed"] = 1;
+      	 $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["toDirection"]=$data->paramData[2]->dataValue." Watt";
+      	 $_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["changed"] = 1;
        }
     }
   }
@@ -346,11 +349,12 @@ function updateStatus()
 
 function setObjectStatus($objectId, $status, $text)
 {
+	global $mySessionId;
   //echo "setObjectStatus($objectId, $status, $text)<br>";
-  if ($_SESSION["ajaxObjects"][$objectId]["status"] != $status || $_SESSION["ajaxObjects"][$objectId]["text"] != $text) $_SESSION["ajaxObjects"][$objectId]["changed"] = 1;
+  if ($_SESSION["ajaxObjects".$mySessionId][$objectId]["status"] != $status || $_SESSION["ajaxObjects".$mySessionId][$objectId]["text"] != $text) $_SESSION["ajaxObjects".$mySessionId][$objectId]["changed"] = 1;
   
-  $_SESSION["ajaxObjects"][$objectId]["status"] = $status;
-  $_SESSION["ajaxObjects"][$objectId]["text"] = $text;
+  $_SESSION["ajaxObjects".$mySessionId][$objectId]["status"] = $status;
+  $_SESSION["ajaxObjects".$mySessionId][$objectId]["text"] = $text;
 }
 
 function getParamNameForObjectFunction($objectId,$functionName,$paramId)

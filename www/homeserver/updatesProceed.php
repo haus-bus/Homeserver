@@ -46,12 +46,9 @@ if ($proceed == 1)
     for($i = 0; $i < 10; $i ++)
     {
       $result = unzip ( "../apl.zip" );
-      if ($result)
-        break;
-      if ($i == 2)
-        error_reporting ( 0 );
-      if ($i == 9)
-        die ( "Installation fehlgeschlagen" );
+      if ($result) break;
+      if ($i == 2) error_reporting ( 0 );
+      if ($i == 9) die ( "Installation fehlgeschlagen" );
     }
     echo "OK<br><br>";
 
@@ -78,7 +75,8 @@ if ($proceed == 1)
     
     echo " <br><br>Installation erfolgreich!";
     exit ();
-  } else if ($action == "updateFirmware")
+  } 
+  else if ($action == "updateFirmware")
   {
     ob_end_flush ();
     ob_start ();
@@ -90,7 +88,7 @@ if ($proceed == 1)
       $paramId = $row [0];
       $erg = QUERY ( "select name from featureFunctionEnums where paramId='$paramId' and value='$firmwareId' limit 1" );
       if ($row = MYSQLi_FETCH_ROW ( $erg )) $firmwareName = $row [0];
-      else die ( "Fehler paramId $paramId und firmwareId $firmwareId nicht gefunden" );
+      else die ( "Fehler paramId $paramId und firmwareId $firmwareId nicht gefunden");
     } else die ( "Fehler featureFunctionId $firmwareIdFunctionId nicht gefunden" );
     
     if ($confirm == 1)
@@ -98,8 +96,7 @@ if ($proceed == 1)
       if ($actUpdateId == "")
       {
         $actUpdateId = 0;
-        if (file_exists ( "../firmware/homeserver.sql" ))
-          recoverDb ();
+        if (file_exists ( "../firmware/homeserver.sql" )) recoverDb ();
       }
       
       $erg = QUERY ( "select objectId,id,majorRelease, minorRelease,firmwareId,name from controller where id>'$actUpdateId' and size != '999' and online='1' and firmwareId='$firmwareId' order by id limit 1" );
@@ -171,18 +168,29 @@ if ($proceed == 1)
         
         if (getInstanceId ( $objectId ) != $BOOTLOADER_INSTANCE_ID)
         {
-          liveOut ( "<b>Bootloader wird aktiviert ...</b>" );
-          flushIt ();
-          callObjectMethodByName ( $objectId, "reset" );
-          $receiverObjectid = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $BOOTLOADER_INSTANCE_ID );
+        	for ($i=0;$i<3;$i++)
+        	{
+            liveOut ( "<b>Bootloader wird aktiviert ...</b>" );
+            flushIt ();
+            callObjectMethodByName ( $objectId, "reset" );
+            $receiverObjectid = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $BOOTLOADER_INSTANCE_ID );
+       
+            for ($i=0;$i<5;$i++)
+            {
+              sleepMs(100);
+              callObjectMethodByName($receiverObjectid, "ping");
+            }
           
-          sleepMs ( 1000 );
-          $result = callObjectMethodByNameAndRecover ( $receiverObjectid, "ping", "", "pong", 1, 2, 0,"senderData" );
-          //callObjectMethodByName ( $receiverObjectid, "ping" );
-          //$result = waitForObjectResultByName ( $receiverObjectid, 5, "pong", $lastLogId, "senderData" );
-          $objectId = $result->objectId;
-          liveOut ( "Bootloader gestartet. ObjectID: " . getFormatedObjectId ( $objectId ) );
-          liveOut ( '' );
+            sleepMs ( 500 );
+            $result = callObjectMethodByNameAndRecover ( $receiverObjectid, "ping", "", "pong", 1, 2, 0,"senderData" );
+            if ($result!=-1)
+            {
+              $objectId = $result->objectId;
+              liveOut ( "Bootloader gestartet. ObjectID: " . getFormatedObjectId ( $objectId ) );
+              liveOut ( '' );
+            }
+            else if ($i==2) die("Bootloader konnte nicht gestartet werden");
+          }
         }
         
         liveOut ( "<b>Firmware Update ...</b>" );
@@ -191,13 +199,10 @@ if ($proceed == 1)
         flushIt ();
         
         $fwfile = "../firmware/" . $firmwareName . ".bin";
-        if ($local == 1)
-          $fwfile = "../firmware/" . $_SESSION ["actUpdateFile"];
+        if ($local == 1) $fwfile = "../firmware/" . $_SESSION ["actUpdateFile"];
         
-        if (strpos ( $fwfile, "BOOTER" ) !== FALSE)
-          $isBooter = 1;
-        else
-          $isBooter = 0;
+        if (strpos ( $fwfile, "BOOTER" ) !== FALSE) $isBooter = 1;
+        else $isBooter = 0;
         
         $fileSize = filesize ( $fwfile );
         liveOut ( "Datei: " . substr ( $fwfile, strrpos ( $fwfile, "/" ) + 1 ) );
@@ -221,8 +226,7 @@ if ($proceed == 1)
           $buffer = fread ( $fd, $blockSize );
           $data ["address"] = $ready;
           $data ["data"] = $buffer;
-          if ($firstWriteId == - 1)
-            $firstWriteId = $lastLogId;
+          if ($firstWriteId == - 1) $firstWriteId = $lastLogId;
           
           $result = callObjectMethodByNameAndRecover ( $objectId, "writeMemory", $data, "MemoryStatus", 3, 2, 0 );
           if ($result == - 1)
@@ -292,8 +296,7 @@ if ($proceed == 1)
           else $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $BOOTLOADER_INSTANCE_ID );
           callObjectMethodByName ( $receiverObjectId, "ping" );
           $result = waitForObjectResultByName ( $receiverObjectId, 5, "pong", $lastLogId, "funtionDataParams", 0 );
-          if ($result != - 1)
-            break;
+          if ($result != - 1) break;
           sleep ( 1 );
           if ($i == 9)
           {
@@ -313,7 +316,7 @@ if ($proceed == 1)
         liveOut ( "Firmwareupdate erfolgreich beendet." );
         
         //updateControllerStatus (1);
-        // sleep(3);
+        sleep(2);
         flushIt ();
         die ( "<script>location='updatesProceed.php?proceed=1&action=$action&firmwareId=$firmwareId&local=$local&force=$force&confirm=1&actUpdateId=$actUpdateId';</script>" );
       }
