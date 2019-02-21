@@ -63,8 +63,7 @@ if ($action == "callMethod")
     exit();
     */
   }
-  else if (substr($row[0], 0, 3) == "get")
-    waitForCommandId($waitForId);
+  else if (substr($row[0], 0, 3) == "get") waitForCommandId($waitForId);
 }
 else if ($action == "recover")
 {
@@ -103,6 +102,9 @@ else if ($action == "recover")
         unset($data);
         foreach ( $obj as $key => $valueObj )
         {
+        	if ($valueObj->name=="timeCorrection") continue;
+         	if ($valueObj->name=="reserve") continue;
+
           $data[$valueObj->name] = $valueObj->dataValue;
           if ($actData[$valueObj->name] != $valueObj->dataValue)
           {
@@ -112,7 +114,12 @@ else if ($action == "recover")
           }
         }
         
-        if ($changes == 1) callObjectMethodByName($controllerObjectId, "setConfiguration", $data);
+        if ($changes == 1)
+        {
+        	callObjectMethodByName($controllerObjectId, "setConfiguration", $data);
+        	sleep(1);
+        	callObjectMethodByNameAndRecover($controllerObjectId, "getConfiguration", "", "Configuration");
+        }
       }
       else $message = "getConfiguration nicht erfolgreich";
       
@@ -138,6 +145,8 @@ else if ($action == "recover")
             unset($data);
             foreach ( $configObj as $key => $valueObj )
             {
+            	if ($valueObj->name=="timeCorrection") continue;
+            	if ($valueObj->name=="reserve") continue;
               $data[$valueObj->name] = $valueObj->dataValue;
               if ($actData[$valueObj->name] != $valueObj->dataValue)
               {
@@ -147,7 +156,12 @@ else if ($action == "recover")
               }
             }
             
-            if ($changes == 1) callObjectMethodByName($obj->objectId, "setConfiguration", $data);
+            if ($changes == 1)
+            {
+            	callObjectMethodByName($obj->objectId, "setConfiguration", $data);
+   	        	sleep(1);
+        	    callObjectMethodByNameAndRecover($obj->objectId, "getConfiguration", "", "Configuration");
+        	  }
           }
           else $message = "getConfiguration nicht erfolgreich";
         }
@@ -157,10 +171,10 @@ else if ($action == "recover")
       // bei zuvoriger Änderung -> Reset 
       if ($resetRelevantChanges == 1)
       {
+      	echo "reset... <br>";
         callObjectMethodByName($controllerObjectId, "reset");
-        sleep(5);
-        $result = callObjectMethodByNameAndRecover($controllerObjectId, "ping", "", "pong");
-        if ($result == - 1) die("Kein pong empfangen");
+        $result = waitForObjectEventByName($controllerObjectId, 10, "evStarted", $lastLogId, "funtionDataParams", 0);
+        if ($result==-1) die("Kein pong empfangen");
       }
       
       // Dann der Rest
@@ -195,7 +209,12 @@ else if ($action == "recover")
               }
             }
             
-            if ($changes == 1) callObjectMethodByName($obj->objectId, "setConfiguration", $data);
+            if ($changes == 1)
+            {
+            	callObjectMethodByName($obj->objectId, "setConfiguration", $data);
+            	sleep(1);
+        	    callObjectMethodByNameAndRecover($obj->objectId, "getConfiguration", "", "Configuration");
+            }
           }
           else $message = "getConfiguration nicht erfolgreich";
         }
@@ -208,8 +227,9 @@ else if ($action == "recover")
   
   if ($callback == 1)
   {
+  	flushIt();
     sleep(3);
-    echo "<script>location='recovery.php?action=recover&confirm=1&lastId=$id';</script>";
+    echo "<script>window.parent.location='recovery.php?action=recover&confirm=1&lastId=$id';</script>";
     exit();
   }
 }
@@ -300,7 +320,7 @@ else if ($action == "restoreFactorySettings")
               }
             }
             callObjectMethodByName($controllerObjectId, "reset");
-            waitForObjectEventByName($controllerObjectId, 5, "evStarted", $lastLogId);
+            waitForObjectEventByName($controllerObjectId, 10, "evStarted", $lastLogId);
             //updateControllerStatus();
 			      callObjectMethodByName($controllerObjectId, "getRemoteObjects");
             waitForObjectResultByName($controllerObjectId, 5, "RemoteObjects", $lastLogId);
@@ -401,9 +421,9 @@ else if ($action == "restoreFactorySettings")
               }
             }
             callObjectMethodByName($controllerObjectId, "reset");
-            waitForObjectEventByName($controllerObjectId, 5, "evStarted", $lastLogId);
+            waitForObjectEventByName($controllerObjectId, 10, "evStarted", $lastLogId);
             //updateControllerStatus();
-			callObjectMethodByName($controllerObjectId, "getRemoteObjects");
+			      callObjectMethodByName($controllerObjectId, "getRemoteObjects");
             waitForObjectResultByName($controllerObjectId, 5, "RemoteObjects", $lastLogId);
             
             $erg = QUERY("select * from featureInstances where controllerId='$id'");
@@ -575,7 +595,7 @@ else if ($action == "restoreFactorySettings")
               }
             }
             callObjectMethodByName($controllerObjectId, "reset");
-            waitForObjectEventByName($controllerObjectId, 5, "evStarted", $lastLogId);
+            waitForObjectEventByName($controllerObjectId, 10, "evStarted", $lastLogId);
             //updateControllerStatus();
 			callObjectMethodByName($controllerObjectId, "getRemoteObjects");
             waitForObjectResultByName($controllerObjectId, 5, "RemoteObjects", $lastLogId);
@@ -1000,9 +1020,10 @@ if ($action == "activateBootloader" || $action == "fwUpdate")
       if ($firstWriteId == - 1)
         $firstWriteId = $lastLogId;
       
-      usleep(50000);
+      // Das wieder einkommentieren, falls es Probleme gibt
+      //usleep(50000);
       
-      $result = callObjectMethodByNameAndRecover($objectId, "writeMemory", $data, "MemoryStatus", 2, 3,1);
+      $result = callObjectMethodByNameAndRecover($objectId, "writeMemory", $data, "MemoryStatus", 3, 3,1);
       if ($result==-1)
       {
       	updateControllerStatus ();
@@ -1073,26 +1094,15 @@ if ($action == "activateBootloader" || $action == "fwUpdate")
     liveOut("<b>Starte Controller neu...</b>");
     callObjectMethodByName($objectId, "reset");
     flush();
-    
-    sleep(3);
-    
-    for($i = 0; $i < 3; $i++)
+
+    if ($isBooter != 1) $receiverObjectId = getObjectId(getDeviceId($objectId), getClassId($objectId), $FIRMWARE_INSTANCE_ID);
+    else $receiverObjectId = getObjectId(getDeviceId($objectId), getClassId($objectId), $BOOTLOADER_INSTANCE_ID);
+    $result = waitForObjectEventByName($receiverObjectId, 10, "evStarted", $lastLogId, "funtionDataParams", 0);
+    if ($result==-1) 
     {
-      if ($isBooter != 1)
-        $receiverObjectId = getObjectId(getDeviceId($objectId), getClassId($objectId), $FIRMWARE_INSTANCE_ID);
-      else
-        $receiverObjectId = getObjectId(getDeviceId($objectId), getClassId($objectId), $BOOTLOADER_INSTANCE_ID);
-      callObjectMethodByName($receiverObjectId, "ping");
-      $result = waitForObjectResultByName($receiverObjectId, 3, "pong", $lastLogId, "funtionDataParams", 0);
-      if ($result != - 1)
-        break;
-      sleep(1);
-      if ($i == 9)
-      {
-        updateControllerStatus();
-        liveOut("Fehler! Controller antwortet nicht");
-        exit();
-      }
+      updateControllerStatus();
+      liveOut("Fehler! Controller antwortet nicht");
+      exit();
     }
     
     liveOut("Firmwareupdate erfolgreich beendet");

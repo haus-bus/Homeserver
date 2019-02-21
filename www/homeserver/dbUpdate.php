@@ -183,6 +183,7 @@ QUERY("ALTER TABLE `featureinstances` ADD `extra` TINYINT NOT NULL AFTER `lastCh
 
 QUERY("CREATE TABLE IF NOT EXISTS `heating` (`id` int(11) NOT NULL AUTO_INCREMENT, `sensor` int(11) NOT NULL, `relay` int(11) NOT NULL, `diagram` int(11) NOT NULL, PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=latin1", TRUE);
 
+QUERY("UPDATE featurefunctionparams set type='SBYTE' where type='BYTE' and (id='158' or id='160' or id='155' or id='157' or id='161')");
 
 echo "OK";
 

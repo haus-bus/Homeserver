@@ -133,8 +133,7 @@ else if ($action == "submitRules")
   {
   	//echo "Controller ".$obj->name."<br>";
     // PC-Server überspringen
-    if ($obj->size == "999")
-      continue;
+    if ($obj->size == "999") continue;
       
       // Position 0 für Anzahl der Gruppen freihalten
     $dataPos = 1;
@@ -336,8 +335,10 @@ else if ($action == "submitRules")
     $notifyOnStartHold = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnStartHold");
     $notifyOnEndHold = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnEndHold");
     $notifyOnFree = getFunctionParamBitValueByNameForClassesId($tasterClassesId, "setConfiguration", "eventMask", "notifyOnFree");
+    //die($notifyOnCovered."-".$notifyOnClicked."-".$notifyOnDoubleClicked."-".$notifyOnStartHold."-".$notifyOnEndHold."-".$notifyOnFree);
     
-    $bitmask = "";
+    $bitmask = array();
+    
     $erg = QUERY("SELECT distinct featureInstanceId, functionId, controller.id from rulesignals join featureInstances on (featureInstances.id = rulesignals.featureInstanceId) join featureClasses on (featureClasses.id = featureInstances.featureClassesId) join featureFunctions on (featureFunctions.id=featureFunctionId) join controller on (controller.id = featureInstances.controllerId) where featureClasses.id='$tasterClassesId'  and online='1' and groupAlias='0' order by featureInstanceId");
     while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
@@ -351,7 +352,6 @@ else if ($action == "submitRules")
       else if ($tasterEvents[$obj->functionId] == "evFree") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnFree);
     }
     
-    
     // Und noch Signale aus den Diagrammen berücksichtigen
     $erg = QUERY("SELECT DISTINCT featureInstanceId, graphsignalevents.functionId
   FROM graphsignalevents
@@ -364,7 +364,7 @@ else if ($action == "submitRules")
   ORDER BY featureInstanceId");
     while ( $obj = mysqli_fetch_OBJECT($erg) )
     {
-      if ($bitmask[$obj->featureInstanceId] == "") $bitmask[$obj->featureInstanceId] = 0;
+      //if ($bitmask[$obj->featureInstanceId] == "") $bitmask[$obj->featureInstanceId] = 0;
       
       if ($tasterEventsId[$obj->functionId] == "evCovered") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnCovered);
       else if ($tasterEventsId[$obj->functionId] == "evClicked") $bitmask[$obj->featureInstanceId] |= pow(2, $notifyOnClicked);
@@ -399,7 +399,9 @@ else if ($action == "submitRules")
       
       $holdTimeout = getResultDataValueByName("holdTimeout", $result);
       $eventMask = getResultDataValueByName("eventMask", $result);
-      if ($eventMask > 127) $mask += 128;
+      
+      $mask+=($eventMask&0xC0); // Die oberen beiden Bits unverändert übernehmen
+
       $waitForDoubleClickTimeout = getResultDataValueByName("waitForDoubleClickTimeout", $result);
       
       $configArray = array (
@@ -850,10 +852,8 @@ if ($action == "addSignal")
         
         if ($allMyRuleSignals[$obj->featureInstanceId . "-" . $obj->featureFunctionId] != 1)
         {
-          if ($ansicht == "Experte" && $obj->featureFunctionView == "Entwickler")
-            continue;
-          if ($ansicht == "Standard" && ($obj->featureFunctionView == "Experte" || $obj->featureFunctionView == "Entwickler"))
-            continue;
+          if ($ansicht == "Experte" && $obj->featureFunctionView == "Entwickler") continue;
+          if ($ansicht == "Standard" && ($obj->featureFunctionView == "Experte" || $obj->featureFunctionView == "Entwickler")) continue;
           
           if ($lastRoom == "")
           {
@@ -1513,15 +1513,15 @@ else if ($action == "editSignalParams")
         $value = $$value;
         
         if ($value=="*" && $row[1]=="BYTE") $value=255;
+        else if ($value=="*" && $row[1]=="SBYTE") $value=-1;
+        else if ($value=="-1" && $row[1]=="SBYTE") $value=0;
         else if ($value=="*" && $row[1]=="SHORT") $value=65535;
       }
       QUERY("INSERT into ruleSignalParams (ruleSignalId,featureFunctionParamsId,paramValue) values('$ruleSignalId','$row[0]','$value')");
     }
     
-    if ($logicalGroupMode == 1)
-      header("Location: editLogicalSignals.php?groupId=$groupId");
-    else
-      header("Location: editRules.php?groupId=$groupId");
+    if ($logicalGroupMode == 1) header("Location: editLogicalSignals.php?groupId=$groupId");
+    else header("Location: editRules.php?groupId=$groupId");
     exit();
   }
   else
@@ -1556,28 +1556,27 @@ else if ($action == "editSignalParams")
       $erg2 = QUERY("select id,name,type,comment,view from featureFunctionParams where featureFunctionId='$featureFunctionId' order by id");
       while ( $obj2 = mysqli_fetch_OBJECT($erg2) )
       {
-        if ($ansicht == "Experte" && $obj2->view == "Entwickler")
-          continue;
-        if ($ansicht == "Standard" && ($obj2->view == "Experte" || $obj2->view == "Entwickler"))
-          continue;
+        if ($ansicht == "Experte" && $obj2->view == "Entwickler") continue;
+        if ($ansicht == "Standard" && ($obj2->view == "Experte" || $obj2->view == "Entwickler")) continue;
         
         $actParamsTag = $paramTag;
         $actParamsTag = str_replace("%PARAM_NAME%", i18n($obj2->name), $actParamsTag);
         
         $myValue = $myValues[$obj2->id];
         if ($obj2->type=="BYTE" && $myValue==255) $myValue="*";
+        else if ($obj2->type=="SBYTE" && ($myValue==-1 || $myValue==255)) $myValue="*"; // 255 wegen Kompatibilität zu vorherigem unsigned
         else if ($obj2->type=="WORD" && $myValue==65535) $myValue="*";
         
         if ($obj2->type == "ENUM")
         {
           $type = "<select name='param" . $obj2->id . "'>";
+          if ($myValue==255) $type.= "<option value='255' selected>ANY";
+
           $erg3 = QUERY("select id,name,value from featureFunctionEnums where featureFunctionId='$featureFunctionId' and paramId='$obj2->id' order by id");
           while ( $obj3 = mysqli_fetch_OBJECT($erg3) )
           {
-            if ($myValue == $obj3->value)
-              $selected = "selected";
-            else
-              $selected = "";
+            if ($myValue == $obj3->value) $selected = "selected";
+            else $selected = "";
             
             $type .= "<option value='$obj3->value' $selected>" . i18n($obj3->name);
           }
@@ -2634,8 +2633,7 @@ while ( $obj99 = mysqli_fetch_OBJECT($erg99) )
         $myFeatureInstance = $allFeatureInstances[$obj->featureInstanceId];
         $myRoom = getRoomForFeatureInstance($obj->featureInstanceId);
         $add = "";
-        if ($obj->groupAlias > 0)
-          $add = "R ".$obj->groupAlias." ";
+        if ($obj->groupAlias > 0) $add = "R ".$obj->groupAlias." ";
         $actSignalTag = str_replace("%SIGNAL_ROOM%", $add . $myRoom->name, $actSignalTag);
         $actSignalTag = str_replace("%SIGNAL_CLASS%", i18n($allFeatureClasses[$myFeatureInstance->featureClassesId]->name), $actSignalTag);
         $actSignalTag = str_replace("%SIGNAL_NAME%", $myFeatureInstance->name, $actSignalTag);

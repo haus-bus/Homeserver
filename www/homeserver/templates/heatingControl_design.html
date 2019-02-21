@@ -3,7 +3,7 @@
 <head><link rel="StyleSheet" href="/homeserver/css/main.css" type="text/css" />
 <body><div class="contentWrap"  id="content" style="margin-right:16px;">
 <br>
-<table width=95% align=center>
+<table width=95% align=center style="padding-left:5px">
 	<tr><td>
 <b>Heizungssteuerung</b>
 <hr>
@@ -15,22 +15,52 @@ Damit das Thermostat aktiv wird, müssen einmalig die zugehörigen Regeln per Bu
 <b>Aktuelle Thermostate</b>
 <hr>
 <table cellspacing=3 cellpadding=3 border=0>
-<tr><td><b>Temperatursensor</td><td></td><td><b>Heizungsaktor</td><td></td><td><b>Diagramm</td><td></td><td><b>Raum</td><td></td><td></td></tr>
+<tr><td></td><td><b>Temperatursensor</td><td></td><td><b>Heizungsaktor</td><td></td><td><b>Diagramm</td><td></td><td><b>Raum</td><td></td><td></td></tr>
 <%ELEMENTS%>
-<tr>
- <td valign=top>%STATUS% &nbsp;<a href="addGenericFeature.php?params=%SENSOR_PARAMS%&classes=Temperatursensor&returnUrl=heatingControl.php">%TEMP%</a></td><td></td>
- <td valign=top><a href="addGenericFeature.php?params=%AKTOR_PARAMS%&classes=Schalter,Rollladen&returnUrl=heatingControl.php">%SWITCH%</a></td><td></td>
- <td valign=top><a href="heatingControl.php?action=selectDiagram&id=%ID%">%DIAGRAM%</a></td><td></td>
- <td valign=top><i>%ROOM%</i></td>
- <td valign=top></td>
- <td  valign=top width=10><a href="heatingControl.php?action=delete&id=%ID%"><img src="img/remove.gif" title="löschen"></a></td>
+<tr bgcolor=#eeeeee>
+ <td valign=top width=4><nobr>%STATUS%</td><td><nobr><a href="addGenericFeature.php?params=%SENSOR_PARAMS%&classes=Temperatursensor&returnUrl=heatingControl.php">%TEMP%</a></td><td></td>
+ <td valign=top><nobr><a href="addGenericFeature.php?params=%AKTOR_PARAMS%&classes=Schalter,Rollladen&returnUrl=heatingControl.php">%SWITCH%</a></td><td></td>
+ <td valign=top><nobr><a href="heatingControl.php?action=selectDiagram&id=%ID%">%DIAGRAM%</a></td><td></td>
+ <td valign=top><nobr><i>%ROOM%</i></td>
+ <td valign=top width=10><a href="heatingControl.php?action=delete&id=%ID%"><img src="img/remove.gif" title="löschen"></a></td>
 </tr>
+<%OPT_SENSOR%>
+<tr>
+ <td valign=top>&nbsp;</td>
+ <td colspan=8><nobr><form action="heatingControl.php" action="POST"><input type=hidden name="action" value="setConfig"><input type=hidden name="id" value="%ID%">
+ 	         Untere Temperaturschwelle: <input type=text name="temp_1_%ID%" value="%TEMP_1%" size=4> &nbsp;&nbsp;
+           Obere Temperaturschwelle: <input type=text name="temp_2_%ID%" value="%TEMP_2%" size=4> &nbsp;&nbsp;
+           Regelungsintervall: <select name="interval_%ID%">%INTERVAL_OPTIONS%</select>
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <input type=submit value="Speichern"> </form>
+ </td>
+</tr>
+<tr><td colspan=9 height=10> </td></tr>
+</%OPT_SENSOR%>
 </%ELEMENTS%>
 </table>
 <br>
-<form action="heatingControl.php" method="POST"><input type=hidden name=action value="createNew"><input type=submit value="Neues Thermostat erstellen"></form>
+<table width=100% border=0>
+	<tr><td><a href="heatingControl.php?action=createNew"><u>Neues Thermostat erstellen</u></a></td>
+		<td align=right></td>
+	</tr>
+</table>
 <br><br>
-<%OPT_GENERATE_RULES%><b>TODOs</b><hr><form action="heatingControl.php" method="POST"><input type=hidden name=action value="generateRules"><input type=submit value="Regeln für inaktive Thermostate generieren"></form><br><br></%OPT_GENERATE_RULES%>
+<!--%OPT_GENERATE_RULES%><b>TODOs</b><hr><form action="heatingControl.php" method="POST"><input type=hidden name=action value="generateRules"><input type=submit value="Regeln für inaktive Thermostate generieren"></form><br><br></%OPT_GENERATE_RULES%-->
 
 
+<br>Info<hr>
+Es werden zwei verschiedene Arten von Heizungssteuerungen unterstützt:<br><br>
+<u>1. Einfach Stellantriebe</u><br>
+Ein einfacher Stellantrieb wird per Relais (Schalter) angesteuert, sobald Wärme angefordert wird und schaltet ab, sobald die Sollwärme erreucht ist<br>
+In diesem Fall wird als Solltemperatur die untere Temperaturschwelle verwendet. Die Angabe der oberen Temperaturschwelle dient lediglich<br>
+zur Bestimmung der Hysterse und sollte ca. 1 Grad höher liegt<br>
+<br>
+<u>2. Doppelrichtungsventile</u><br>
+Diese Heizungsventile werden in zwei Richtungen geregelt (aus <-> zu) und dehalb mit einem Rollladenaktor angesteuert.<br>
+Der Durchfluss wird dabei in 4 Stufen angesteuert (0%, 25%, 50%, 75%, 100%). Mittels der unteren und oberen Temperaturschwelle werden alle<br>
+Zustände eines Temperatursensors ausgewertet (cold, warm, hot) und schalten den Durchfluss jeweils höher oder tiefer:<br>
+evCold (Temp < untere Schwelle) -> Ventil weiter aufdrehen (max 100%) <br>
+evWarm (Temp zwischen unterer und oberer Schwelle) -> Ventil unverändert lassen <br>
+evHot (Temp über oberer Schwelle)  -> Ventil zudrehen (min 0%)<br>
+<br><br><br>
 </td></tr></table>

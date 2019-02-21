@@ -313,13 +313,12 @@ function adjustHeating(theId, direction)
 {
 	 var actValue = document.getElementById("form"+theId).elements.namedItem("heating").value;
 	 actValue = parseFloat(actValue.replace(",","."));
-	 if (direction=="hoch") actValue+=0.5;
-	 else actValue-=0.5;
-	 if (direction=="hoch") actValue+=0.5;
-	 else actValue-=0.5;
+	 if (direction=="hoch") actValue+=0.1;
+	 else actValue-=0.1;
+	 
+	 actValue = Math.round(actValue*10)/10;	
 
    document.getElementById("form"+theId).elements.namedItem("heating").value=actValue;
-   //saveHeating(theId);
 }
 
 function saveHeating(theId)
@@ -328,6 +327,14 @@ function saveHeating(theId)
 	 var request="index.php?action=changeHeating&heatingId="+theId+"&heating="+actValue;
 	 send(request, "");
 }
+
+function switchRolloHeating(theId, status)
+{
+	 var request="index.php?action=switchRolloHeating&heatingId="+theId+"&status="+status;
+	 send(request, "");
+}
+
+
 
 </script>
 
@@ -399,16 +406,15 @@ function saveHeating(theId)
   <table width=100% border=0>
    <tr>
     <td valign=bottom>
- 	   <form action="index.php" method="POST"  id="form%MY_ID%"><input type=hidden name=onlyType value="%ONLY_TYPE%"><input type=hidden name=action value="changeHeating"><input type=hidden name=heatingId value="%MY_ID%">
+ 	   <form action="index.php" method="POST"  id="form%MY_ID%" style="display:inline"><input type=hidden name=onlyType value="%ONLY_TYPE%"><input type=hidden name=action value="changeHeating"><input type=hidden name=heatingId value="%MY_ID%">
  	   <input style="width:90%;background-color:#eeeeee;height:80px;text-align:center;font-size:30px;color:#444444" type=text size=10 name="heating" value="%HEATING_TEMP%"><br>
  	   <br>
-     <input onclick="saveHeating(%MY_ID%)" type=button style="background-image:verlauf_gross.gif;width:90%" value="Speichern"></form>
-    </td>
+     <input onclick="saveHeating(%MY_ID%)" type=button style="background-image:verlauf_gross.gif;width:90%;height:40px" value="Speichern"></form></td>
     <td valign=top>
-     <table onclick="adjustHeating(%MY_ID%, 'hoch')" width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+     <table onclick="adjustHeating(%MY_ID%, 'hoch');return false;" width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
       <tr><td align=center valign="center"><img src="hoch_einzeln.png" id="hoch%MY_ID%" border=0></td></tr>
 	   </table><br>
-   	 <table onclick="adjustHeating(%MY_ID%, 'runter')" width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+   	 <table onclick="adjustHeating(%MY_ID%, 'runter');return false;" width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
 	    <tr><td align=center valign="center"><img src="runter_einzeln.png" id="runter%MY_ID%" border=0></td></tr>
 	   </table>
     </td>
@@ -436,6 +442,108 @@ function saveHeating(theId)
 <tr bgcolor="#7F7F7F"><td colspan="7" height="10"  bgcolor="#7F7F7F"></td></tr>
 <!-- Schalter Element ende -->
 </%OPT_HEATING%>
+
+
+<%OPT_HEATING_ROLLO%>
+<!-- Trenner horizontal -->
+<tr><td colspan="7" height="10"></td></tr>
+
+<!-- Heizungssteuerng Element start -->
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10" bgcolor="#7F7F7F"></td></tr>
+<tr bgcolor="#7F7F7F">
+ <td width="2%" bgcolor="#7F7F7F"></td>
+ 
+ <%LEFT%>
+ <!-- Heizungssteuerng TEXT START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top" align=center>
+ 	<table width="100%" height="127" cellspacing=0 cellpadding=0 border=0>
+ 	 <tr><td width="100%" height="42" valign="top"><div id="text%MY_ID%" class="text">%TEXT%</div></td></tr>
+ 	 <tr>
+ 	 	<td width="100%" height="32" valign="bottom" align="center">
+ 	 	 <table width=50% border=0>
+ 	 	 	<tr>
+ 	 	 	 <td>
+ 	 	 	 	<table width="100%" height="31" cellspacing=0 cellpadding=0 border=0>
+	       <tr>
+	   	    <td bgcolor="#eeeeee" align=center valign=center class="bordered"><div id="label%MY_ID%#3" style="padding-top:6px" class="label"></div><div id="direction%MY_ID%" style="padding-top:6px;padding-bottom:6px;" class="label"></div></td>
+   	   	</tr>
+	     </table>
+	     <td width=64 align=right><%OPT_DIAGRAM%><a href="%DIAGRAM_LINK%" target="_blank"><img src="../img/diagram.png" height=56></a></%OPT_DIAGRAM%></td>
+	    </tr>
+	   </table>
+	  </td>
+	 </tr>
+	</table>
+ </td>
+ <!-- Heizungssteuerng TEXT ENDE -->
+ </%LEFT%>
+
+ <td width="2%" bgcolor="#7F7F7F"></td>
+
+ <!-- Heizungssteuerng MITTE START -->
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="bottom">
+  <table width=100% border=0>
+   <tr>
+    <td valign=bottom>
+ 	   <form action="index.php" method="POST"  id="form%MY_ID%"><input type=hidden name=onlyType value="%ONLY_TYPE%"><input type=hidden name=action value="changeHeating"><input type=hidden name=heatingId value="%MY_ID%">
+ 	   <input style="width:90%;background-color:#eeeeee;height:80px;text-align:center;font-size:30px;color:#444444" type=text size=10 name="heating" value="%HEATING_TEMP%"><br>
+ 	   <br>
+     <input onclick="saveHeating(%MY_ID%)" type=button style="background-image:verlauf_gross.gif;width:90%;height:40px" value="Speichern"></form>
+    </td>
+    <td valign=top>
+     <table onclick="adjustHeating(%MY_ID%, 'hoch');return false;" width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+      <tr><td align=center valign="center"><img src="hoch_einzeln.png" id="hoch%MY_ID%" border=0></td></tr>
+	   </table><br>
+   	 <table onclick="adjustHeating(%MY_ID%, 'runter');return false;" width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+	    <tr><td align=center valign="center"><img src="runter_einzeln.png" id="runter%MY_ID%" border=0></td></tr>
+	   </table>
+    </td>
+   </tr>
+  </table>
+ </td>
+ <!-- Heizungssteuerng MITTE ENDE -->
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+
+ <%RIGHT%>
+ <!-- Heizungssteuerng TASTER START -->
+ <%OPT_HEATING_SWITCH%>
+ <td width="30%" height="144" bgcolor="#7F7F7F" valign="top">
+ 	<table width="100%" height="144" cellspacing=0 cellpadding=0 border=0>
+	<tr>
+	<td valign="bottom" align=right>
+		<table width="35%" height="31" cellspacing=0 cellpadding=0 border=0>
+	       <tr>
+	   	    <td bgcolor="#eeeeee" align=center valign=center class="bordered">
+	   	    	<div style="padding-left:10px;padding-top:6px;padding-bottom:6px;" class="label">%PROZENT%%</div>
+	   	    </td>
+	   	    <td width=50> </td>
+   	   	</tr>
+	     </table>
+		<img src="hoch_einzeln.png" id="hoch%MY_ID%" border=0 style="visibility:hidden"><img src="hoch_einzeln.png" id="runter%MY_ID%" border=0 style="visibility:hidden">
+  <!--table onclick="switchRolloHeating(%SENSOR_ID%, 'toWarm')" width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+  <tr><td align=center valign="center"><img src="hoch_einzeln.png" id="hoch%MY_ID%" border=0></td></tr>
+	</table>
+	</td>
+	</tr>
+  <tr>
+	<td valign="bottom">
+	<table onclick="switchRolloHeating(%SENSOR_ID%, 'toCold')" width="100%" height="62" background="verlauf_klein.gif" cellspacing=0 cellpadding=0 border=0 class="bordered">
+	<tr><td align=center valign="center"><img src="runter_einzeln.png" id="runter%MY_ID%" border=0></td></tr>
+	</table-->
+	</td>
+	</tr>
+	</table>
+ </td>
+</%OPT_HEATING_SWITCH%>
+ <!-- Heizungssteuerng TASTER ENDE -->
+ </%RIGHT%>
+ 
+ <td width="2%" bgcolor="#7F7F7F"></td>
+</tr>
+<tr bgcolor="#7F7F7F"><td colspan="7" height="10"  bgcolor="#7F7F7F"></td></tr>
+<!-- Schalter Element ende -->
+</%OPT_HEATING_ROLLO%>
 
 <%OPT_ROLLO%>
 <!-- Trenner horizontal -->

@@ -4,32 +4,45 @@ include("../include/all.php");
 if ($action=="changeHeating")
 {
 	 $objectId=$heatingId;
-	 $lowThreshold = $heating;
    $erg = QUERY("select functionData from lastReceived where senderObj='$objectId' and function='Configuration' order by id desc limit 1");
    if ($row=MYSQLi_FETCH_ROW($erg))
    {
    	 $functionData = unserialize($row[0]);
-   	 
-   	 $upperThreshold = $lowThreshold+3;
-   	 $reportTime = 5;
-   	 $hysteresis = 0;
-
    	 $paramData = $functionData->paramData;
    	 $callArray = array();
    	 foreach ($paramData as $obj)
    	 {
-   	 	  if ($obj->name=="lowerThreshold") $callArray["lowerThreshold"]=$lowThreshold;
-   	 	  else if ($obj->name=="upperThreshold") $callArray["upperThreshold"]=$upperThreshold;
-   	 	  else if ($obj->name=="reportTime") $callArray["reportTime"]=$reportTime;
-   	 	  else if ($obj->name=="hysteresis") $callArray["hysteresis"]=$hysteresis;
-   	 	  else $callArray[$obj->name]=$obj->dataValue;
-   	 } 
+   	 	  $callArray[$obj->name]=$obj->dataValue;
+   	 }
+   	 
+   	 $heating = str_replace(",",".",$heating);
+   	 
+   	 $before = $callArray["lowerThreshold"].".";
+   	 if ($callArray["lowerThresholdFraction"]<10)  $before.="0".$callArray["lowerThresholdFraction"];
+   	 else $before.=$callArray["lowerThresholdFraction"];
+   	 $diff = round($heating-$before,2);
+   	 
+   	 $lowerThreshold = (int)$heating;
+   	 $lowerThresholdFraction = round(($heating-$lowerThreshold)*100);
+   	 
+   	 $upperThresholdBefore = $callArray["upperThreshold"].".";
+   	 if ($callArray["upperThresholdFraction"]<10)  $upperThresholdBefore.="0".$callArray["upperThresholdFraction"];
+   	 else $upperThresholdBefore.=$callArray["upperThresholdFraction"];
+   	 $upperThresholdAfter = $upperThresholdBefore+$diff;
+   	 $upperThreshold = (int)$upperThresholdAfter;
+   	 $upperThresholdFraction = round(($upperThresholdAfter-$upperThreshold)*100);
+   	 
+   	 //die("heating = $heating before = $before diff =  $diff lowerThreshold = $lowerThreshold lowerThresholdFraction = $lowerThresholdFraction upperThresholdBefore = $upperThresholdBefore upperThresholdAfter = $upperThresholdAfter upperThreshold = $upperThreshold upperThresholdFraction = $upperThresholdFraction");
+   	 $callArray["lowerThreshold"]=$lowerThreshold;
+     $callArray["lowerThresholdFraction"]=$lowerThresholdFraction;   	 
+     $callArray["upperThreshold"]=$upperThreshold;   	 
+     $callArray["upperThresholdFraction"]=$upperThresholdFraction;   	 
    	 
 	   callObjectMethodByName($objectId, "setConfiguration", $callArray);
 	   sleepMs(200);
 	   callObjectMethodByName($objectId, "getConfiguration");
+	   sleepMs(200);
 	   callObjectMethodByName($objectId, "getStatus");
-	   
 	   $scrollTo="END";
 	   $lastRoom=-1;
 	   $erg = QUERY("select rooms.id as roomId, rooms.name as roomName,
@@ -51,7 +64,7 @@ if ($action=="changeHeating")
      	  	 break;
      	  }
      }
-     
+     die($status."-".$heatingId);
 /*
 	   //die("select roomId from roomFeatures join featureInstances on(featureInstances.id=roomFeatures.featureInstanceId) where objectId='$objectId'");
 	   $erg = QUERY("select roomId from roomFeatures join featureInstances on(featureInstances.id=roomFeatures.featureInstanceId) where objectId='$objectId'");
@@ -62,6 +75,29 @@ if ($action=="changeHeating")
 	   exit;
    }
 }
+else if ($action=="switchRolloHeating")
+{
+	$erg = QUERY("select functionData from lastReceived where senderObj='$heatingId' and function='Status' order by id desc limit 1");
+  if ($row=MYSQLi_FETCH_ROW($erg))
+  {
+     $functionData = unserialize($row[0]);
+     $paramData = $functionData->paramData;
+     $callArray = array();
+     foreach ($paramData as $obj)
+     {
+     	  if ($obj->name=="lastEvent")
+     	  {
+     	  	  if ($status=="toWarm") $callArray["lastEvent"]="200";
+     	  	  else $callArray["lastEvent"]="202";
+     	  }
+     	  else $callArray[$obj->name]=$obj->dataValue;
+     }
+	   
+	  callInstanceMethodForObjectId(0, 94, $callArray, $heatingId);
+   	die($status."-".$heatingId);
+  }
+}
+	
 
 $html = file_get_contents("index_design.html");
 $html = str_replace("%ONLY_TYPE%",$onlyType,$html);
@@ -117,6 +153,11 @@ $heatingTag = getTag("%OPT_HEATING%",$html);
 $heatingSwitchTag = getTag("%OPT_HEATING_SWITCH%",$heatingTag);
 $heatingDiagramTag = getTag("%OPT_DIAGRAM%",$heatingTag);
 $html = str_replace("%OPT_HEATING%","",$html);
+
+$heatingRolloTag = getTag("%OPT_HEATING_ROLLO%",$html);
+$heatingRolloSwitchTag = getTag("%OPT_HEATING_SWITCH%",$heatingRolloTag);
+$heatingRolloDiagramTag = getTag("%OPT_DIAGRAM%",$heatingRolloTag);
+$html = str_replace("%OPT_HEATING_ROLLO%","",$html);
 
 $multiRowTag = getTag("%MULTITASTER_ROW%",$html);
 $multiTasterPanelTag = getTag("%MULTITASTER_PANELS%",$html);
@@ -192,6 +233,8 @@ $heatingRelays = array();    // alle Thermostat Schalter -> Temperatur Sensoren
 $heatingRelayObj = array();  // alle Thermostat Temperatur Sensoren -> Datenbankobjekte der Schalter
 $heatingDiagrams = array(); // alle Thermostat Temperatur Sensoren -> Diagramme
 $heating=array();          // Räume, die ein Thermostat haben
+$heatingTypeRollo = array();    // Rollosteuerungen
+$heatingRolloLastPositon = array(); // Letzte Position der Rolloheizungssteuerung
 $erg = QUERY("select sensor,relay,diagram from heating");
 while($obj=MYSQLi_FETCH_OBJECT($erg))
 {
@@ -233,6 +276,20 @@ while ( $obj = MYSQLi_FETCH_OBJECT($erg))
 	{
 		$heatingRelayObj[$heatingRelays[$obj->featureInstanceId]]=$obj;
 		$obj->thermostatRelay=1;
+		
+		if ($obj->classesName=="Rollladen") $heatingTypeRollo[$obj->roomName]=1;
+		{
+	    $erg2 = QUERY("select functionData, function from lastReceived where senderObj='$obj->objectId' and (function='evClosed' or function='evOpen') order by id desc limit 1");
+ 	    if ($row2=MYSQLi_FETCH_ROW($erg2))
+ 	    {
+ 	    	 if ($row2[1]=="evOpen") $heatingRolloLastPositon[$obj->featureInstanceId]=0;
+ 	    	 else
+ 	    	 {
+ 	  	     $functionData = unserialize($row2[0]);
+ 	  	     $heatingRolloLastPositon[$obj->featureInstanceId]=$functionData->paramData[0]->dataValue;
+  	  	 }
+ 	  	}
+		}
 	}
 	
 	if ($obj->classesName!="LogicalButton" && $obj->classesName!="Taster")
@@ -327,6 +384,7 @@ foreach($elements as $room=>$arr)
       }
 
    	  if ($heating[$room]=="") continue;
+   	  else if ($heatingTypeRollo[$room]==1) $actClassTag = $heatingRolloTag; 
    	  else $actClassTag = $heatingTag;
  	  }
  	  else if ($class=="Feuchtesensor")
@@ -502,7 +560,14 @@ foreach($elements as $room=>$arr)
     	 	    $mySchalterObj = $heatingRelayObj[$obj->featureInstanceId];
     	 	    if ($mySchalterObj!="")
     	 	    {
-    	 	  	  $myHeatingSwitchTag = $heatingSwitchTag;
+    	 	    	if ($heatingTypeRollo[$room]==1)
+    	 	    	{
+    	 	    		$myHeatingSwitchTag = $heatingRolloSwitchTag;
+    	 	    		$myHeatingSwitchTag = str_replace("%SENSOR_ID%",$obj->objectId,$myHeatingSwitchTag);
+    	 	    		$myHeatingSwitchTag = str_replace("%PROZENT%",$heatingRolloLastPositon[$mySchalterObj->featureInstanceId],$myHeatingSwitchTag);
+    	 	    	}
+    	 	    	else $myHeatingSwitchTag = $heatingSwitchTag;
+    	 	    	
     	 	  	  $myHeatingSwitchTag = str_replace("%MY_ID%",$mySchalterObj->objectId, $myHeatingSwitchTag);
     	 	  	  $actFeatureTag = str_replace("%OPT_HEATING_SWITCH%",$myHeatingSwitchTag,$actFeatureTag);
     	 	    }
@@ -511,7 +576,8 @@ foreach($elements as $room=>$arr)
     	 	    $diagramId = $heatingDiagrams[$obj->featureInstanceId];
     	 	    if ($diagramId!="")
     	 	    {
-    	 	  	  $myHeatingDiagramTag = $heatingDiagramTag;
+    	 	    	if ($heatingTypeRollo[$room]==1) $myHeatingDiagramTag = $heatingRolloDiagramTag;
+    	 	  	  else $myHeatingDiagramTag = $heatingDiagramTag;
     	 	  	  $myHeatingDiagramTag = str_replace("%DIAGRAM_LINK%","/homeserver/showGraph.php?id=".$diagramId, $myHeatingDiagramTag);
     	 	  	  $actFeatureTag = str_replace("%OPT_DIAGRAM%",$myHeatingDiagramTag,$actFeatureTag);
     	 	    }
@@ -523,8 +589,10 @@ foreach($elements as $room=>$arr)
     	 	    {
     	 	  	   $functionData = unserialize($row[0]);
     	 	  	   $lowThreshold = $functionData->paramData[0]->dataValue;
+    	 	  	   $lowThresholdFraction = $functionData->paramData[1]->dataValue;
+    	 	  	   if ($lowThresholdFraction>0 && $lowThresholdFraction<10) $lowThresholdFraction="0".$lowThresholdFraction;
     	 	    }
-            $actFeatureTag = str_replace("%HEATING_TEMP%",$lowThreshold,$actFeatureTag);
+            $actFeatureTag = str_replace("%HEATING_TEMP%",round($lowThreshold.".".$lowThresholdFraction,1),$actFeatureTag);
           }
           
     	 }

@@ -14,7 +14,7 @@ if ($forward==1)
 
 if ($proceed == 1)
 {
-	if ($_SESSION ["onlineVersionMainController"]=="")
+	if ($_SESSION ["onlineVersionMainController"]=="" && $force != 1)
 	{
 		$_SESSION["forwardGet"]=$_GET;
 		header("Location: updates.php?action=readOnlineVersion&forward=updatesProceed.php");
@@ -194,7 +194,7 @@ if ($proceed == 1)
         }
         
         liveOut ( "<b>Firmware Update ...</b>" );
-        liveOut ( "W‰hrend des Updates den Controller und den PC NICHT AUSSCHALTEN!" );
+        liveOut ( "W√§hrend des Updates den Controller und den PC NICHT AUSSCHALTEN!" );
         liveOut ( '' );
         flushIt ();
         
@@ -206,14 +206,14 @@ if ($proceed == 1)
         
         $fileSize = filesize ( $fwfile );
         liveOut ( "Datei: " . substr ( $fwfile, strrpos ( $fwfile, "/" ) + 1 ) );
-        liveOut ( "Grˆﬂe: $fileSize Bytes" );
+        liveOut ( "Gr√∂√üe: $fileSize Bytes" );
         
         callObjectMethodByName ( $objectId, "getConfiguration" );
         
         $result = waitForObjectResultByName ( $objectId, 5, "Configuration", $lastLogId );
         $blockSize = getResultDataValueByName ( "dataBlockSize", $result );
         
-        liveOut ( "Blockgrˆﬂe: " . $blockSize . " Bytes" );
+        liveOut ( "Blockgr√∂√üe: " . $blockSize . " Bytes" );
         liveOut ( '' );
         liveOut ( "<div id=\"status\">Updatestatus: 0/$fileSize Bytes - 0%</div>" );
         
@@ -248,11 +248,12 @@ if ($proceed == 1)
           $i ++;
           flushIt ();
           
-          sleepMS(5); //TODO warum hilft das ?
+          // Das hier wieder einkommentieren, falls es Probleme gibt
+          //sleepMS(5); //TODO warum hilft das ?
         }
         fclose ( $fd );
         
-        liveOut ( "‹bertragung erfolgreich beendet" );
+        liveOut ( "√úbertragung erfolgreich beendet" );
         liveOut ( '' );
         
         if ($verify == 1)
@@ -288,25 +289,18 @@ if ($proceed == 1)
         callObjectMethodByName ( $objectId, "reset" );
         flush ();
         
-        sleep ( 4 );
+        if ($isBooter != 1) $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $FIRMWARE_INSTANCE_ID );
+        else $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $BOOTLOADER_INSTANCE_ID );
         
-        for($i = 0; $i < 10; $i ++)
+        $result = waitForObjectEventByName($receiverObjectId, 10, "evStarted", $lastLogId, "funtionDataParams", 0);
+        if ($result==-1)
         {
-          if ($isBooter != 1) $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $FIRMWARE_INSTANCE_ID );
-          else $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $BOOTLOADER_INSTANCE_ID );
-          callObjectMethodByName ( $receiverObjectId, "ping" );
-          $result = waitForObjectResultByName ( $receiverObjectId, 5, "pong", $lastLogId, "funtionDataParams", 0 );
-          if ($result != - 1) break;
-          sleep ( 1 );
-          if ($i == 9)
-          {
             updateControllerStatus();
             liveOut ( "Fehler! Controller antwortet nicht" );
             exit ();
-          }
         }
 
-        // Wenn gerade die normale Firmware geladen wurde, nehmen wir anschlieﬂend den Booter offline, damit der nicht nochmal geladen wird
+        // Wenn gerade die normale Firmware geladen wurde, nehmen wir anschlie√üend den Booter offline, damit der nicht nochmal geladen wird
         if ($isBooter != 1)
         {
            $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $BOOTLOADER_INSTANCE_ID );
@@ -468,7 +462,7 @@ if ($proceed == 1)
         }
         
         liveOut ( "<b>Booter Update ...</b>" );
-        liveOut ( "W‰hrend des Updates den Controller und den PC NICHT AUSSCHALTEN!" );
+        liveOut ( "W√§hrend des Updates den Controller und den PC NICHT AUSSCHALTEN!" );
         liveOut ( '' );
         flushIt ();
         
@@ -477,19 +471,19 @@ if ($proceed == 1)
           $fwfile = "../firmware/" . $_SESSION ["actUpdateFile"];
         
         $fileSize = filesize ( $fwfile );
-        liveOut ( "Datei: " . substr ( $fwfile, strrpos ( $fwfile, "/" ) + 1 ) . " Grˆﬂe: $fileSize Bytes" );
+        liveOut ( "Datei: " . substr ( $fwfile, strrpos ( $fwfile, "/" ) + 1 ) . " Gr√∂√üe: $fileSize Bytes" );
         
         callObjectMethodByName ( $objectId, "getConfiguration" );
         
         $result = waitForObjectResultByName ( $objectId, 5, "Configuration", $lastLogId );
         $blockSize = getResultDataValueByName ( "dataBlockSize", $result );
         
-        liveOut ( "Daten Blockgrˆﬂe: " . $blockSize . " Bytes" );
+        liveOut ( "Daten Blockgr√∂√üe: " . $blockSize . " Bytes" );
         liveOut ( '' );
         liveOut ( "<div id=\"status\">Updatestatus: 0/$fileSize Bytes - 0%</div>" );
         
-		$memoryStatusOk = getFunctionParamEnumValueByName($objectId, "MemoryStatus", "status", "OK");
-	    $memoryStatusAborted = getFunctionParamEnumValueByName($objectId, "MemoryStatus", "status", "ABORTED");
+		    $memoryStatusOk = getFunctionParamEnumValueByName($objectId, "MemoryStatus", "status", "OK");
+	      $memoryStatusAborted = getFunctionParamEnumValueByName($objectId, "MemoryStatus", "status", "ABORTED");
 	
         $fd = fopen ( $fwfile, "r" );
         $ready = 0;
@@ -514,32 +508,33 @@ if ($proceed == 1)
 		  $memoryStatus = getResultDataValueByName("status", $result);
 		  
 		  if ($memoryStatus != $memoryStatusOk)
-          {
-			if($memoryStatus == $memoryStatusAborted) 
-			{
-			  liveOut("Bootloader hat die FW nicht akzeptiert!  ");
-			  liveOut("Mˆgliche Ursachen: ");
-			  liveOut("- FW ist nicht f¸r dieses Modul ");
-			  liveOut("- FW Major-Release-Kennung ist vom Bootloader verschieden ");
-			  liveOut("- FW Minor-Kennung ist nicht grˆﬂer als bereits installiert ");
-			  liveOut("- FW ist korrupt oder modifiziert ");
-			}
-			else
-			{
+      {
+  			if($memoryStatus == $memoryStatusAborted) 
+			  {
+			    liveOut("Bootloader hat die FW nicht akzeptiert!  ");
+			    liveOut("M√∂gliche Ursachen: ");
+			    liveOut("- FW ist nicht f√ºr dieses Modul ");
+			    liveOut("- FW Major-Release-Kennung ist vom Bootloader verschieden ");
+			    liveOut("- FW Minor-Kennung ist nicht gr√∂√üer als bereits installiert ");
+			    liveOut("- FW ist korrupt oder modifiziert ");
+			  }
+			  else
+			  {
 			  liveOut("Bootloader hat fehlerhaften MemoryStatus gemeldet: " . $result[0]->dataValue);
-			}
-            exit ();
-          }
-          $ready += strlen ( $buffer );
-          if ($round % 5 == 0 || ($fileSize - $ready < 1500))
-            statusOut ( $ready, $fileSize, $blockSize );
-          $round ++;
-          $i ++;
-          // sleepMS(50); //TODO warum hilft das ?
-        }
+  			}
+  
+        exit ();
+      }
+      $ready += strlen ( $buffer );
+      if ($round % 5 == 0 || ($fileSize - $ready < 1500))
+      statusOut ( $ready, $fileSize, $blockSize );
+      $round ++;
+      $i ++;
+      // sleepMS(50); //TODO warum hilft das ?
+    }
         fclose ( $fd );
         
-        liveOut ( "‹bertragung erfolgreich beendet" );
+        liveOut ( "√úbertragung erfolgreich beendet" );
         liveOut ( '' );
         
         if ($verify == 1)
@@ -575,25 +570,16 @@ if ($proceed == 1)
         callObjectMethodByName ( $objectId, "reset" );
         flush ();
         
-        sleep ( 4 );
-        
-        for($i = 0; $i < 10; $i ++)
+        $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $BOOTLOADER_INSTANCE_ID );
+        $result = waitForObjectEventByName($receiverObjectId, 10, "evStarted", $lastLogId, "funtionDataParams", 0);
+        if ($result==-1)
         {
-          $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $BOOTLOADER_INSTANCE_ID );
-          callObjectMethodByName ( $receiverObjectId, "ping" );
-          $result = waitForObjectResultByName ( $receiverObjectId, 5, "pong", $lastLogId, "funtionDataParams", 0 );
-          if ($result != - 1)
-            break;
-          sleep ( 1 );
-          if ($i == 9)
-          {
-            // updateControllerStatus();
+            //updateControllerStatus();
             liveOut ( "Fehler! Controller antwortet nicht" );
             exit ();
-          }
         }
         
-        // Anschlieﬂend nehmen wir die normale Firmware offline, damit die nicht nochmal geladen wird
+        // Anschlie√üend nehmen wir die normale Firmware offline, damit die nicht nochmal geladen wird
         $receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $FIRMWARE_INSTANCE_ID);
         QUERY("update controller set online='0' where objectId='$receiverObjectId' limit 1");
         
@@ -639,7 +625,7 @@ if ($proceed == 1)
     if ($andAfterSkip=="") unset($_SESSION["controllerWithEthernet"]);
     else $_SESSION["controllerWithEthernet"]=$andAfterSkip;
     
-    if ($firmwareId==1) // Wenn wir den Booter vom Hauptcontroller aktualisieren, sollte es keine Taster mit <= Version geben, weil die sonst anschlieﬂend ggf. nicht mehr erreichbar sind
+    if ($firmwareId==1) // Wenn wir den Booter vom Hauptcontroller aktualisieren, sollte es keine Taster mit <= Version geben, weil die sonst anschlie√üend ggf. nicht mehr erreichbar sind
     {
     	 $warning="";
     	 $biggestMainBooterMajor="";
@@ -668,7 +654,7 @@ if ($proceed == 1)
          }
        }
        
-       if ($warning!="") echo "<br><font color=#bb0000><b>Achtung: Wenn der Booter der Maincontroller aktualisiert wird, sind anschlieﬂend IC2 Module ggf. nicht mehr erreichbar, falls diese nicht zuvor aktualisiert wurden!<br>Aktuell haben folgende Module eine potentiell zu kleine Booterversion und sollten zuerst aktualisiert werden:<br><font size=2>$warning </font></b><br><br>";
+       if ($warning!="") echo "<br><font color=#bb0000><b>Achtung: Wenn der Booter der Maincontroller aktualisiert wird, sind anschlie√üend IC2 Module ggf. nicht mehr erreichbar, falls diese nicht zuvor aktualisiert wurden!<br>Aktuell haben folgende Module eine potentiell zu kleine Booterversion und sollten zuerst aktualisiert werden:<br><font size=2>$warning </font></b><br><br>";
     }
 
     
@@ -715,7 +701,7 @@ if ($proceed == 1)
         flushIt ();
         
         liveOut ( "<b>Firmware Update ...</b>" );
-        liveOut ( "W‰hrend des Updates den Controller und den PC NICHT AUSSCHALTEN!" );
+        liveOut ( "W√§hrend des Updates den Controller und den PC NICHT AUSSCHALTEN!" );
         liveOut ( '' );
         flushIt ();
         
@@ -724,7 +710,7 @@ if ($proceed == 1)
         
         $fileSize = filesize ( $fwfile );
         liveOut ( "Datei: " . substr ( $fwfile, strrpos ( $fwfile, "/" ) + 1 ) );
-        liveOut ( "Grˆﬂe: $fileSize Bytes" );
+        liveOut ( "Gr√∂√üe: $fileSize Bytes" );
         
         $currentReaderId = getObjectId(getDeviceId($objectId), 90, 1);
         callObjectMethodByName ( $currentReaderId, "getCurrentIp" );
@@ -895,7 +881,7 @@ class Zipper extends ZipArchive
 function dbUpdate($dbUpdate, $table)
 {
   $pos = strpos ( $dbUpdate, "INSERT INTO `$table`" );
-  if ($pos===FALSE) liveOut ( "Fehler! Eintrag f¸r Tabelle $table nicht gefunden" );
+  if ($pos===FALSE) liveOut ( "Fehler! Eintrag f√ºr Tabelle $table nicht gefunden" );
   else
   {
     $sql = "TRUNCATE table $table";

@@ -248,10 +248,10 @@ function _waitForObjectResult($senderObjectId, $waitSeconds, $type, $functionId,
 
         if (time() - $start > $waitSeconds)
         {
-            if ($fail == 1) die("Antwort nicht empfangen $type: functionId=$functionId,  waitSeconds=$waitSeconds, lastLogId=$lastLogId, senderObjectId=$senderObjectId");
+            if ($fail == 1) die("Antwort nicht empfangen $type: functionId=$functionId,  waitSeconds=$waitSeconds, lastLogId=$lastLogId, senderObjectId=$senderObjectId "); //<br>".$sql);
             else
             {
-            	echo "Antwort nicht empfangen $type: functionId=$functionId,  waitSeconds=$waitSeconds, lastLogId=$lastLogId, senderObjectId=$senderObjectId <br>";
+            	echo "Antwort nicht empfangen $type: functionId=$functionId,  waitSeconds=$waitSeconds, lastLogId=$lastLogId, senderObjectId=$senderObjectId <br>"; //.$sql."<br>";
             	return -1;
             }
         }
@@ -524,6 +524,11 @@ function callInstanceMethodForObjectId($receiverObjectId, $featureFunctionId, $p
         else $wasEmpty = 0;
 
         if ($obj2->type == "BYTE" || $obj2->type == "ENUM" || $obj2->type == "BITMASK") $data[$dataPos++] = $param;
+        else if ($obj2->type == "SBYTE")
+        {
+        	if ($param<0) $data[$dataPos++] = 256+$param;
+        	else $data[$dataPos++]=$param;
+        }
         else if ($obj2->type == "BLOB")
         {
           if ($wasEmpty != 1)
@@ -664,6 +669,11 @@ function sendCommand($receiverObjectId, $data, $senderObjectId = "", $binaryStar
 function paramToBytes($param, $dataType, $convertWeektimeToThreeBytes=0)
 {
     if ($dataType == "BYTE" || $dataType == "ENUM" || $dataType == "BITMASK") $bytes = $param;
+    else if ($dataType == "SBYTE")
+    {
+    	if ($param<0) $bytes = 256 + $param;
+    	else $bytes = $param;
+    }
     else if ($dataType == "WORD") $bytes = wordToBytes($param);
     else if ($dataType == "DWORD") $bytes = dWordToBytes($param);
     else if ($dataType == "WEEKTIME")
@@ -827,12 +837,19 @@ function cleanUp()
 {
 	global $MAX_LOG_ENTRIES;
 	global $MAX_TRACE_ENTRIES;
+	global $DOUBLE_ENTRIES_FOR_SDCARDS_BIGGER_THAN_8GB;
+	
+	if ($DOUBLE_ENTRIES_FOR_SDCARDS_BIGGER_THAN_8GB==1 && formatBytesToGb(disk_total_space("/var/www/homeserver"))>7.5)
+	{
+		$MAX_LOG_ENTRIES*=2;
+		$MAX_TRACE_ENTRIES*=2;
+	}
 	
 	trace("cleanUp start",1);
 	
 	$start = time();
 	
-	// Journale aufr㴭en
+	// Journale aufräumen
   $erg = QUERY("select count(*) from udpcommandlog");
   $row=MYSQLi_FETCH_ROW($erg);
   $diff = $row[0]-$MAX_LOG_ENTRIES;
@@ -863,7 +880,7 @@ function cleanUp()
   	 QUERY($sql);
   }
 
-  // Trace aufr㴭en
+  // Trace aufräumen
   $erg = QUERY("select count(*) from trace");
   $row=MYSQLi_FETCH_ROW($erg);
   $diff = $row[0]-$MAX_TRACE_ENTRIES;
@@ -874,43 +891,43 @@ function cleanUp()
   	 QUERY($sql);
   }
   
-  exec("rm /var/lib/php5/sess_0*");
-  exec("rm /var/lib/php5/sess_1*");
-  exec("rm /var/lib/php5/sess_2*");
-  exec("rm /var/lib/php5/sess_3*");
-  exec("rm /var/lib/php5/sess_4*");
-  exec("rm /var/lib/php5/sess_5*");
-  exec("rm /var/lib/php5/sess_6*");
-  exec("rm /var/lib/php5/sess_7*");
-  exec("rm /var/lib/php5/sess_8*");
-  exec("rm /var/lib/php5/sess_9*");
-  exec("rm /var/lib/php5/sess_a*");
-  exec("rm /var/lib/php5/sess_b*");
-  exec("rm /var/lib/php5/sess_c*");
-  exec("rm /var/lib/php5/sess_d*");
-  exec("rm /var/lib/php5/sess_e*");
-  exec("rm /var/lib/php5/sess_f*");
-  exec("rm /var/lib/php5/sess_g*");
-  exec("rm /var/lib/php5/sess_h*");
-  exec("rm /var/lib/php5/sess_i*");
-  exec("rm /var/lib/php5/sess_j*");
-  exec("rm /var/lib/php5/sess_k*");
-  exec("rm /var/lib/php5/sess_l*");
-  exec("rm /var/lib/php5/sess_m*");
-  exec("rm /var/lib/php5/sess_n*");
-  exec("rm /var/lib/php5/sess_o*");
-  exec("rm /var/lib/php5/sess_p*");
-  exec("rm /var/lib/php5/sess_q*");
-  exec("rm /var/lib/php5/sess_r*");
-  exec("rm /var/lib/php5/sess_s*");
-  exec("rm /var/lib/php5/sess_t*");
-  exec("rm /var/lib/php5/sess_u*");
-  exec("rm /var/lib/php5/sess_v*");
-  exec("rm /var/lib/php5/sess_w*");
-  exec("rm /var/lib/php5/sess_x*");
-  exec("rm /var/lib/php5/sess_y*");
-  exec("rm /var/lib/php5/sess_z*");
-  exec("rm /var/lib/php5/sess_*");
+  exec("rm /var/lib/php/sessions/sess_0*");
+  exec("rm /var/lib/php/sessions/sess_1*");
+  exec("rm /var/lib/php/sessions/sess_2*");
+  exec("rm /var/lib/php/sessions/sess_3*");
+  exec("rm /var/lib/php/sessions/sess_4*");
+  exec("rm /var/lib/php/sessions/sess_5*");
+  exec("rm /var/lib/php/sessions/sess_6*");
+  exec("rm /var/lib/php/sessions/sess_7*");
+  exec("rm /var/lib/php/sessions/sess_8*");
+  exec("rm /var/lib/php/sessions/sess_9*");
+  exec("rm /var/lib/php/sessions/sess_a*");
+  exec("rm /var/lib/php/sessions/sess_b*");
+  exec("rm /var/lib/php/sessions/sess_c*");
+  exec("rm /var/lib/php/sessions/sess_d*");
+  exec("rm /var/lib/php/sessions/sess_e*");
+  exec("rm /var/lib/php/sessions/sess_f*");
+  exec("rm /var/lib/php/sessions/sess_g*");
+  exec("rm /var/lib/php/sessions/sess_h*");
+  exec("rm /var/lib/php/sessions/sess_i*");
+  exec("rm /var/lib/php/sessions/sess_j*");
+  exec("rm /var/lib/php/sessions/sess_k*");
+  exec("rm /var/lib/php/sessions/sess_l*");
+  exec("rm /var/lib/php/sessions/sess_m*");
+  exec("rm /var/lib/php/sessions/sess_n*");
+  exec("rm /var/lib/php/sessions/sess_o*");
+  exec("rm /var/lib/php/sessions/sess_p*");
+  exec("rm /var/lib/php/sessions/sess_q*");
+  exec("rm /var/lib/php/sessions/sess_r*");
+  exec("rm /var/lib/php/sessions/sess_s*");
+  exec("rm /var/lib/php/sessions/sess_t*");
+  exec("rm /var/lib/php/sessions/sess_u*");
+  exec("rm /var/lib/php/sessions/sess_v*");
+  exec("rm /var/lib/php/sessions/sess_w*");
+  exec("rm /var/lib/php/sessions/sess_x*");
+  exec("rm /var/lib/php/sessions/sess_y*");
+  exec("rm /var/lib/php/sessions/sess_z*");
+  exec("rm /var/lib/php/sessions/sess_*");
   
   exec("find /var/log/ -name \"*.gz\"|xargs rm");
   exec("find /var/log/ -name \"*.1\"|xargs rm");
@@ -1236,6 +1253,7 @@ function getFunctionData($featureClassesId, $functionId, $datagramm, $dataPos, $
     global $BROADCAST_OBJECT_ID;
 
     $RULE_DATA_FUNCTION_ID = 134;
+    $MEMORY_DATA_FUNCTION_ID = 132;
 
     $erg = QUERY("select featureFunctions.id,featureFunctions.featureClassesId,featureFunctions.type,featureFunctions.name,featureFunctions.functionId,
                          featureClasses.classId 
@@ -1254,13 +1272,18 @@ function getFunctionData($featureClassesId, $functionId, $datagramm, $dataPos, $
             $paramsStr .= $obj2->name . " = ";
 
             if ($obj2->type == "BYTE" || $obj2->type == "BITMASK") $dataValue = $datagramm[$dataPos++];
+            else if ($obj2->type == "SBYTE")
+            {
+            	$dataValue = $datagramm[$dataPos++];
+            	if ($dataValue>127) $dataValue=$dataValue-256;
+            }
             else if ($obj2->type == "WORD" || $obj2->type == "WEEKTIME") $dataValue = bytesToWord($datagramm, $dataPos);
             else if ($obj2->type == "DWORD") $dataValue = bytesToDword($datagramm, $dataPos);
             else if ($obj2->type == "STRING") $dataValue = bytesToString($datagramm, $dataPos, $dataLength);
             else if ($obj2->type == "WORDLIST") $dataValue = bytesToWordList($datagramm, $dataPos, $dataLength);
             else if ($obj2->type == "BLOB")
             {
-               if ($featureClassesId == $CONTROLLER_CLASSES_ID && $functionId == $RULE_DATA_FUNCTION_ID) $dataValue = bytesToByteList($datagramm, $dataPos, $dataLength -2);
+               if ($featureClassesId == $CONTROLLER_CLASSES_ID && ($functionId == $RULE_DATA_FUNCTION_ID || $functionId == $MEMORY_DATA_FUNCTION_ID)) $dataValue = bytesToByteList($datagramm, $dataPos, $dataLength -2);
                else $dataValue = blobToCrc32($datagramm, $dataPos, $dataLength);
             } 
             else if ($obj2->type == "ENUM")
@@ -1450,4 +1473,11 @@ function whichIsLastReceivedEvent($objectId, $eventNames)
   if ($obj=MYSQLi_FETCH_OBJECT($erg)) return $obj->function;
   return "";
 }
+
+function formatBytesToGb($bytes, $precision = 2) 
+{ 
+    $bytes = max($bytes, 0); 
+    $bytes /= (1 << (10 * 3)); 
+    return round($bytes, $precision); 
+} 
 ?>

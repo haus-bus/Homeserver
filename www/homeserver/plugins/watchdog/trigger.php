@@ -1,15 +1,16 @@
 <?php
+$myFile="../../user/gruppen.txt";
 
 $debugMe=0;
 
 if ($_GET["debug"]==1)
 {
 	include("../../include/all.php");
-	$content = file_get_contents("gruppen.txt");
+	$content = file_get_contents($myFile);
 }
 else
 {
-	$content = file_get_contents("plugins/watchdog/gruppen.txt");
+	$content = file_get_contents("plugins/watchdog/$myFile");
 }
 
 $parts = explode("####", $content);

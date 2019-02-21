@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="744.09448"
+   height="1052.3622"
+   id="svg3100">
+  <defs
+     id="defs3102">
+    <linearGradient
+       id="linearGradient3781">
+      <stop
+         id="stop3783"
+         style="stop-color:#000000;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3785"
+         style="stop-color:#000000;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+    <radialGradient
+       cx="359.73801"
+       cy="70.092644"
+       r="1.0725173"
+       fx="359.73801"
+       fy="70.092644"
+       id="radialGradient3787"
+       xlink:href="#linearGradient3781"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,0.99905896,0,0.06595987)" />
+  </defs>
+  <metadata
+     id="metadata3105">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <use
+     transform="translate(-8.8834485,-15.854783)"
+     id="use5420"
+     x="0"
+     y="0"
+     width="744.09448"
+     height="1052.3622" />
+  <g
+     id="HAS_ID_19">
+    <path
+       d="m 368.39358,70.095335 a 6.1528957,6.1465048 0 1 1 -12.30579,0 6.1528957,6.1465048 0 1 1 12.30579,0 z"
+       id="statusSocket"
+       style="fill:#ff7010;fill-rule:evenodd;stroke:#000000;stroke-opacity:1" />
+    <text
+       id="textSocket"
+       style="display:none" />  
+    <metadata id="metaSocket" type="switch" action="fill" param1="orange" param2="white" functionParam1=""/>   
+    <g
+       id="g3789">
+      <rect
+         width="15.529222"
+         height="15.513091"
+         x="354.47607"
+         y="62.338795"
+         id="rect2996"
+         style="fill:none;stroke:#000000;stroke-width:0.20169717;stroke-opacity:1" />
+      <path
+         d="m 360.70969,70.095337 a 0.97166875,0.97065947 0 0 1 -1.94333,0 0.97166875,0.97065947 0 1 1 1.94333,0 z"
+         id="path5410"
+         style="opacity:0.72727272;fill:url(#radialGradient3787);fill-opacity:1;stroke:#000000;stroke-width:0.20169714;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <rect
+         width="0.65625376"
+         height="1.2270151"
+         x="361.91257"
+         y="64.124542"
+         id="rect5614"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.20169717;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <rect
+         width="0.65625376"
+         height="1.2270151"
+         x="361.91257"
+         y="74.839096"
+         id="rect5614-1"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.20169717;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <use
+         transform="translate(4.9612958,0)"
+         id="use3770"
+         x="0"
+         y="0"
+         width="744.09448"
+         height="1052.3622"
+         xlink:href="#path5410" />
+    </g>
+  </g>
+</svg>

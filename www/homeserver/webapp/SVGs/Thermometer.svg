@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="744.09448"
+   height="1052.3622"
+   id="svg3108">
+  <defs
+     id="defs3110">
+    <radialGradient
+       cx="21.070801"
+       cy="13.9051"
+       r="2.5801899"
+       fx="21.070801"
+       fy="13.9051"
+       id="radialGradient3950"
+       xlink:href="#id0"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       cx="21.070801"
+       cy="13.9051"
+       r="2.5801899"
+       fx="21.070801"
+       fy="13.9051"
+       id="id0"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop51"
+         style="stop-color:#94c7e2;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop53"
+         style="stop-color:#00a8ff;stop-opacity:1"
+         offset="1" />
+      <stop
+         id="stop55"
+         style="stop-color:#00a8ff;stop-opacity:1"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       cx="21.070801"
+       cy="13.9051"
+       r="2.5801899"
+       fx="21.070801"
+       fy="13.9051"
+       id="radialGradient3153"
+       xlink:href="#id0"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       cx="21.070801"
+       cy="13.9051"
+       r="2.5801899"
+       fx="21.070801"
+       fy="13.9051"
+       id="radialGradient3156"
+       xlink:href="#id0"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(18.888883,0,0,19.164916,133.81576,380.1779)" />
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter5405">
+      <feGaussianBlur
+         id="feGaussianBlur5407"
+         stdDeviation="0.23712002" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata3113">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="HAS_ID_32">
+    <metadata id="metaTemperature" type="temperature" action="" param1="" param2="" functionParam1=""/> 
+    <path
+       d="m 531.61186,646.0087 c 0,0 0.73988,0.37697 1.45501,0.39614 0.71494,0.019 1.52565,-0.37314 1.52565,-0.37314 l 0.005,2.68826 c 0,0 1.40836,0.72827 1.38758,2.17675 -0.0264,1.83907 -1.46294,2.43031 -2.92608,2.41651 -1.84601,-0.0171 -2.95214,-0.77062 -2.92607,-2.48493 0.0208,-1.34135 1.47824,-2.10833 1.47824,-2.10833 l 1.9e-4,-2.71126 z"
+       id="statusTherm"
+       style="fill:url(#radialGradient3156);fill-rule:evenodd;stroke:#00a8ff;stroke-width:0.04999985" />
+    <path
+       d="m 531.62758,637.49371 -0.16244,11.24194 c 0,0 -1.48146,0.86511 -1.47749,2.08553 0.004,1.19532 0.54891,2.64706 3.02543,2.64591 2.47652,-10e-4 3.15369,-1.34576 3.13593,-2.57519 -0.0208,-1.38984 -1.38625,-2.23099 -1.38625,-2.23099 l -0.0397,-11.2454 c 0,0 0.16622,-1.48969 -1.62935,-1.49869 -1.5402,-0.008 -1.46635,1.57689 -1.46635,1.57689 z"
+       id="Thermometer"
+       style="fill:#6fa9b2;fill-opacity:0.1372549;stroke:#6ba8b1;stroke-width:0.2;stroke-miterlimit:4;stroke-dasharray:none" />       
+    <text
+       x="689.92682"
+       y="500.30554"
+       transform="scale(0.77578918,1.28901)"
+       id="textTherm"
+       style="font-size:9.03613663px;font-weight:normal;fill:#1f1a17;fill-rule:evenodd;font-family:Calibri">21.22°C</text>
+  </g>
+</svg>

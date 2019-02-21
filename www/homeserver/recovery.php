@@ -65,10 +65,11 @@ else if ($action=="Konfiguration wiederherstellen" || $action=="recover")
 		 $erg = QUERY("select id,name,objectId from controller where online='1' and bootloader!='1' and id>'$lastId' and size!='999' order by id");
 		 while($obj=mysqli_fetch_OBJECT($erg))
 		 {
-		 	 echo "Wiederherstellung läuft: ".$obj->name."<br>";
-		 	 echo "<iframe src='editController.php?id=$obj->id&action=recover&callback=1' width=400 height=800 scrolling=0 border=0 frameborder=0></iframe>";
+		 	 echo "<br><p style='padding-left:20px'>Wiederherstellung läuft: ".$obj->name."<br>";
+		 	 echo "<iframe src='editController.php?id=$obj->id&action=recover&callback=1' width=800 height=800 scrolling=0 border=0 frameborder=0></iframe>";
 		 	 exit;
 		 }
+		 
 		 $message="Wiederherstellung beendet";
 	}
 	else showMessage("Soll die aktuelle Konfiguration nun wiederhergestellt werden?", "Konfiguration wiederherstellen", "recovery.php?action=recover&confirm=1", "Ja, Wiederherstellen","recovery.php", "Nein, zurück");

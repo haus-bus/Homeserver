@@ -31,6 +31,12 @@ function query_insert_id()
 	 return MYSQLi_INSERT_ID($db);
 }
 
+function query_affected_rows()
+{ 
+	 global $db;
+	 return MYSQLi_affected_rows($db);
+}
+
 function query_real_escape_string($escapestr)
 { 
 	 global $db;

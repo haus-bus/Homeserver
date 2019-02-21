@@ -460,8 +460,7 @@ if ($action == "submitLine")
 
 if ($action == "editButton")
 {
-  if ($featureInstanceId != "")
-    QUERY("UPDATE webapppagesbuttons set featureInstanceId='$featureInstanceId' where id='$buttonId' limit 1");
+  if ($featureInstanceId != "") QUERY("UPDATE webapppagesbuttons set featureInstanceId='$featureInstanceId' where id='$buttonId' limit 1");
   
   setupTreeAndContent("editButton_design.html");
   if ($buttonId != "")
@@ -475,13 +474,10 @@ if ($action == "editButton")
     {
       $page = substr($link, 1);
       $erg = QUERY("select name from webapppages where id='$page' limit 1");
-      if ($row = mysqli_fetch_ROW($erg))
-        $signal = "Subseite: $row[0]";
-      else
-        $signal = "Fehler: Subseite nicht mehr vorhanden";
+      if ($row = mysqli_fetch_ROW($erg)) $signal = "Subseite: $row[0]";
+      else $signal = "Fehler: Subseite nicht mehr vorhanden";
     }
-    else if (strpos($link, "http://") !== FALSE)
-      $signal = $link;
+    else if (strpos($link, "http://") !== FALSE) $signal = $link;
     else
     {
       // FeatureInstance suchen
@@ -533,10 +529,7 @@ if ($action == "editButton")
 
 if ($action == "submitButton" || $action == "chooseSignal" || $action == "choosePage")
 {
-  if ($delete == 1)
-  {
-    QUERY("DELETE from webapppagesbuttons where id='$buttonId'");
-  }
+  if ($delete == 1) QUERY("DELETE from webapppagesbuttons where id='$buttonId'");
   else if ($buttonId == "")
   {
     if (strpos($signal, "http://") !== FALSE)
@@ -578,6 +571,8 @@ if ($submitted != "")
       QUERY("DELETE from webapppageszeilen where id='$actId' limit 1");
       QUERY("DELETE from webapppagesbuttons where zeilenId='$actId'");
     }
+    
+    @unlink("webapp/".$pageId.".webapp");
     
     triggerTreeUpdate();
     header("Location: editButtonPage.php");
@@ -633,11 +628,8 @@ if ($pageId == "")
   $html = str_replace("%PAGE_NAME%", "", $html);
   
   $erg = QUERY("select id from webappPages where pos='1' limit 1");
-  if ($row = mysqli_fetch_ROW($erg))
-  {
-  }
-  else
-    $checked = "checked";
+  if ($row = mysqli_fetch_ROW($erg)) { }
+  else  $checked = "checked";
   $html = str_replace("%CHECKED%", $checked, $html);
   $html = str_replace("%SVG_FUNCTIONS%", $checked, $html);
   removeTag("%OPT_DELETE%", $html);
@@ -661,7 +653,7 @@ else
       $info .= $svgInfos->old . " alte nicht mehr gültige Objekte gefunden <br>";
     if ($svgInfos->notFound > 0)
       $info .= $svgInfos->notFound . " ungültige nicht existierende Objekte gefunden <br>";
-    $info .= "<br><br><a href='editButtonPage.php?pageId=$pageId&action=addObject'><u>Weitere Objekte zur Seite hinzufügen</a><br>";
+    //$info .= "<br><br><a href='editButtonPage.php?pageId=$pageId&action=addObject'><u>Weitere Objekte zur Seite hinzufügen</a><br>";
     $html = str_replace("%SVG_FUNCTIONS%", $info, $html);
   }
   
@@ -715,7 +707,8 @@ show();
 
 function generatePage($fileIn, $fileOut)
 {
-  $input = file_get_contents($fileIn);
+	$input = file_get_contents($fileIn);
+
   if (strpos($input, 'id="__x0022_') !== FALSE)
     generateSvgCorel($fileIn, $fileOut);
   else

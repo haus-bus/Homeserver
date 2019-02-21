@@ -1,0 +1,47 @@
+
+<html>
+<head><link rel="StyleSheet" href="/homeserver/css/main.css" type="text/css" />
+<body><div class="contentWrap"  id="content" style="margin-right:16px;">
+<br>
+<table width=95% align=center style="padding-left:5px">
+	<tr><td>
+<b>Strommessung per Sonoff POW</b>
+<hr>
+Mit diesem Plugin können im WLAN eingebundene Sonoff POW verwendet werden, um den Stromverbrauch einzelner Komponenten zu messen. Der aktuelle Stromverbrauch wird dabei in der tabellarischen Webapp angezeigt, sobald ein Sonoff Pow einem Raum zugeordnet wurde. Zusätzlich wird zyklisch ein Homeserver Event gesendet und die aktuelle Leistung und der Gesamtverbrauch visualisiert.<br>
+<br>%DEBUG%
+<br><br>
+<b>Aktuelle Strommessungen</b>
+<hr>
+<table cellspacing=3 cellpadding=3 border=0>
+<tr>
+	 <td></td>
+	 <td><b>Name</td><td></td>
+	 <td><b>IP</td><td></td>
+	 <td><b>Watt</td><td></td>
+	 <td><b>kwH</td><td></td>
+	 <td><b>Diagramm</td><td></td>
+	 <td><b>Raum</td><td></td>
+	 	<td></td>
+</tr>
+<%ELEMENTS%>
+<tr bgcolor=#eeeeee>
+ <td valign=top width=4><nobr>%STATUS%</td>
+ <td><nobr><a href="sonoffPow.php?action=changeName&id=%ID%">%NAME%</a></td><td></td>
+ <td valign=top><nobr><a href="sonoffPow.php?action=changeIp&id=%ID%">%IP%</a></td><td></td>
+ <td valign=top><nobr>%WATT%</a></td><td></td>
+ <td valign=top><nobr><a href="sonoffPow.php?action=resetKwh&id=%ID%">%KWH%</a></td><td></td>
+ <td valign=top><nobr><a href="sonoffPow.php?action=selectDiagram&id=%ID%">%DIAGRAM%</a></td><td></td>
+ <td valign=top><nobr><i>%ROOM%</i></td>
+ <td valign=top width=10><a href="sonoffPow.php?action=delete&id=%ID%"><img src="img/remove.gif" title="löschen"></a></td>
+</tr>
+</%ELEMENTS%>
+</table>
+<br>
+<table width=100% border=0>
+	<tr><td><a href="sonoffPow.php?action=createNew"><u>Neuen Strommesser erstellen</u></a></td>
+		<td align=right></td>
+	</tr>
+</table>
+<br><br>
+<br><br><br>
+</td></tr></table>

@@ -174,7 +174,7 @@ else if($action=="setConfig")
 }
 
 
-$html = file_get_contents("templates/heatingControl_design.html");
+$html = file_get_contents("templates/sonoffPow_design.html");
 
 // Sekunden =  Sekunden minReportTime * 1s baseTime
 $namesDauer = "deaktiviert";
@@ -210,14 +210,8 @@ $elementsTag = getTag("%ELEMENTS%",$html);
 $elements="";
 //$foundInavtive=0;
 $generated=0;
-$erg = QUERY("select heating.id, heating.sensor, heating.relay, heating.diagram, graphs.title as graphTitle, group_concat(rooms.name) as roomName
-                     from heating 
-                     left join graphs on(graphs.id=heating.diagram)
-                     left join roomFeatures on(roomFeatures.featureInstanceId=heating.sensor)
-                     left join rooms on(rooms.id=roomFeatures.roomId)
-                     group by roomFeatures.featureInstanceId,heating.id
-                     order by heating.id");
-while($obj=MYSQLi_FETCH_OBJECT($erg))
+//$erg = QUERY("select ");
+/*while($obj=MYSQLi_FETCH_OBJECT($erg))
 {
 	 $actTag = $elementsTag;
 	 $actTag = str_replace("%ID%",$obj->id, $actTag);
@@ -330,15 +324,11 @@ while($obj=MYSQLi_FETCH_OBJECT($erg))
 	 
 	 $elements.=$actTag;
 }
+*/
 
 
 $html = str_replace("%ELEMENTS%",$elements,$html);
 
-/*if ($foundInavtive==1) chooseTag("%OPT_GENERATE_RULES%",$html);
-else removeTag("%OPT_GENERATE_RULES%",$html);
-*/
-
-if ($generated==1) $debug.="<font color=#bb0000><b>Achtung:</b> Nach dem Generieren neuer Regeln, müssen diese einmalig zu den Controllern übermittelt werden. Dies bitte unter System -> Controller: Regeln übermitteln durchführen oder <a href='/homeserver/editRules.php?action=submitRules' target='_blank'>hier klicken.</a></font><br>";
 if ($debut!="") $debug="<br>".$debug."<br>";
 
 $html = str_replace("%DEBUG%",$debug,$html);

@@ -126,7 +126,7 @@ if ($id=="")
     $actTag = str_replace("%PARAM_NAME%","",$actTag);
     $actTag = str_replace("%COMMENT%","",$actTag);
     
-    $paramTypeOptions = getSelect($obj2->type,"ENUM,BYTE,WORD,DWORD,STRING,WORDLIST,BLOB,WEEKTIME,BITMASK");
+    $paramTypeOptions = getSelect($obj2->type,"ENUM,BYTE,SBYTE,WORD,DWORD,STRING,WORDLIST,BLOB,WEEKTIME,BITMASK");
     $actTag = str_replace("%PARAM_TYPE_OPTIONS%",$paramTypeOptions, $actTag);
      
     removeTag("%ENUM%",$actTag);
@@ -172,7 +172,7 @@ else
           $actTag = str_replace("%PARAM_TITLE%","Parameter".($paramCount+1),$actTag);
           $actTag = str_replace("%PARAM_ID%",$obj2->id, $actTag);
           $actTag = str_replace("%PARAM_NAME%",$obj2->name,$actTag);
-          $paramTypeOptions = getSelect($obj2->type,"ENUM,BYTE,WORD,DWORD,STRING,WORDLIST,BLOB,WEEKTIME,BITMASK");
+          $paramTypeOptions = getSelect($obj2->type,"ENUM,BYTE,SBYTE,WORD,DWORD,STRING,WORDLIST,BLOB,WEEKTIME,BITMASK");
 
           if ($obj2->view=="Standard")
           {
@@ -280,7 +280,7 @@ else
      $actTag = str_replace("%PARAM_TITLE%","Parameter".($paramCount+1),$actTag);
      $actTag = str_replace("%PARAM_ID%",$nextId,$actTag);
      $actTag = str_replace("%PARAM_NAME%","",$actTag);
-     $paramTypeOptions = getSelect($obj2->type,"ENUM,BYTE,WORD,DWORD,STRING,WORDLIST,BLOB,WEEKTIME,BITMASK");
+     $paramTypeOptions = getSelect($obj2->type,"ENUM,BYTE,SBYTE,WORD,DWORD,STRING,WORDLIST,BLOB,WEEKTIME,BITMASK");
      $actTag = str_replace("%PARAM_TYPE_OPTIONS%",$paramTypeOptions, $actTag);
      $actTag = str_replace("%COMMENT%","",$actTag);
      $actTag = str_replace("%standardChecked%","checked",$actTag);

@@ -4,10 +4,6 @@ Mit dieser Klasse lassen sich eigene Plugins für das Bussystem schreiben.
 Man wird über alle eintreffenden Nachrichten informiert und kann beliebige Aktionen auslösen.
 Zusätzlich gibt es Hilfsfunktionen, mit denen man sich Zustände merken kann.
 
-ACHTUNG: Das userPlugin muss einmalig aktiviert werden:
-1. per SSH einloggen
-2. sudo php /var/www/homeserver/activateUserPlugin.php
-
 ACHTUNG: Nicht diese Datei ändern, sondern die Datei myUserPlugin.php, da diese Datei mit jedem Update überschrieben wird !!
 
 ACHTUNG: Jedes mal, wenn dieses Skript geändert wird, muss es einmal neu eingelesen werden.

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="210mm"
+   height="297mm"
+   id="svg4359">
+  <defs
+     id="defs4361" />
+  <metadata
+     id="metadata4364">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="HAS_ID_18">
+    <path
+       d="m 266.86763,379.76471 0,-1.17908 -66.21302,0 0,1.17908 66.21302,0 z m 0,-1.34754 0,-1.1791 -66.21302,0 0,1.1791 66.21302,0 z m 0,-1.34753 0,-1.1791 -66.21302,0 0,1.1791 66.21302,0 z m 0,-1.34755 0,-1.17908 -66.21302,0 0,1.17908 66.21302,0 z"
+       id="statusRollo"
+       style="fill:#dededd;fill-rule:evenodd;stroke:#1f1a17;stroke-width:0.03645854" />
+    <path
+       d="m 225.0557,381.2399 1.0881,2.177 -2.1769,0 1.0888,-2.177 z m -0.1764,3.9372 0,-1.8741 0.3528,0 0,1.8741 -0.3528,0 z"
+       id="arrowUpRollo"
+       style="fill:#1f1a17;opacity:0;fill-rule:nonzero;stroke:none" />
+    <path
+       d="m 238.71548,384.86179 -1.0881,-2.177 2.1769,0 -1.0888,2.177 z m 0.1764,-3.9372 0,1.8741 -0.3528,0 0,-1.8741 0.3528,0 z"
+       id="arrowDownRollo"
+       style="fill:#1f1a17;opacity:0;fill-rule:nonzero;stroke:none" />
+    <text
+       x="210.78673"
+       y="415.54196"
+       transform="scale(1.0791882,0.92662243)"
+       id="textRollo"
+       style="font-size:4.75018883px;font-weight:normal;fill:#838281;fill-rule:evenodd;font-family:Arial">100</text>
+  </g>
+</svg>

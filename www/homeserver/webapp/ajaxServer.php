@@ -310,7 +310,9 @@ function updateStatus()
     	$_SESSION["ajaxObjects".$mySessionId][$obj->senderObj]["changed"] = 1;
     	if ($data->name == "Status")
     	{
-        $myStatus = $data->paramData[0]->dataValue . "." . $data->paramData[1]->dataValue;
+    		$myVal = $data->paramData[1]->dataValue;
+    		if (strlen($myVal)==1) $myVal="0".$myVal;
+        $myStatus = $data->paramData[0]->dataValue . "." .$myVal ;
         if ( $_SESSION["utf8Encoding"] == 1) $myStatus .= utf8_encode("°") . "C";
         else $myStatus .= "°C";
       	setObjectStatus($obj->senderObj, 1, $myStatus);

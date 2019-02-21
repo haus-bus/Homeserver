@@ -3,13 +3,10 @@
 // Offizielle Parameter - Bei Bedarf ändern
 $SERVER_ACTIVE = 1;        // PC-Serverinstanz aktiv
 
-/*$SERVER_WEATHER = 1;      // Wetterfunktionen auf dem Server aktivieren (Benötigt Internetzugriff)
-$COUNTRY = "Deutschland"; // Land für automatische Tag/Nacht Steuerung nach Dämmerungszeiten
-$ZIP_CODE = "33102";      // PLZ für automatische Tag/Nacht Steuerung nach Dämmerungszeiten
-*/
-
 $MAX_LOG_ENTRIES = 200000; // Wie viele Datenbankeinträge maximal im Journal gehalten werden
 $MAX_TRACE_ENTRIES = 10000; // Wie viele Datenbankeinträge maximal im Trace gehalten werden
+$DOUBLE_ENTRIES_FOR_SDCARDS_BIGGER_THAN_8GB = 1;  // Doppelt so viele Einträge erlaubt, wenn ab 8GB Karte
+
 
 
 // INTERNE PARAMETER -- HIER NICHTS ÄNDERN !

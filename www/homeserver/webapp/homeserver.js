@@ -67,7 +67,7 @@ function isMobile()
 {
 	var supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
 	return supportsTouch;
-	//return window.Touch;
+	// return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 }
 
 /**

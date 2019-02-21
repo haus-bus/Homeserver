@@ -1,7 +1,70 @@
 <?php
 include("include/all.php");
 
-print_r(unserialize('O:8:"stdClass":9:{s:2:"id";s:2:"94";s:16:"featureClassesId";s:1:"2";s:4:"type";s:6:"RESULT";s:4:"name";s:6:"Status";s:10:"functionId";s:3:"129";s:7:"classId";s:2:"32";s:16:"functionDebugStr";s:6:"Status";s:9:"paramData";a:3:{i:0;O:8:"stdClass":4:{s:2:"id";s:3:"161";s:4:"name";s:7:"celsius";s:4:"type";s:4:"BYTE";s:9:"dataValue";i:22;}i:1;O:8:"stdClass":4:{s:2:"id";s:3:"162";s:4:"name";s:12:"centiCelsius";s:4:"type";s:4:"BYTE";s:9:"dataValue";i:38;}i:2;O:8:"stdClass":5:{s:2:"id";s:3:"422";s:4:"name";s:9:"lastEvent";s:4:"type";s:4:"ENUM";s:13:"dataValueName";s:4:"WARM";s:9:"dataValue";i:201;}}s:14:"paramsDebugStr";s:55:"celsius = 22, centiCelsius = 38, lastEvent = WARM / 201";}'));
+$blockSize=512;
+$objectId= 2077949953;
+$totalSize = 47412;
+
+$blockSize=128;
+$objectId= 1681719297;
+$totalSize = 52084; 
+
+$totalSize+=4;
+
+$rounds=(int)($totalSize/$blockSize);
+$rest = $totalSize- ($rounds*$blockSize);
+
+$fp = fopen('testFw.bin', 'w');
+for ($i=0;$i<$rounds;$i++)
+{
+  $address=$i*$blockSize;
+  $length=$blockSize;
+  $result = executeCommand($objectId, "readMemory", array("address" => $address,"length" => $length), "MemoryData");
+  $data = $result["data"];
+  $bytes = explode(",",$data);
+  
+  for ($a=0;$a<$blockSize;$a++)
+  {
+    fwrite($fp, chr($bytes[$a]));
+  }
+}
+
+$address=$rounds*$blockSize;
+$length=$rest;
+$result = executeCommand($objectId, "readMemory", array("address" => $address,"length" => $length), "MemoryData");
+$data = $result["data"];
+$bytes = explode(",",$data);
+
+for ($a=0;$a<$rest;$a++)
+{
+  fwrite($fp, chr($bytes[$a]));
+}
+
+
+fclose($fp);
+
+die("done");
+
+exit;
+
+$objectId="1493176583";
+$erg = QUERY ( "select online from controller join featureInstances on (featureInstances.controllerId=controller.id) where featureInstances.objectId='$objectId' limit 1" );
+      if (($row = MYSQLi_FETCH_ROW ( $erg )) && $row[0]==0)
+      {
+    	  echo "Controller for objectId $objectId ist offline. Verwendet 1000 als Timebase <br>";
+        $configCache [$objectId] = 1000;
+      }
+      else echo "online";
+      exit;
+      
+$objectId = 1501364225;
+callObjectMethodByName ( $objectId, "reset" );
+$receiverObjectId = getObjectId ( getDeviceId ( $objectId ), getClassId ( $objectId ), $FIRMWARE_INSTANCE_ID );
+        
+$result = waitForObjectEventByName($receiverObjectId, 10, "evStarted", $lastLogId, "funtionDataParams", 0);
+if ($result==-1) die("nö");
+die("Yo");
+        
 exit;
     	 	  
     	 	  $min = time()-60*60*24*30;

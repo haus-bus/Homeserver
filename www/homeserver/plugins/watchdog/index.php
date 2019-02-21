@@ -1,4 +1,6 @@
 <?php
+$myFile="../../user/gruppen.txt";
+
 include ($_SERVER["DOCUMENT_ROOT"] . "/homeserver/include/all.php");
 
 if ($action=="new")
@@ -6,17 +8,17 @@ if ($action=="new")
 	 $erg = QUERY("Select id from groups where name='$gruppe' limit 1") or die(MYSQL_ERROR());
 	 if ($obj=MYSQLi_FETCH_OBJECT($erg))
 	 {
-	 	  $content = file_get_contents("gruppen.txt");
+	 	  $content = file_get_contents($myFile);
 	 	  $id=$obj->id;
 	 	  $content.="####".$id."###".$gruppe;
-	 	  file_put_contents("gruppen.txt",$content);
+	 	  file_put_contents($myFile,$content);
 	 	  die("<script>location='index.php?action=refresh';</script>");
 	 } 
 	 else $error="Gruppe nicht gefunden: $gruppe";
 }
 else if ($action=="delete")
 {
-	 $content = file_get_contents("gruppen.txt");
+	 $content = file_get_contents($myFile);
    $parts = explode("####", $content);
    $found=0;
    $newContent="";
@@ -37,7 +39,7 @@ else if ($action=="delete")
 	   $newContent.="####".$myId."###".$gruppe;
    }
    
-   if ($found==1) file_put_contents("gruppen.txt",$newContent);
+   if ($found==1) file_put_contents($myFile,$newContent);
    else $error = "Gruppe mit ID $id nicht gefunden";
 }
 else if ($action=="refresh")
@@ -67,7 +69,7 @@ echo "<input type=text name=gruppe size=40> <input type=submit value='Gruppe zur
 echo "<br><br>";
 echo "<b>Aktuell überwachte Gruppen</b><br><br>";
 
-$content = file_get_contents("gruppen.txt");
+$content = file_get_contents($myFile);
 $parts = explode("####", $content);
 foreach ((array)$parts as $entry)
 {
